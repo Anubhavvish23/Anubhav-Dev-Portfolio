@@ -44,7 +44,7 @@ const Projects = () => {
 
   return (
     <>
-      <style jsx>{`
+      <style>{`
         .animated-button {
           position: relative;
           display: flex;

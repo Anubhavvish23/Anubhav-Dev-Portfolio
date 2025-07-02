@@ -1,6 +1,23 @@
 import React from 'react';
 import { Trophy, Star, Zap, Code, Rocket, Users, BookOpen, Briefcase, Crown, Medal, Activity, Globe, Bot, Brain, Laptop2, UserCheck, Sparkles, ArrowRight } from 'lucide-react';
 
+type FloatingIconProps = {
+  children: React.ReactNode;
+  delay?: number;
+};
+
+const FloatingIcon = ({ children, delay = 0 }: FloatingIconProps) => (
+    <div 
+      className="absolute animate-bounce opacity-20"
+      style={{
+        animationDelay: `${delay}s`,
+        animationDuration: '3s'
+      }}
+    >
+      {children}
+    </div>
+  );
+
 const Achievements = () => {
   const [inView, setInView] = React.useState(false);
   const [activeYear, setActiveYear] = React.useState(0);
@@ -65,18 +82,6 @@ const Achievements = () => {
     { number: "100+", label: "GitHub Contributions", icon: <Activity className="w-6 h-6" /> },
     { number: "15+", label: "Technologies Mastered", icon: <Sparkles className="w-6 h-6" /> }
   ];
-
-  const FloatingIcon = ({ children, delay = 0 }) => (
-    <div 
-      className="absolute animate-bounce opacity-20"
-      style={{
-        animationDelay: `${delay}s`,
-        animationDuration: '3s'
-      }}
-    >
-      {children}
-    </div>
-  );
 
   return (
     <section id="achievements" className="py-24 bg-white dark:bg-black text-slate-900 dark:text-white relative overflow-hidden min-h-screen">
