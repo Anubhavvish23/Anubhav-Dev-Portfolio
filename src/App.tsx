@@ -14,6 +14,8 @@ import ScrollProgress from './components/ScrollProgress';
 import Scene3D from './components/Scene3D';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AllProjects from './components/AllProjects';
+// import EasterEggs from './components/EasterEggs';
+import ScrollEndHearts from './components/ScrollEndHearts';
 import './App.css';
 
 function App() {
@@ -32,6 +34,9 @@ function App() {
 
         {/* 3D Background Scene */}
         {!isLoading && <Scene3D />}
+
+        {/* EasterEggs - fun hidden features */}
+        {/* {!isLoading && <EasterEggs />} */}
 
         {/* Animated Background */}
         <div className="fixed inset-0 z-0">
@@ -62,6 +67,9 @@ function App() {
           />
         </div>
 
+        {/* ScrollEndHearts - scroll to end and blue star hover effects */}
+        <ScrollEndHearts />
+
         {/* UI Components */}
         {!isLoading && (
           <>
@@ -86,6 +94,7 @@ function App() {
           </>
         )}
       </div>
+      {/* Visitor Counter Badge - Moved to Contact page */}
       </BrowserRouter>
     </ThemeProvider>
   );

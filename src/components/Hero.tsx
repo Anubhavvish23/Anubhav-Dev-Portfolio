@@ -216,14 +216,6 @@ const Hero = () => {
             <ChevronDown size={24} />
           </motion.div>
         </motion.div>
-        {/* Visitor Counter Badge - Added at the bottom of Hero section */}
-        <div className="flex justify-center items-center text-sm mt-8 mb-2 w-full">
-          <img
-            src="https://hits.sh/anubhav-dev-portfolio.vercel.app.svg?style=flat-square&label=visitors&color=blue"
-            alt="Visitor Counter"
-            className="h-6"
-          />
-        </div>
       </section>
     </>
   );
