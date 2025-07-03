@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import ParallaxSection, { ParallaxCard, ParallaxText } from './ParallaxSection';
 
 const CIcon = () => (
   <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-600 text-white font-bold text-lg">C</span>
@@ -58,45 +59,51 @@ const Skills = () => {
   return (
     <section id="skills" className="py-20 relative bg-white dark:bg-black text-slate-900 dark:text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 50 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
-          <h2 className="title text-5xl font-bold mb-6">Skills & Expertise</h2>
-          <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-            A comprehensive toolkit of modern technologies and frameworks
-          </p>
-        </motion.div>
+        <ParallaxSection speed={0.3}>
+          <motion.div
+            ref={ref}
+            initial={{ opacity: 0, y: 50 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <h2 className="title text-6xl font-bold mb-6 text-black dark:text-white">Skills & Expertise</h2>
+            <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+              A comprehensive toolkit of modern technologies and frameworks
+            </p>
+          </motion.div>
+        </ParallaxSection>
 
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Left Column - Skill Bars */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="space-y-6"
-          >
-            <h3 className="text-2xl font-bold mb-8">Technical Proficiency</h3>
-            {skills.map((skill, index) => (
-              <div key={skill.name} className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">{skill.name}</span>
-                  <span className="text-slate-600 dark:text-slate-300">{skill.level}%</span>
-                </div>
-                <div className="h-3 bg-slate-200 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-black rounded-full shadow-md border border-white"
-                    initial={{ width: 0 }}
-                    animate={inView ? { width: `${skill.level}%` } : {}}
-                    transition={{ duration: 1.5, delay: 0.5 + index * 0.1 }}
-                  />
-                </div>
-              </div>
-            ))}
-          </motion.div>
+          <ParallaxSection speed={0.2} direction="left">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={inView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="space-y-6"
+            >
+              <h3 className="text-2xl font-bold mb-8">Technical Proficiency</h3>
+              {skills.map((skill, index) => (
+                <ParallaxCard key={skill.name} speed={0.1 + index * 0.05} className="p-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="font-medium">{skill.name}</span>
+                      <span className="text-slate-600 dark:text-slate-300">{skill.level}%</span>
+                    </div>
+                    <div className="h-3 bg-slate-200 rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-black rounded-full shadow-md border border-white"
+                        initial={{ width: 0 }}
+                        animate={inView ? { width: `${skill.level}%` } : {}}
+                        transition={{ duration: 1.5, delay: 0.5 + index * 0.1 }}
+                      />
+                    </div>
+                  </div>
+                </ParallaxCard>
+              ))}
+            </motion.div>
+          </ParallaxSection>
 
           {/* Right Column - Radial Charts */}
           <motion.div

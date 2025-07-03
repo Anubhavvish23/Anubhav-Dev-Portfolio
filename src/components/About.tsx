@@ -37,7 +37,7 @@ const About = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="title text-4xl font-bold text-slate-900 dark:text-white">About Me</h2>
+          <h2 className="title text-5xl font-bold text-slate-900 dark:text-white">About Me</h2>
           <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
             I'm a passionate full-stack developer with a love for creating innovative digital solutions. 
             My journey in tech is driven by curiosity, creativity, and a commitment to excellence.

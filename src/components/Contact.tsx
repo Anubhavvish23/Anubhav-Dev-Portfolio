@@ -69,7 +69,7 @@ const Contact = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="title text-4xl font-bold mb-8 text-slate-900 dark:text-white">Get In Touch</h2>
+                      <h2 className="title text-5xl font-bold mb-8 text-slate-900 dark:text-white">Get In Touch</h2>
           <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
             Ready to bring your ideas to life? Let's collaborate and create something amazing together.
           </p>
@@ -84,7 +84,7 @@ const Contact = () => {
             className="space-y-6"
           >
             <div className="glass rounded-2xl p-8">
-              <h3 className="title text-2xl font-bold text-slate-900 dark:text-white mb-6">Send Message</h3>
+              <h3 className="title text-3xl font-bold text-slate-900 dark:text-white mb-6">Send Message</h3>
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Name Field */}
@@ -222,7 +222,7 @@ const Contact = () => {
           >
             {/* Contact Information */}
             <div className="glass rounded-2xl p-8">
-              <h3 className="title text-2xl font-bold text-slate-900 mb-6">Contact Information</h3>
+              <h3 className="title text-3xl font-bold text-slate-900 mb-6">Contact Information</h3>
               
               <div className="space-y-6">
                 {contactInfo.map((info, index) => (
@@ -253,7 +253,7 @@ const Contact = () => {
 
             {/* Social Media */}
             <div className="glass rounded-2xl p-8">
-              <h3 className="title text-2xl font-bold text-slate-900 mb-6">Follow Me</h3>
+              <h3 className="title text-3xl font-bold text-slate-900 mb-6">Follow Me</h3>
               
               <div className="flex gap-4">
                 {socialLinks.map((social, index) => (

@@ -1,6 +1,6 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { ExternalLink, Github, Eye } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ExternalLink, Github, Eye, Search, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const projects = [
@@ -69,8 +69,62 @@ const projects = [
   }
 ];
 
+// Get all unique tags
+const allTags = Array.from(new Set(projects.reduce((acc: string[], project) => [...acc, ...project.tags], [])));
+
 const AllProjects = () => {
   const navigate = useNavigate();
+  const [filteredProjects, setFilteredProjects] = useState(projects);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showFeatured, setShowFeatured] = useState(false);
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  // Filter projects based on selected tags, search query, and featured filter
+  useEffect(() => {
+    let filtered = projects;
+
+    // Filter by search query
+    if (searchQuery) {
+      filtered = filtered.filter(project =>
+        project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    }
+
+    // Filter by selected tags
+    if (selectedTags.length > 0) {
+      filtered = filtered.filter(project =>
+        selectedTags.some(tag => project.tags.includes(tag))
+      );
+    }
+
+    // Filter by featured
+    if (showFeatured) {
+      filtered = filtered.filter(project => project.featured);
+    }
+
+    setFilteredProjects(filtered);
+  }, [selectedTags, searchQuery, showFeatured]);
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev =>
+      prev.includes(tag)
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
+  };
+
+  const clearFilters = () => {
+    setSelectedTags([]);
+    setSearchQuery('');
+    setShowFeatured(false);
+  };
 
   return (
     <section className="py-20 min-h-screen bg-white dark:bg-slate-900">
@@ -106,104 +160,221 @@ const AllProjects = () => {
       `}</style>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-12">
+        <div className="flex items-center justify-between mb-8">
           <h2 className="text-4xl font-bold">All Projects</h2>
-          <button onClick={() => navigate('/')} className="custom-button">
+          <button onClick={() => navigate(-1)} className="custom-button">
             <span className="button_top">Back to Home</span>
           </button>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((project, index) => (
-            <motion.div
-              key={project.title}
-              className="glass rounded-2xl overflow-hidden group cursor-pointer"
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: index * 0.1 }}
-              whileHover={{ scale: 1.02, y: -10 }}
-              layout
+        {/* Search and Filter Section */}
+        <div className="mb-8 space-y-4">
+          {/* Search Bar */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Search projects by title, description, or technology..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+
+          {/* Filter Controls */}
+          <div className="flex flex-wrap items-center gap-4">
+            {/* Featured Toggle */}
+            <motion.button
+              onClick={() => setShowFeatured(!showFeatured)}
+              className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                showFeatured
+                  ? 'bg-yellow-500 text-white shadow-lg'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <div className="relative overflow-hidden">
-                <motion.img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-48 object-cover"
-                  whileHover={{ scale: 1.1 }}
-                  transition={{ duration: 0.5 }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <motion.div
-                  className="absolute inset-0 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  initial={{ scale: 0 }}
-                  whileHover={{ scale: 1 }}
-                >
-                  <motion.a
-                    href={project.demo}
-                    className="p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-blue-500/50 transition-colors"
-                    whileHover={{ scale: 1.1, rotate: 360 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <Eye size={20} />
-                  </motion.a>
-                  <motion.a
-                    href={project.github}
-                    className="p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-purple-500/50 transition-colors"
-                    whileHover={{ scale: 1.1, rotate: 360 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <Github size={20} />
-                  </motion.a>
-                </motion.div>
-              </div>
-              <div className="p-6">
-                <motion.h3
-                  className="text-xl font-bold text-slate-900 mb-3 group-hover:gradient-text transition-all duration-300"
-                  whileHover={{ x: 5 }}
-                >
-                  {project.title}
-                </motion.h3>
-                <p className="text-slate-600 mb-4 leading-relaxed">
-                  {project.description}
-                </p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {project.tags.map((tag, tagIndex) => (
-                    <motion.span
-                      key={tag}
-                      className="px-3 py-1 bg-slate-100 rounded-full text-sm text-slate-600"
-                      initial={{ opacity: 0, scale: 0 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.5 + tagIndex * 0.1 }}
-                      whileHover={{ scale: 1.1, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
-                    >
-                      {tag}
-                    </motion.span>
-                  ))}
-                </div>
-                <div className="flex gap-3">
-                  <motion.a
-                    href={project.demo}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg text-blue-700 hover:text-blue-800 transition-all duration-300 text-sm font-medium"
-                    whileHover={{ scale: 1.05, x: 5 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <ExternalLink size={16} />
-                    Live Demo
-                  </motion.a>
-                  <motion.a
-                    href={project.github}
-                    className="flex items-center gap-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 rounded-lg text-purple-700 hover:text-purple-800 transition-all duration-300 text-sm font-medium"
-                    whileHover={{ scale: 1.05, x: 5 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Github size={16} />
-                    Code
-                  </motion.a>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+              ⭐ Featured Only
+            </motion.button>
+
+            {/* Clear Filters */}
+            {(selectedTags.length > 0 || searchQuery || showFeatured) && (
+              <motion.button
+                onClick={clearFilters}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-all duration-300"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+              >
+                Clear Filters
+              </motion.button>
+            )}
+          </div>
+
+          {/* Tag Filters */}
+          <div className="flex flex-wrap gap-2">
+            {allTags.map((tag) => (
+              <motion.button
+                key={tag}
+                onClick={() => toggleTag(tag)}
+                className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 ${
+                  selectedTags.includes(tag)
+                    ? 'bg-blue-500 text-white shadow-lg'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {tag}
+              </motion.button>
+            ))}
+          </div>
+
+          {/* Results Count */}
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Showing {filteredProjects.length} of {projects.length} projects
+          </div>
         </div>
+
+        {/* Projects Grid */}
+        <AnimatePresence mode="wait">
+          {filteredProjects.length > 0 ? (
+            <motion.div
+              key={`${selectedTags.join(',')}-${searchQuery}-${showFeatured}`}
+              className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              {filteredProjects.map((project, index) => (
+                <motion.div
+                  key={`${project.title}-${index}`}
+                  className="glass rounded-2xl overflow-hidden group cursor-pointer"
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: index * 0.1 }}
+                  whileHover={{ scale: 1.02, y: -10 }}
+                  layout
+                >
+                  <div className="relative overflow-hidden">
+                    <motion.img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-48 object-cover"
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ duration: 0.5 }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    {project.featured && (
+                      <div className="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                        ⭐ Featured
+                      </div>
+                    )}
+                    <motion.div
+                      className="absolute inset-0 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      initial={{ scale: 0 }}
+                      whileHover={{ scale: 1 }}
+                    >
+                      <motion.a
+                        href={project.demo}
+                        className="p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-blue-500/50 transition-colors"
+                        whileHover={{ scale: 1.1, rotate: 360 }}
+                        whileTap={{ scale: 0.9 }}
+                      >
+                        <Eye size={20} />
+                      </motion.a>
+                      <motion.a
+                        href={project.github}
+                        className="p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-purple-500/50 transition-colors"
+                        whileHover={{ scale: 1.1, rotate: 360 }}
+                        whileTap={{ scale: 0.9 }}
+                      >
+                        <Github size={20} />
+                      </motion.a>
+                    </motion.div>
+                  </div>
+                  <div className="p-6">
+                    <motion.h3
+                      className="text-xl font-bold text-slate-900 mb-3 group-hover:gradient-text transition-all duration-300"
+                      whileHover={{ x: 5 }}
+                    >
+                      {project.title}
+                    </motion.h3>
+                    <p className="text-slate-600 mb-4 leading-relaxed">
+                      {project.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {project.tags.map((tag, tagIndex) => (
+                        <motion.span
+                          key={tag}
+                          className="px-3 py-1 bg-slate-100 rounded-full text-sm text-slate-600"
+                          initial={{ opacity: 0, scale: 0 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.5 + tagIndex * 0.1 }}
+                          whileHover={{ scale: 1.1, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
+                        >
+                          {tag}
+                        </motion.span>
+                      ))}
+                    </div>
+                    <div className="flex gap-3">
+                      <motion.a
+                        href={project.demo}
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg text-blue-700 hover:text-blue-800 transition-all duration-300 text-sm font-medium"
+                        whileHover={{ scale: 1.05, x: 5 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <ExternalLink size={16} />
+                        Live Demo
+                      </motion.a>
+                      <motion.a
+                        href={project.github}
+                        className="flex items-center gap-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 rounded-lg text-purple-700 hover:text-purple-800 transition-all duration-300 text-sm font-medium"
+                        whileHover={{ scale: 1.05, x: 5 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Github size={16} />
+                        Code
+                      </motion.a>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              className="text-center py-12"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <div className="text-6xl mb-4">🔍</div>
+              <h3 className="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-2">
+                No projects found
+              </h3>
+              <p className="text-gray-500 dark:text-gray-400">
+                Try adjusting your search or filter criteria
+              </p>
+              <motion.button
+                onClick={clearFilters}
+                className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Clear All Filters
+              </motion.button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );

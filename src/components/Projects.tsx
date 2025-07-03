@@ -143,8 +143,8 @@ const Projects = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="title text-4xl font-bold mb-8 text-slate-900 dark:text-white">Projects</h2>
-            <h2 className="title text-5xl font-bold mb-6 text-slate-900 dark:text-white">Featured Projects</h2>
+            <h2 className="title text-5xl font-bold mb-8 text-slate-900 dark:text-white">Projects</h2>
+            <h2 className="title text-6xl font-bold mb-6 text-slate-900 dark:text-white">Featured Projects</h2>
             <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
               A showcase of my recent work, demonstrating technical skills and creative problem-solving
             </p>
@@ -282,7 +282,7 @@ const Projects = () => {
           >
             <button
               className="animated-button"
-              onClick={() => navigate('/projects-all')}
+              onClick={() => navigate('/projects')}
             >
               <svg viewBox="0 0 24 24" className="arr-2" xmlns="http://www.w3.org/2000/svg">
                 <path

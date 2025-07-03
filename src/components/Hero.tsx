@@ -48,7 +48,7 @@ const Hero = () => {
           }} />
         </div>
 
-        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 relative z-10">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 relative z-10 pt-16 sm:pt-0">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             
             {/* Left Content */}
@@ -60,7 +60,7 @@ const Hero = () => {
             >
               {/* Name with Cedarville Cursive Font */}
               <motion.h1
-                className="title text-4xl xs:text-5xl sm:text-6xl md:text-7xl font-bold"
+                className="title text-5xl font-bold"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
@@ -123,7 +123,7 @@ const Hero = () => {
 
             {/* Right Side - Profile Image with Bottom-to-Top Animation */}
             <motion.div
-              className="relative mx-auto lg:mx-0 w-56 h-56 xs:w-64 xs:h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 mt-8 lg:mt-0"
+              className="relative mx-auto lg:ml-24 w-56 h-56 xs:w-64 xs:h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 mt-8 lg:mt-0"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}

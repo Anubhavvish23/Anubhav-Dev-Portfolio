@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../contexts/ThemeContext';
+import { useLocation } from 'react-router-dom';
 
 const ScrollEndHearts: React.FC = () => {
   const { isDark } = useTheme();
+  const location = useLocation();
   const [showCongrats, setShowCongrats] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [rings, setRings] = useState<Array<{id: number, x: number, y: number, size: number}>>([]);
   const [sparkles, setSparkles] = useState<Array<{id: number, x: number, y: number, delay: number}>>([]);
   const [endParticles, setEndParticles] = useState<Array<{id: number, x: number, y: number, direction: {x: number, y: number}, type: string}>>([]);
 
-  // Show particles and message when scrolled to end
+  // Show particles and message when scrolled to end (only on home page)
   useEffect(() => {
     const onScroll = () => {
-      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
+      // Only show congratulations on the home page (root path)
+      if (location.pathname === '/' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
         setShowCongrats(true);
         // Create random floating particles
         const particleTypes = ['✨', '🌟', '💫', '⭐', '🎉'];
@@ -38,7 +41,7 @@ const ScrollEndHearts: React.FC = () => {
     };
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [location.pathname]);
 
   // Modern mouse hover effects
   useEffect(() => {
