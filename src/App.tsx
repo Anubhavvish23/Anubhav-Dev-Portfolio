@@ -5,6 +5,7 @@ import Hero from './components/Hero';
 import About from './components/About';
 import Skills from './components/Skills';
 import Projects from './components/Projects';
+import Achievements from './components/Achievements';
 import Contact from './components/Contact';
 import Navigation from './components/Navigation';
 import CustomCursor from './components/CustomCursor';
@@ -36,6 +37,7 @@ const AppContent = () => {
               <About />
               <Skills />
               <Projects />
+              <Achievements />
               <Contact />
               {isHomePage && <ScrollEndHearts />}
             </ParallaxBackground>
