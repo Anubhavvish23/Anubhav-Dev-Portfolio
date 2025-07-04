@@ -23,7 +23,7 @@ const SocialMediaVisitor: React.FC = () => {
       name: 'LinkedIn',
       icon: <Linkedin className="w-6 h-6 text-white" />,
       colors: ['#0077B5', '#00A0DC', '#0073B1', '#006097', '#004B7C'],
-      message: 'Thank you for visiting from LinkedIn! 🎉',
+      message: '👋 Hey LinkedIn friend! Thanks for visiting my site! 🎉',
       subMessage: 'I appreciate you taking the time to check out my portfolio!',
       gradient: 'from-blue-600 to-blue-700',
       borderColor: 'border-blue-500/20'
@@ -32,7 +32,7 @@ const SocialMediaVisitor: React.FC = () => {
       name: 'WhatsApp',
       icon: <MessageCircle className="w-6 h-6 text-white" />,
       colors: ['#25D366', '#128C7E', '#075E54', '#34B7F1', '#25D366'],
-      message: 'Thanks for visiting from WhatsApp! 💬',
+      message: '👋 Hey WhatsApp friend! Thanks for visiting my site! 💬',
       subMessage: 'Great to see you here! Feel free to reach out!',
       gradient: 'from-green-500 to-green-600',
       borderColor: 'border-green-500/20'
@@ -41,7 +41,7 @@ const SocialMediaVisitor: React.FC = () => {
       name: 'Instagram',
       icon: <Instagram className="w-6 h-6 text-white" />,
       colors: ['#E4405F', '#F77737', '#FCAF45', '#833AB4', '#5851DB'],
-      message: 'Welcome from Instagram! 📸✨',
+      message: '👋 Hey Instagram friend! Thanks for visiting my site! 📸✨',
       subMessage: 'Thanks for checking out my work! Hope you like it!',
       gradient: 'from-pink-500 via-purple-500 to-orange-500',
       borderColor: 'border-pink-500/20'
@@ -49,26 +49,32 @@ const SocialMediaVisitor: React.FC = () => {
   };
 
   useEffect(() => {
+    // Debug logging for development
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    
     // Check if user has already seen the message in this session
     const hasSeenMessage = sessionStorage.getItem('socialMediaVisitorShown');
     if (hasSeenMessage) {
+      if (isDevelopment) console.log('Social Media Visitor: Message already shown in this session');
       setHasShown(true);
       return;
     }
 
     // Check for social media referral
     const detectSocialPlatform = (): string | null => {
+      let detectedPlatform: string | null = null;
+      
       // Check document.referrer
-      const referrer = document.referrer;
+      const referrer = document.referrer.toLowerCase();
+      if (isDevelopment) console.log('Social Media Visitor: Referrer:', referrer);
+      
       if (referrer) {
         if (referrer.includes('linkedin.com') || referrer.includes('linked.in')) {
-          return 'linkedin';
-        }
-        if (referrer.includes('whatsapp.com') || referrer.includes('wa.me')) {
-          return 'whatsapp';
-        }
-        if (referrer.includes('instagram.com') || referrer.includes('ig.me')) {
-          return 'instagram';
+          detectedPlatform = 'linkedin';
+        } else if (referrer.includes('whatsapp.com') || referrer.includes('wa.me')) {
+          detectedPlatform = 'whatsapp';
+        } else if (referrer.includes('instagram.com') || referrer.includes('ig.me')) {
+          detectedPlatform = 'instagram';
         }
       }
 
@@ -76,27 +82,78 @@ const SocialMediaVisitor: React.FC = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const refParam = urlParams.get('ref');
       const utmSource = urlParams.get('utm_source');
+      const source = urlParams.get('source');
+      
+      if (isDevelopment) {
+        console.log('Social Media Visitor: URL Params:', {
+          ref: refParam,
+          utm_source: utmSource,
+          source: source
+        });
+      }
       
       if (refParam) {
         const ref = refParam.toLowerCase();
-        if (ref === 'linkedin' || ref === 'whatsapp' || ref === 'instagram') {
-          return ref;
+        // Support both full names and short codes
+        if (ref === 'linkedin' || ref === 'ln') {
+          detectedPlatform = 'linkedin';
+        } else if (ref === 'whatsapp' || ref === 'wp') {
+          detectedPlatform = 'whatsapp';
+        } else if (ref === 'instagram' || ref === 'insta') {
+          detectedPlatform = 'instagram';
         }
       }
 
       if (utmSource) {
         const source = utmSource.toLowerCase();
         if (source === 'linkedin' || source === 'whatsapp' || source === 'instagram') {
-          return source;
+          detectedPlatform = source;
         }
       }
 
-      return null;
+      // Additional source parameter check
+      if (source) {
+        const sourceLower = source.toLowerCase();
+        if (sourceLower === 'linkedin' || sourceLower === 'ln') {
+          detectedPlatform = 'linkedin';
+        } else if (sourceLower === 'whatsapp' || sourceLower === 'wp') {
+          detectedPlatform = 'whatsapp';
+        } else if (sourceLower === 'instagram' || sourceLower === 'insta') {
+          detectedPlatform = 'instagram';
+        }
+      }
+
+      // Check for hash parameters (for SPA routing)
+      const hash = window.location.hash;
+      if (hash) {
+        const hashParams = new URLSearchParams(hash.substring(1));
+        const hashRef = hashParams.get('ref');
+        if (hashRef) {
+          const ref = hashRef.toLowerCase();
+          if (ref === 'linkedin' || ref === 'ln') {
+            detectedPlatform = 'linkedin';
+          } else if (ref === 'whatsapp' || ref === 'wp') {
+            detectedPlatform = 'whatsapp';
+          } else if (ref === 'instagram' || ref === 'insta') {
+            detectedPlatform = 'instagram';
+          }
+        }
+      }
+
+      if (isDevelopment) {
+        console.log('Social Media Visitor: Detected Platform:', detectedPlatform);
+      }
+
+      return detectedPlatform;
     };
 
     const detectedPlatform = detectSocialPlatform();
     
     if (detectedPlatform && platforms[detectedPlatform]) {
+      if (isDevelopment) {
+        console.log('Social Media Visitor: Showing message for', detectedPlatform);
+      }
+      
       setDetectedPlatform(platforms[detectedPlatform]);
       setShowMessage(true);
       setHasShown(true);
@@ -106,13 +163,19 @@ const SocialMediaVisitor: React.FC = () => {
 
       // Trigger confetti animation
       const triggerConfetti = () => {
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: platforms[detectedPlatform].colors,
-          zIndex: 9999,
-        });
+        try {
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: platforms[detectedPlatform].colors,
+            zIndex: 9999,
+          });
+        } catch (error) {
+          if (isDevelopment) {
+            console.error('Social Media Visitor: Confetti error:', error);
+          }
+        }
       };
 
       // Delay confetti slightly for better effect
@@ -124,6 +187,10 @@ const SocialMediaVisitor: React.FC = () => {
       }, 5000);
 
       return () => clearTimeout(timer);
+    } else {
+      if (isDevelopment) {
+        console.log('Social Media Visitor: No social media platform detected');
+      }
     }
   }, []);
 
