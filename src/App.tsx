@@ -16,6 +16,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import AllProjects from './components/AllProjects';
 import ScrollEndHearts from './components/ScrollEndHearts';
 import { ParallaxBackground, FloatingElements } from './components/ParallaxSection';
+import SocialMediaVisitor from './components/SocialMediaVisitor';
 import './App.css';
 
 const AppContent = () => {
@@ -24,6 +25,7 @@ const AppContent = () => {
 
   return (
     <div className="App">
+      <SocialMediaVisitor />
       <CustomCursor />
       <ScrollProgress />
       <Navigation />

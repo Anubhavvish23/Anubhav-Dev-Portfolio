@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn Visitor Detection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-link {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background: #0077B5;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .test-link:hover {
+            background: #005885;
+        }
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>LinkedIn Visitor Detection Test</h1>
+    
+    <div class="note">
+        <strong>Note:</strong> This page helps you test the LinkedIn visitor detection feature. 
+        Click the links below to simulate different referral scenarios and see how the component behaves.
+    </div>
+
+    <div class="section">
+        <h2>Test Scenarios</h2>
+        
+        <h3>1. Document Referrer Test</h3>
+        <p>This simulates coming from LinkedIn via document.referrer:</p>
+        <a href="http://localhost:5173" class="test-link" onclick="simulateLinkedInReferrer()">
+            Test LinkedIn Referrer
+        </a>
+
+        <h3>2. URL Parameter Tests</h3>
+        <p>These simulate coming from LinkedIn via URL parameters:</p>
+        <a href="http://localhost:5173?ref=linkedin" class="test-link">
+            Test with ?ref=linkedin
+        </a>
+        <a href="http://localhost:5173?utm_source=linkedin" class="test-link">
+            Test with ?utm_source=linkedin
+        </a>
+        <a href="http://localhost:5173?ref=linkedin&utm_medium=social" class="test-link">
+            Test with multiple parameters
+        </a>
+
+        <h3>3. Clear Session Storage</h3>
+        <p>If you want to test the message again in the same session:</p>
+        <button onclick="clearSessionStorage()" class="test-link" style="border: none; cursor: pointer;">
+            Clear Session Storage
+        </button>
+    </div>
+
+    <div class="section">
+        <h2>How It Works</h2>
+        <ul>
+            <li><strong>Document Referrer:</strong> Detects if the user came from linkedin.com or linked.in</li>
+            <li><strong>URL Parameters:</strong> Detects ?ref=linkedin or ?utm_source=linkedin</li>
+            <li><strong>Session Storage:</strong> Prevents showing the message multiple times in the same session</li>
+            <li><strong>Auto-hide:</strong> Message disappears after 5 seconds</li>
+            <li><strong>Confetti:</strong> Triggers a LinkedIn-themed confetti animation</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Development Server</h2>
+        <p>Make sure your development server is running:</p>
+        <code>npm run dev</code>
+        <p>Then click the test links above to see the LinkedIn visitor detection in action!</p>
+    </div>
+
+    <script>
+        function simulateLinkedInReferrer() {
+            // This is a simplified simulation - in real scenarios, 
+            // the referrer would be set by the browser when navigating from LinkedIn
+            alert('Note: Document referrer simulation requires actual navigation from LinkedIn.\n\nFor testing, use the URL parameter links instead.');
+        }
+
+        function clearSessionStorage() {
+            sessionStorage.removeItem('linkedinVisitorShown');
+            alert('Session storage cleared! You can now test the LinkedIn visitor detection again.');
+        }
+    </script>
+</body>
+</html> 
