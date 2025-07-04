@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import ParallaxSection, { ParallaxCard, ParallaxText } from './ParallaxSection';
@@ -7,11 +7,151 @@ const CIcon = () => (
   <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-600 text-white font-bold text-lg">C</span>
 );
 
-const Skills = () => {
+interface SkillsProps {
+  magicMode?: boolean;
+}
+
+const getRandom = (min: number, max: number) => Math.random() * (max - min) + min;
+
+const Skills: React.FC<SkillsProps> = ({ magicMode }) => {
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
+
+  // Enhanced Chaotic Magic Mode state
+  const [titlePos, setTitlePos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
+  const [descPos, setDescPos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
+  const [techTitlePos, setTechTitlePos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
+  const [expertiseTitlePos, setExpertiseTitlePos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
+  const [stackTitlePos, setStackTitlePos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
+  const [skillBarsPos, setSkillBarsPos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
+  const [radialChartsPos, setRadialChartsPos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
+  const [techStackPos, setTechStackPos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
+
+  useEffect(() => {
+    if (!magicMode) {
+      setTitlePos({ x: 0, y: 0, rotate: 0, scale: 1 });
+      setDescPos({ x: 0, y: 0, rotate: 0, scale: 1 });
+      setTechTitlePos({ x: 0, y: 0, rotate: 0, scale: 1 });
+      setExpertiseTitlePos({ x: 0, y: 0, rotate: 0, scale: 1 });
+      setStackTitlePos({ x: 0, y: 0, rotate: 0, scale: 1 });
+      setSkillBarsPos({ x: 0, y: 0, rotate: 0, scale: 1 });
+      setRadialChartsPos({ x: 0, y: 0, rotate: 0, scale: 1 });
+      setTechStackPos({ x: 0, y: 0, rotate: 0, scale: 1 });
+      return;
+    }
+
+    let timers: number[] = [];
+
+    // Chaotic title animation
+    const chaosTitle = () => {
+      setTitlePos({
+        x: getRandom(-80, 80),
+        y: getRandom(-40, 40),
+        rotate: getRandom(-30, 30),
+        scale: getRandom(0.9, 1.1)
+      });
+      timers.push(window.setTimeout(chaosTitle, getRandom(1500, 3500)));
+    };
+
+    // Falling description
+    const fallDesc = () => {
+      setDescPos({
+        x: getRandom(-60, 60),
+        y: getRandom(-25, 25),
+        rotate: getRandom(-20, 20),
+        scale: getRandom(0.85, 1.15)
+      });
+      timers.push(window.setTimeout(fallDesc, getRandom(2000, 4500)));
+    };
+
+    // Spinning tech title
+    const spinTechTitle = () => {
+      setTechTitlePos({
+        x: getRandom(-50, 50),
+        y: getRandom(-20, 20),
+        rotate: getRandom(-45, 45),
+        scale: getRandom(0.8, 1.2)
+      });
+      timers.push(window.setTimeout(spinTechTitle, getRandom(1800, 4000)));
+    };
+
+    // Chaotic expertise title
+    const chaosExpertiseTitle = () => {
+      setExpertiseTitlePos({
+        x: getRandom(-50, 50),
+        y: getRandom(-20, 20),
+        rotate: getRandom(-45, 45),
+        scale: getRandom(0.8, 1.2)
+      });
+      timers.push(window.setTimeout(chaosExpertiseTitle, getRandom(2200, 5000)));
+    };
+
+    // Floating stack title
+    const floatStackTitle = () => {
+      setStackTitlePos({
+        x: getRandom(-40, 40),
+        y: getRandom(-15, 15),
+        rotate: getRandom(-25, 25),
+        scale: getRandom(0.9, 1.1)
+      });
+      timers.push(window.setTimeout(floatStackTitle, getRandom(2500, 5500)));
+    };
+
+    // Bouncing skill bars
+    const bounceSkillBars = () => {
+      setSkillBarsPos({
+        x: getRandom(-30, 30),
+        y: getRandom(-10, 10),
+        rotate: getRandom(-15, 15),
+        scale: getRandom(0.95, 1.05)
+      });
+      timers.push(window.setTimeout(bounceSkillBars, getRandom(3000, 6000)));
+    };
+
+    // Spinning radial charts
+    const spinRadialCharts = () => {
+      setRadialChartsPos({
+        x: getRandom(-35, 35),
+        y: getRandom(-12, 12),
+        rotate: getRandom(-20, 20),
+        scale: getRandom(0.9, 1.1)
+      });
+      timers.push(window.setTimeout(spinRadialCharts, getRandom(2800, 5200)));
+    };
+
+    // Chaotic tech stack
+    const chaosTechStack = () => {
+      setTechStackPos({
+        x: getRandom(-45, 45),
+        y: getRandom(-18, 18),
+        rotate: getRandom(-30, 30),
+        scale: getRandom(0.85, 1.15)
+      });
+      timers.push(window.setTimeout(chaosTechStack, getRandom(3200, 5800)));
+    };
+
+    // Start all chaotic animations
+    chaosTitle();
+    fallDesc();
+    spinTechTitle();
+    chaosExpertiseTitle();
+    floatStackTitle();
+    bounceSkillBars();
+    spinRadialCharts();
+    chaosTechStack();
+
+    return () => {
+      timers.forEach(timer => clearTimeout(timer));
+    };
+  }, [magicMode]);
+
+  // Continuous rotation for extra chaos
+  const continuousRotate = magicMode ? {
+    rotate: [0, 360],
+    transition: { duration: 10, repeat: Infinity, ease: "linear" }
+  } : {};
 
   const skills = [
     { name: 'React/Next.js', level: 95, color: 'from-blue-500 to-cyan-500' },
@@ -53,11 +193,48 @@ const Skills = () => {
     { name: 'Django', icon: '🦄', progress: 80 },
     { name: 'Full Stack', icon: '🧑‍💻', progress: 95 },
     { name: 'Gen AI', icon: '🤖', progress: 75 },
-    { name: 'ML', icon: '📊', progress: 78 },
+    { name: 'ML', icon: '��', progress: 78 },
+    { name: 'Data Visualization', icon: '📊', progress: 80 },
   ];
+
+  // Magic sparkles for stack proficiency
+  const MagicStackSparkles = () => (
+    <>
+      {magicMode && (
+        <div className="pointer-events-none absolute inset-0 z-0">
+          {[...Array(10)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute bg-purple-400/40 rounded-full shadow-lg"
+              style={{
+                width: 7 + Math.random() * 10,
+                height: 7 + Math.random() * 10,
+                left: `${40 + Math.random() * 20}%`, // focus sparkles around center
+                top: `${70 + Math.random() * 20}%`, // focus sparkles near stack proficiency
+                filter: 'blur(1.5px) drop-shadow(0 0 6px #c4b5fd)'
+              }}
+              animate={{
+                y: [0, -15 + Math.random() * 30, 0],
+                opacity: [0.5, 1, 0.5],
+                scale: [1, 1.2, 1]
+              }}
+              transition={{
+                duration: 2.5 + Math.random() * 1.5,
+                repeat: Infinity,
+                delay: Math.random() * 1.5,
+                ease: 'easeInOut'
+              }}
+            />
+          ))}
+        </div>
+      )}
+    </>
+  );
 
   return (
     <section id="skills" className="py-20 relative bg-white dark:bg-black text-slate-900 dark:text-white">
+      {/* Magic sparkles for stack proficiency */}
+      <MagicStackSparkles />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ParallaxSection speed={0.3}>
           <motion.div
@@ -67,10 +244,22 @@ const Skills = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="title text-6xl font-bold mb-6 text-black dark:text-white">Skills & Expertise</h2>
-            <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+            <motion.h2
+              className="title text-6xl font-bold mb-6 text-black dark:text-white"
+              animate={magicMode ? { ...titlePos } : {}}
+              transition={magicMode ? { duration: 1.5, type: 'spring' } : {}}
+              style={{ position: magicMode ? 'relative' : undefined }}
+            >
+              Skills & Expertise
+            </motion.h2>
+            <motion.p
+              className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed"
+              animate={magicMode ? { ...descPos } : {}}
+              transition={magicMode ? { duration: 2, type: 'spring' } : {}}
+              style={{ position: magicMode ? 'relative' : undefined }}
+            >
               A comprehensive toolkit of modern technologies and frameworks
-            </p>
+            </motion.p>
           </motion.div>
         </ParallaxSection>
 
@@ -83,25 +272,38 @@ const Skills = () => {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="space-y-6"
             >
-              <h3 className="text-2xl font-bold mb-8">Technical Proficiency</h3>
-              {skills.map((skill, index) => (
-                <ParallaxCard key={skill.name} speed={0.1 + index * 0.05} className="p-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">{skill.name}</span>
-                      <span className="text-slate-600 dark:text-slate-300">{skill.level}%</span>
+              <motion.h3
+                className="text-2xl font-bold mb-8"
+                animate={magicMode ? { ...techTitlePos } : {}}
+                transition={magicMode ? { duration: 1.5, type: 'spring' } : {}}
+                style={{ position: magicMode ? 'relative' : undefined }}
+              >
+                Technical Proficiency
+              </motion.h3>
+              <motion.div
+                animate={magicMode ? { ...skillBarsPos } : {}}
+                transition={magicMode ? { duration: 2, type: 'spring' } : {}}
+                style={{ position: magicMode ? 'relative' : undefined }}
+              >
+                {skills.map((skill, index) => (
+                  <ParallaxCard key={skill.name} speed={0.1 + index * 0.05} className="p-4">
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">{skill.name}</span>
+                        <span className="text-slate-600 dark:text-slate-300">{skill.level}%</span>
+                      </div>
+                      <div className="h-3 bg-slate-200 rounded-full overflow-hidden">
+                        <motion.div
+                          className="h-full bg-black rounded-full shadow-md border border-white"
+                          initial={{ width: 0 }}
+                          animate={inView ? { width: `${skill.level}%` } : {}}
+                          transition={{ duration: 1.5, delay: 0.5 + index * 0.1 }}
+                        />
+                      </div>
                     </div>
-                    <div className="h-3 bg-slate-200 rounded-full overflow-hidden">
-                      <motion.div
-                        className="h-full bg-black rounded-full shadow-md border border-white"
-                        initial={{ width: 0 }}
-                        animate={inView ? { width: `${skill.level}%` } : {}}
-                        transition={{ duration: 1.5, delay: 0.5 + index * 0.1 }}
-                      />
-                    </div>
-                  </div>
-                </ParallaxCard>
-              ))}
+                  </ParallaxCard>
+                ))}
+              </motion.div>
             </motion.div>
           </ParallaxSection>
 
@@ -112,124 +314,135 @@ const Skills = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="space-y-8"
           >
-            <h3 className="text-2xl font-bold mb-8">Expertise Areas</h3>
-            <div className="grid grid-cols-2 gap-8">
-              {radialSkills.map((skill, index) => (
-                <motion.div
-                  key={skill.name}
-                  className="text-center"
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={inView ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ duration: 0.8, delay: 0.6 + index * 0.1 }}
-                >
-                  <div className="relative w-24 h-24 mx-auto mb-4">
-                    <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="40" stroke="#000" strokeWidth={8} fill="none" />
-                      <motion.circle
-                        cx="50"
-                        cy="50"
-                        r="40"
-                        stroke="#000"
-                        strokeWidth={8}
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeDasharray={`${2 * Math.PI * 40}`}
-                        initial={{ strokeDashoffset: 2 * Math.PI * 40 }}
-                        animate={inView ? { strokeDashoffset: 2 * Math.PI * 40 * (1 - skill.percentage / 100) } : {}}
-                        transition={{ duration: 2, delay: 0.8 + index * 0.2 }}
-                        style={{ filter: 'drop-shadow(0 0 6px #000)' }}
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="font-bold">{skill.percentage}%</span>
+            <motion.h3
+              className="text-2xl font-bold mb-8"
+              animate={magicMode ? { ...expertiseTitlePos } : {}}
+              transition={magicMode ? { duration: 1.5, type: 'spring' } : {}}
+              style={{ position: magicMode ? 'relative' : undefined }}
+            >
+              Expertise Areas
+            </motion.h3>
+            <motion.div
+              animate={magicMode ? { ...radialChartsPos } : {}}
+              transition={magicMode ? { duration: 2, type: 'spring' } : {}}
+              style={{ position: magicMode ? 'relative' : undefined }}
+            >
+              <div className="grid grid-cols-2 gap-6">
+                {radialSkills.map((skill, index) => (
+                  <ParallaxCard key={skill.name} speed={0.15 + index * 0.1} className="p-6 text-center">
+                    <div className="relative w-24 h-24 mx-auto mb-4">
+                      <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="40"
+                          stroke="currentColor"
+                          strokeWidth="8"
+                          fill="none"
+                          className="text-slate-200 dark:text-slate-700"
+                        />
+                        <motion.circle
+                          cx="50"
+                          cy="50"
+                          r="40"
+                          stroke="currentColor"
+                          strokeWidth="8"
+                          fill="none"
+                          strokeLinecap="round"
+                          className="text-black"
+                          initial={{ strokeDasharray: 0, strokeDashoffset: 0 }}
+                          animate={inView ? { 
+                            strokeDasharray: `${2 * Math.PI * 40}`,
+                            strokeDashoffset: `${2 * Math.PI * 40 * (1 - skill.percentage / 100)}`
+                          } : {}}
+                          transition={{ duration: 2, delay: 1 + index * 0.2 }}
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-lg font-bold">{skill.percentage}%</span>
+                      </div>
                     </div>
-                  </div>
-                  <p className="text-slate-600 dark:text-slate-300 font-medium">{skill.name}</p>
-                </motion.div>
-              ))}
-            </div>
+                    <h4 className="font-semibold">{skill.name}</h4>
+                  </ParallaxCard>
+                ))}
+              </div>
+            </motion.div>
           </motion.div>
         </div>
 
-        {/* Tech Stack Icons */}
+        {/* Tech Stack Section */}
         <motion.div
+          className="mt-16"
           initial={{ opacity: 0, y: 50 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="mt-16"
+          transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <h3 className="text-2xl font-bold text-center mb-2">Technology Stack</h3>
-          <div className="flex flex-wrap justify-center gap-3">
-            {techStack.filter(t => t.progress === undefined).map((tech, i) => (
-              <motion.div
-                key={tech.name}
-                className="glass rounded-xl p-4 text-center cursor-pointer group w-40 min-h-[90px] flex flex-col items-center justify-between"
-                initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 1 + i * 0.05 }}
-                whileHover={{ scale: 1.1, y: -10, rotateY: 15 }}
-              >
-                <div className="text-3xl mb-2 group-hover:animate-bounce">{tech.icon}</div>
-                <p className="text-slate-600 dark:text-slate-300 text-sm font-medium mb-2">{tech.name}</p>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Stack Progress */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-10">
-            {stackProgress.map((stack, index) => (
-              <motion.div
-                key={stack.name}
-                className="glass rounded-xl p-6 flex flex-col items-center"
-                initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 1.5 + index * 0.1 }}
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-2xl">{stack.icon}</span>
-                  <span className="font-semibold">{stack.name}</span>
-                </div>
-                <div className="w-full h-3 bg-slate-200 rounded-full overflow-hidden mt-2">
-                  <motion.div
-                    className="h-full bg-black rounded-full shadow-md border border-white"
-                    initial={{ width: 0 }}
-                    animate={inView ? { width: `${stack.progress}%` } : {}}
-                    transition={{ duration: 1.2, delay: 1.7 + index * 0.1 }}
-                  />
-                </div>
-                <div className="w-full flex justify-end text-xs text-slate-700 mt-1 font-mono">{stack.progress}%</div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* ✅ Certifications Section Fixed for Dark Mode */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 2.2 }}
-            className="mt-16"
+          <motion.h3
+            className="text-2xl font-bold mb-8 text-center"
+            animate={magicMode ? { ...stackTitlePos } : {}}
+            transition={magicMode ? { duration: 1.5, type: 'spring' } : {}}
+            style={{ position: magicMode ? 'relative' : undefined }}
           >
-            <h3 className="text-2xl font-bold text-center mb-4">Certifications</h3>
-            <div className="flex flex-wrap justify-center gap-4">
-              {[
-                'MERN Stack x2',
-                'Django',
-                'Python',
-                'Full Stack',
-                'React',
-                'Next.js',
-                'Gen AI',
-              ].map((cert, idx) => (
-                <div
-                  key={cert}
-                  className="glass rounded-xl px-6 py-3 text-slate-800 dark:text-white font-semibold text-base shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer"
-                  style={{ minWidth: 120 }}
-                >
-                  {cert}
-                </div>
+            Tech Stack
+          </motion.h3>
+          <motion.div
+            animate={magicMode ? { ...techStackPos } : {}}
+            transition={magicMode ? { duration: 2, type: 'spring' } : {}}
+            style={{ position: magicMode ? 'relative' : undefined }}
+          >
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {techStack.slice(0, 10).map((tech, index) => (
+                <ParallaxCard key={tech.name} speed={0.1 + index * 0.05} className="p-4 text-center">
+                  <motion.div
+                    className="text-3xl mb-2"
+                    whileHover={{ scale: 1.2, rotate: 360 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    {tech.icon}
+                  </motion.div>
+                  <span className="text-sm font-medium">{tech.name}</span>
+                </ParallaxCard>
               ))}
             </div>
           </motion.div>
+        </motion.div>
+
+        {/* Stack Progress Section */}
+        <motion.div
+          className="mt-16"
+          initial={{ opacity: 0, y: 50 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.8 }}
+        >
+          <motion.h3
+            className="text-3xl font-bold mb-8 text-center text-black font-[cursive]"
+            animate={magicMode ? { ...stackTitlePos } : {}}
+            transition={magicMode ? { duration: 1.5, type: 'spring' } : {}}
+            style={{ position: magicMode ? 'relative' : undefined }}
+          >
+            Stack Proficiency
+          </motion.h3>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {stackProgress.map((stack, index) => (
+              <ParallaxCard key={stack.name} speed={0.1 + index * 0.1} className="p-6">
+                <div className="flex items-center gap-4 mb-4">
+                  <span className="text-2xl">{stack.icon}</span>
+                  <div>
+                    <h4 className="font-semibold">{stack.name}</h4>
+                    <span className="text-slate-600 dark:text-slate-300">{stack.progress}%</span>
+                  </div>
+                </div>
+                <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
+                    initial={{ width: 0 }}
+                    animate={inView ? { width: `${stack.progress}%` } : {}}
+                    transition={{ duration: 1.5, delay: 1.2 + index * 0.1 }}
+                  />
+                </div>
+              </ParallaxCard>
+            ))}
+          </div>
         </motion.div>
       </div>
     </section>

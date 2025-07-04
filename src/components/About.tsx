@@ -2,8 +2,14 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { MapPin, Code, Heart, Zap } from 'lucide-react';
+import ChaosText from './ChaosText';
+import ChaosCard from './ChaosCard';
 
-const About = () => {
+interface AboutProps {
+  magicMode: boolean;
+}
+
+const About: React.FC<AboutProps> = ({ magicMode }) => {
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -37,11 +43,23 @@ const About = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="title text-5xl font-bold text-slate-900 dark:text-white">About Me</h2>
-          <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
+          <ChaosText 
+            magicMode={magicMode} 
+            element="h2" 
+            className="title text-5xl font-bold text-slate-900 dark:text-white"
+            animationType="text"
+          >
+            About Me
+          </ChaosText>
+          <ChaosText 
+            magicMode={magicMode} 
+            element="p" 
+            className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed"
+            animationType="text"
+          >
             I'm a passionate full-stack developer with a love for creating innovative digital solutions. 
             My journey in tech is driven by curiosity, creativity, and a commitment to excellence.
-          </p>
+          </ChaosText>
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -52,18 +70,39 @@ const About = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="space-y-6"
           >
-            <div className="glass rounded-2xl p-8">
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">My Story</h3>
-              <p className="text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+            <ChaosCard 
+              magicMode={magicMode} 
+              className="glass rounded-2xl p-8"
+              animationType="card"
+            >
+              <ChaosText 
+                magicMode={magicMode} 
+                element="h3" 
+                className="text-2xl font-bold text-slate-900 dark:text-white mb-4"
+                animationType="text"
+              >
+                My Story
+              </ChaosText>
+              <ChaosText 
+                magicMode={magicMode} 
+                element="p" 
+                className="text-slate-600 dark:text-slate-300 leading-relaxed mb-4"
+                animationType="text"
+              >
                 Started my journey in computer science with a fascination for how technology can solve real-world problems. 
                 Over the years, I've developed expertise in both frontend and backend technologies, always staying curious 
                 about emerging trends and best practices.
-              </p>
-              <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+              </ChaosText>
+              <ChaosText 
+                magicMode={magicMode} 
+                element="p" 
+                className="text-slate-600 dark:text-slate-300 leading-relaxed"
+                animationType="text"
+              >
                 When I'm not coding, you'll find me exploring new frameworks, contributing to open source projects, 
                 or sharing knowledge with the developer community.
-              </p>
-            </div>
+              </ChaosText>
+            </ChaosCard>
 
             {/* Location */}
             <motion.div
@@ -76,7 +115,14 @@ const About = () => {
               >
                 <MapPin className="w-6 h-6 text-blue-400" />
               </motion.div>
-              <span className="text-lg">Based in India</span>
+              <ChaosText 
+                magicMode={magicMode} 
+                element="span" 
+                className="text-lg"
+                animationType="text"
+              >
+                Based in India
+              </ChaosText>
             </motion.div>
           </motion.div>
 
@@ -88,18 +134,11 @@ const About = () => {
             className="space-y-6"
           >
             {cards.map((card, index) => (
-              <motion.div
+              <ChaosCard
                 key={card.title}
+                magicMode={magicMode}
                 className="glass rounded-xl p-6 hover:glass-strong transition-all duration-300 cursor-pointer group"
-                initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
-                whileHover={{ 
-                  scale: 1.02,
-                  rotateY: 5,
-                  rotateX: 5,
-                }}
-                style={{ transformStyle: 'preserve-3d' }}
+                animationType="card"
               >
                 <div className="flex items-start gap-4">
                   <motion.div
@@ -113,11 +152,25 @@ const About = () => {
                     {card.icon}
                   </motion.div>
                   <div>
-                    <h4 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">{card.title}</h4>
-                    <p className="text-slate-600 dark:text-slate-300">{card.description}</p>
+                    <ChaosText 
+                      magicMode={magicMode} 
+                      element="h4" 
+                      className="text-xl font-semibold text-slate-900 dark:text-white mb-2"
+                      animationType="text"
+                    >
+                      {card.title}
+                    </ChaosText>
+                    <ChaosText 
+                      magicMode={magicMode} 
+                      element="p" 
+                      className="text-slate-600 dark:text-slate-300"
+                      animationType="text"
+                    >
+                      {card.description}
+                    </ChaosText>
                   </div>
                 </div>
-              </motion.div>
+              </ChaosCard>
             ))}
           </motion.div>
         </div>
@@ -129,13 +182,21 @@ const About = () => {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.8 }}
         >
-          <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-8">Core Values</h3>
+          <ChaosText 
+            magicMode={magicMode} 
+            element="h3" 
+            className="text-2xl font-bold text-slate-900 dark:text-white mb-8"
+            animationType="text"
+          >
+            Core Values
+          </ChaosText>
           <div className="flex justify-center gap-8 flex-wrap">
             {['Innovation', 'Quality', 'Collaboration', 'Growth'].map((value, index) => (
-              <motion.div
+              <ChaosCard
                 key={value}
+                magicMode={magicMode}
                 className="relative"
-                whileHover={{ scale: 1.1 }}
+                animationType="card"
               >
                 <motion.div
                   className="w-16 h-16 rounded-full bg-black flex items-center justify-center cursor-pointer"
@@ -154,8 +215,15 @@ const About = () => {
                 >
                   <span className="text-white font-bold text-sm">{value[0]}</span>
                 </motion.div>
-                <p className="text-slate-600 dark:text-slate-300 text-sm mt-2">{value}</p>
-              </motion.div>
+                <ChaosText 
+                  magicMode={magicMode} 
+                  element="p" 
+                  className="text-slate-600 dark:text-slate-300 text-sm mt-2"
+                  animationType="text"
+                >
+                  {value}
+                </ChaosText>
+              </ChaosCard>
             ))}
           </div>
         </motion.div>

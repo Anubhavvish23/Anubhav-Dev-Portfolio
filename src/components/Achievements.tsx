@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Trophy, Star, Zap, Code, Rocket, Users, BookOpen, Briefcase, Crown, Medal, Activity, Globe, Bot, Brain, Laptop2, UserCheck, Sparkles, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 
 type FloatingIconProps = {
   children: React.ReactNode;
@@ -18,9 +20,25 @@ const FloatingIcon = ({ children, delay = 0 }: FloatingIconProps) => (
     </div>
   );
 
-const Achievements = () => {
+interface AchievementsProps {
+  magicMode?: boolean;
+}
+
+const getRandom = (min: number, max: number) => Math.random() * (max - min) + min;
+
+const Achievements: React.FC<AchievementsProps> = ({ magicMode }) => {
   const [inView, setInView] = React.useState(false);
   const [activeYear, setActiveYear] = React.useState(0);
+  const [ref, inViewRef] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  // Enhanced Chaotic Magic Mode state
+  const [titlePos, setTitlePos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
+  const [descPos, setDescPos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
+  const [timelinePos, setTimelinePos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
+  const [statsPos, setStatsPos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
 
   React.useEffect(() => {
     const timer = setTimeout(() => setInView(true), 100);
@@ -33,6 +51,78 @@ const Achievements = () => {
     }, 4000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (!magicMode) {
+      setTitlePos({ x: 0, y: 0, rotate: 0, scale: 1 });
+      setDescPos({ x: 0, y: 0, rotate: 0, scale: 1 });
+      setTimelinePos({ x: 0, y: 0, rotate: 0, scale: 1 });
+      setStatsPos({ x: 0, y: 0, rotate: 0, scale: 1 });
+      return;
+    }
+
+    let timers: number[] = [];
+
+    // Chaotic title animation
+    const chaosTitle = () => {
+      setTitlePos({
+        x: getRandom(-90, 90),
+        y: getRandom(-45, 45),
+        rotate: getRandom(-35, 35),
+        scale: getRandom(0.8, 1.2)
+      });
+      timers.push(window.setTimeout(chaosTitle, getRandom(1800, 3800)));
+    };
+
+    // Falling description
+    const fallDesc = () => {
+      setDescPos({
+        x: getRandom(-60, 60),
+        y: getRandom(-25, 25),
+        rotate: getRandom(-20, 20),
+        scale: getRandom(0.85, 1.15)
+      });
+      timers.push(window.setTimeout(fallDesc, getRandom(2200, 4800)));
+    };
+
+    // Spinning timeline
+    const spinTimeline = () => {
+      setTimelinePos({
+        x: getRandom(-50, 50),
+        y: getRandom(-20, 20),
+        rotate: getRandom(-25, 25),
+        scale: getRandom(0.9, 1.1)
+      });
+      timers.push(window.setTimeout(spinTimeline, getRandom(3000, 6500)));
+    };
+
+    // Bouncing stats
+    const bounceStats = () => {
+      setStatsPos({
+        x: getRandom(-40, 40),
+        y: getRandom(-15, 15),
+        rotate: getRandom(-15, 15),
+        scale: getRandom(0.95, 1.05)
+      });
+      timers.push(window.setTimeout(bounceStats, getRandom(2500, 5200)));
+    };
+
+    // Start all chaotic animations
+    chaosTitle();
+    fallDesc();
+    spinTimeline();
+    bounceStats();
+
+    return () => {
+      timers.forEach(timer => clearTimeout(timer));
+    };
+  }, [magicMode]);
+
+  // Continuous rotation for extra chaos
+  const continuousRotate = magicMode ? {
+    rotate: [0, 360],
+    transition: { duration: 12, repeat: Infinity, ease: "linear" }
+  } : {};
 
   const achievementsTimeline = [
     {
@@ -77,10 +167,10 @@ const Achievements = () => {
   ];
 
   const stats = [
-    { number: "50+", label: "Projects Completed", icon: <Code className="w-6 h-6" /> },
+    { number: "12+", label: "Projects Completed", icon: <Code className="w-6 h-6" /> },
     { number: "3+", label: "Years Experience", icon: <Trophy className="w-6 h-6" /> },
-    { number: "100+", label: "GitHub Contributions", icon: <Activity className="w-6 h-6" /> },
-    { number: "15+", label: "Technologies Mastered", icon: <Sparkles className="w-6 h-6" /> }
+    { number: "30+", label: "GitHub Contributions", icon: <Activity className="w-6 h-6" /> },
+    { number: "10+", label: "Technologies Mastered", icon: <Sparkles className="w-6 h-6" /> }
   ];
 
   return (
@@ -116,106 +206,181 @@ const Achievements = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
-        <div 
-          className={`text-center mb-20 transition-all duration-1000 ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, y: 50 }}
+          animate={inViewRef ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-20"
         >
-          <h2 className="title text-6xl md:text-8xl mb-6 text-slate-900 dark:text-white">Achievements</h2>
+          <motion.h2
+            className="title text-6xl md:text-8xl mb-6 text-slate-900 dark:text-white"
+            animate={magicMode ? { ...titlePos } : {}}
+            transition={magicMode ? { duration: 1.5, type: 'spring' } : {}}
+            style={{ position: magicMode ? 'relative' : undefined }}
+          >
+            Achievements
+          </motion.h2>
           <div className="flex justify-center items-center gap-4 mb-8">
             <div className="w-12 h-1 bg-slate-900 dark:bg-white animate-pulse"></div>
-            <Sparkles className="w-6 h-6 text-slate-900 dark:text-white animate-spin" style={{animationDuration: '3s'}} />
+            <motion.div
+              animate={magicMode ? continuousRotate : {}}
+            >
+              <Sparkles className="w-6 h-6 text-slate-900 dark:text-white animate-spin" style={{animationDuration: '3s'}} />
+            </motion.div>
             <div className="w-12 h-1 bg-slate-900 dark:bg-white animate-pulse"></div>
           </div>
-          <p className="text-xl text-slate-600 dark:text-slate-300 max-w-4xl mx-auto leading-relaxed font-medium">
+          <motion.p
+            className="text-xl text-slate-600 dark:text-slate-300 max-w-4xl mx-auto leading-relaxed font-medium"
+            animate={magicMode ? { ...descPos } : {}}
+            transition={magicMode ? { duration: 2, type: 'spring' } : {}}
+            style={{ position: magicMode ? 'relative' : undefined }}
+          >
             A structured timeline of growth, innovation, and leadership in technology
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Timeline */}
-        <div className="relative mb-24">
+        <motion.div 
+          className="relative mb-24"
+          animate={magicMode ? { ...timelinePos } : {}}
+          transition={magicMode ? { duration: 2, type: 'spring' } : {}}
+          style={{ position: magicMode ? 'relative' : undefined }}
+        >
           {/* Central timeline line with animated dots */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-slate-900 dark:bg-white h-full rounded-full">
+          <div className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-slate-900 dark:bg-white h-full rounded-full hidden md:block">
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-slate-900 dark:bg-white rounded-full animate-ping"></div>
             <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-slate-400 dark:bg-slate-600 rounded-full animate-pulse"></div>
             <div className="absolute top-2/3 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-slate-400 dark:bg-slate-600 rounded-full animate-pulse" style={{animationDelay: '1s'}}></div>
             <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-slate-900 dark:bg-white rounded-full animate-ping" style={{animationDelay: '2s'}}></div>
           </div>
 
-          {/* Timeline items */}
-          <div className="space-y-32">
-            {achievementsTimeline.map((yearBlock, idx) => (
-              <div 
-                key={yearBlock.year}
-                className={`relative transition-all duration-1000 delay-${idx * 200} ${inView ? 'opacity-100 translate-x-0' : `opacity-0 ${idx % 2 === 0 ? '-translate-x-10' : 'translate-x-10'}`}`}
+          {/* Timeline Items */}
+          <div className="space-y-16">
+            {achievementsTimeline.map((year, yearIndex) => (
+              <motion.div
+                key={year.year}
+                className={`flex flex-col md:flex-row items-center ${yearIndex % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
+                initial={{ opacity: 0, x: yearIndex % 2 === 0 ? -50 : 50 }}
+                animate={inViewRef ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.8, delay: yearIndex * 0.2 }}
               >
-                {/* Animated timeline connector */}
-                <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 top-0">
-                  <div className={`w-6 h-6 rounded-full border-4 border-slate-900 dark:border-white transition-all duration-500 ${activeYear === idx ? 'bg-slate-900 dark:bg-white animate-pulse shadow-lg' : 'bg-white dark:bg-slate-900'}`}></div>
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    <div className={`transition-all duration-500 ${activeYear === idx ? 'text-white animate-bounce' : 'text-slate-900 dark:text-white'}`}>
-                      {yearBlock.icon}
-                    </div>
-                  </div>
-                </div>
-
-                <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 ${idx % 2 === 0 ? '' : 'lg:grid-cols-2'}`}>
-                  {/* Year section */}
-                  <div className={`${idx % 2 === 0 ? 'lg:text-right lg:pr-20' : 'lg:order-2 lg:pl-20'}`}>
-                    <div className="inline-block group">
-                      <div className={`bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-2xl transition-all duration-500 hover:shadow-3xl hover:scale-105 hover:rotate-1`}>
-                        <div className="flex items-center gap-6 mb-4">
-                          <div className={`p-4 bg-slate-900 dark:bg-white text-white rounded-2xl group-hover:scale-110 transition-all duration-300 ${activeYear === idx ? 'animate-pulse' : ''}`}>
-                            {yearBlock.icon}
-                          </div>
-                          <div>
-                            <div className="text-5xl font-black text-slate-900 dark:text-white group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors duration-300">
-                              {yearBlock.year}
-                            </div>
-                            <div className="text-sm uppercase tracking-wider text-slate-600 dark:text-slate-300 font-bold mt-1">
-                              {yearBlock.theme}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="inline-flex items-center gap-2 text-xs text-slate-500 dark:text-slate-300 group-hover:text-slate-700 dark:group-hover:text-slate-400 transition-colors duration-300">
-                            <span className="w-2 h-2 bg-slate-900 dark:bg-white rounded-full animate-pulse"></span>
-                            <span>MILESTONE</span>
-                          </div>
-                        </div>
+                {/* Year Card */}
+                <motion.div
+                  className={`w-full md:w-1/2 ${yearIndex % 2 === 0 ? 'md:pr-8 md:text-right' : 'md:pl-8 md:text-left'} mb-8 md:mb-0`}
+                  whileHover={magicMode ? { scale: 1.1, rotate: 5 } : { scale: 1.02 }}
+                >
+                  <motion.div
+                    className="glass rounded-2xl p-6 relative group cursor-pointer"
+                    whileHover={magicMode ? { 
+                      scale: 1.05, 
+                      rotate: getRandom(-8, 8),
+                      y: -5 
+                    } : { 
+                      scale: 1.02, 
+                      y: -2 
+                    }}
+                  >
+                    <div className="flex items-center gap-4 mb-4">
+                      <motion.div
+                        className="text-blue-500 group-hover:text-purple-500 transition-colors duration-300"
+                        whileHover={magicMode ? { scale: 1.3, rotate: 360 } : { scale: 1.2 }}
+                        animate={magicMode ? continuousRotate : {}}
+                      >
+                        {year.icon}
+                      </motion.div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-slate-900 dark:text-white">{year.year}</h3>
+                        <p className="text-slate-600 dark:text-slate-300 font-medium">{year.theme}</p>
                       </div>
                     </div>
-                  </div>
-
-                  {/* Achievements section */}
-                  <div className={`${idx % 2 === 0 ? 'lg:pl-20' : 'lg:order-1 lg:pr-20'}`}>
-                    <div className="bg-white dark:bg-black rounded-3xl p-8 transition-all duration-300 shadow-2xl hover:scale-102 hover:-rotate-1">
-                      <div className="space-y-6">
-                        {yearBlock.items.map((item, i) => (
-                          <div 
-                            key={i} 
-                            className="flex items-start gap-4 group hover:translate-x-4 transition-all duration-300 p-3 rounded-xl"
-                            style={{animationDelay: `${i * 0.1}s`}}
+                    
+                    <div className="space-y-3">
+                      {year.items.map((item, itemIndex) => (
+                        <motion.div
+                          key={itemIndex}
+                          className="flex items-start gap-3"
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={inViewRef ? { opacity: 1, x: 0 } : {}}
+                          transition={{ duration: 0.5, delay: 0.5 + itemIndex * 0.1 }}
+                          whileHover={magicMode ? { scale: 1.05, rotate: 2 } : {}}
+                        >
+                          <motion.div
+                            className="text-blue-400 mt-1 flex-shrink-0"
+                            whileHover={magicMode ? { scale: 1.2, rotate: 180 } : { scale: 1.1 }}
                           >
-                            <div className="p-3 bg-transparent text-slate-900 dark:text-white rounded-xl group-hover:scale-110 transition-all duration-300 mt-1">
-                              {item.icon}
-                            </div>
-                            <p className="text-slate-900 dark:text-white leading-relaxed transition-colors duration-300 font-medium">
-                              {item.text}
-                            </p>
-                            <ArrowRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-all duration-300 mt-2" />
-                          </div>
-                        ))}
-                      </div>
+                            {item.icon}
+                          </motion.div>
+                          <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">{item.text}</p>
+                        </motion.div>
+                      ))}
                     </div>
-                  </div>
+                  </motion.div>
+                </motion.div>
+
+                {/* Timeline Center Point */}
+                <div className="w-16 h-16 bg-slate-900 dark:bg-white rounded-full flex items-center justify-center relative z-10 shadow-lg">
+                  <motion.div
+                    className="text-white dark:text-slate-900"
+                    whileHover={magicMode ? { scale: 1.3, rotate: 360 } : { scale: 1.2 }}
+                    animate={magicMode ? continuousRotate : {}}
+                  >
+                    {year.icon}
+                  </motion.div>
                 </div>
-              </div>
+
+                {/* Empty space for alignment - hidden on mobile */}
+                <div className="hidden md:block w-1/2"></div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
 
-        {/* Decorative elements */}
-        <div className="absolute top-1/4 left-0 w-3 h-40 bg-gradient-to-b from-transparent via-slate-900 to-transparent opacity-30 rounded-full animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-0 w-3 h-40 bg-gradient-to-b from-slate-900 via-transparent to-slate-900 opacity-30 rounded-full animate-pulse" style={{animationDelay: '1s'}}></div>
+        {/* Stats Section */}
+        <motion.div
+          animate={magicMode ? { ...statsPos } : {}}
+          transition={magicMode ? { duration: 2, type: 'spring' } : {}}
+          style={{ position: magicMode ? 'relative' : undefined }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-8"
+        >
+          {stats.map((stat, index) => (
+            <motion.div
+              key={stat.label}
+              className="text-center"
+              initial={{ opacity: 0, y: 30 }}
+              animate={inViewRef ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.8 + index * 0.1 }}
+              whileHover={magicMode ? { scale: 1.1, rotate: 5 } : { scale: 1.05 }}
+            >
+              <motion.div
+                className="glass rounded-2xl p-6 mb-4"
+                whileHover={magicMode ? { 
+                  scale: 1.1, 
+                  rotate: getRandom(-10, 10),
+                  y: -8 
+                } : { 
+                  scale: 1.05, 
+                  y: -5 
+                }}
+              >
+                <motion.div
+                  className="text-blue-500 mb-4 mx-auto w-fit"
+                  whileHover={magicMode ? { scale: 1.4, rotate: 360 } : { scale: 1.2 }}
+                  animate={magicMode ? continuousRotate : {}}
+                >
+                  {stat.icon}
+                </motion.div>
+                <motion.h3 
+                  className="text-3xl font-bold text-slate-900 dark:text-white mb-2"
+                  whileHover={magicMode ? { scale: 1.2, rotate: 3 } : {}}
+                >
+                  {stat.number}
+                </motion.h3>
+                <p className="text-slate-600 dark:text-slate-300 font-medium">{stat.label}</p>
+              </motion.div>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );

@@ -1,12 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hideNav, setHideNav] = useState(false);
   const lastScrollY = useRef(0);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isHomePage = location.pathname === '/';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,12 +27,12 @@ const Navigation = () => {
   }, []);
 
   const navItems = [
-    { name: 'Home', href: '#home' },
-    { name: 'About', href: '#about' },
-    { name: 'Skills', href: '#skills' },
-    { name: 'Projects', href: '#projects' },
-    { name: 'Achievements', href: '#achievements' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Home', href: isHomePage ? '#home' : '/', isExternal: !isHomePage },
+    { name: 'About', href: '#about', isExternal: false },
+    { name: 'Skills', href: '#skills', isExternal: false },
+    { name: 'Projects', href: '#projects', isExternal: false },
+    { name: 'Achievements', href: '#achievements', isExternal: false },
+    { name: 'Contact', href: '#contact', isExternal: false },
   ];
 
   return (
@@ -54,6 +58,12 @@ const Navigation = () => {
               <motion.a
                 key={item.name}
                 href={item.href}
+                onClick={(e) => {
+                  if (item.isExternal) {
+                    e.preventDefault();
+                    navigate(item.href);
+                  }
+                }}
                 className="relative text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white transition-colors duration-300"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
@@ -99,8 +109,14 @@ const Navigation = () => {
                 <motion.a
                   key={item.name}
                   href={item.href}
+                  onClick={(e) => {
+                    setIsOpen(false);
+                    if (item.isExternal) {
+                      e.preventDefault();
+                      navigate(item.href);
+                    }
+                  }}
                   className="block text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white transition-colors duration-300"
-                  onClick={() => setIsOpen(false)}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}

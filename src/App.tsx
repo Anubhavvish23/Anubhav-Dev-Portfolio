@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { MagicModeProvider, useMagicMode } from './contexts/MagicModeContext';
 import Hero from './components/Hero';
 import About from './components/About';
 import Skills from './components/Skills';
@@ -9,6 +10,8 @@ import Achievements from './components/Achievements';
 import Contact from './components/Contact';
 import Navigation from './components/Navigation';
 import CustomCursor from './components/CustomCursor';
+import ChaosCursor from './components/ChaosCursor';
+import MagicParticles from './components/MagicParticles';
 import LoadingScreen from './components/LoadingScreen';
 import ScrollProgress from './components/ScrollProgress';
 import Scene3D from './components/Scene3D';
@@ -17,16 +20,21 @@ import AllProjects from './components/AllProjects';
 import ScrollEndHearts from './components/ScrollEndHearts';
 import { ParallaxBackground, FloatingElements } from './components/ParallaxSection';
 import SocialMediaVisitor from './components/SocialMediaVisitor';
+import MagicToggle from './components/MagicToggle';
+import { MouseFollower } from 'react-mouse-follower';
 import './App.css';
 
 const AppContent = () => {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
+  const { magicMode } = useMagicMode();
 
   return (
     <div className="App">
       <SocialMediaVisitor />
       <CustomCursor />
+      <ChaosCursor magicMode={magicMode} />
+      <MagicParticles magicMode={magicMode} />
       <ScrollProgress />
       <Navigation />
       
@@ -35,17 +43,17 @@ const AppContent = () => {
           <>
             <ParallaxBackground>
               <FloatingElements />
-              <Hero />
-              <About />
-              <Skills />
-              <Projects />
-              <Achievements />
+              <Hero magicMode={magicMode} />
+              <About magicMode={magicMode} />
+              <Skills magicMode={magicMode} />
+              <Projects magicMode={magicMode} />
+              <Achievements magicMode={magicMode} />
               <Contact />
               {isHomePage && <ScrollEndHearts />}
             </ParallaxBackground>
           </>
         } />
-        <Route path="/projects" element={<AllProjects />} />
+        <Route path="/all-projects" element={<AllProjects magicMode={magicMode} />} />
       </Routes>
 
       {/* <ProjectStats /> */}
@@ -62,8 +70,11 @@ function App() {
 
   return (
     <ThemeProvider>
-      <BrowserRouter>
-        <div className="relative min-h-screen bg-white dark:bg-gray-900 text-slate-900 dark:text-white overflow-x-hidden transition-colors duration-500">
+      <MagicModeProvider>
+        <div className={`relative min-h-screen bg-white dark:bg-gray-900 text-slate-900 dark:text-white overflow-x-hidden transition-colors duration-500`}>
+          {/* Magic Mode Toggle */}
+          <MagicToggle />
+
           {/* Loading Screen */}
           {isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
 
@@ -99,10 +110,18 @@ function App() {
             />
           </div>
 
+          {/* Magic Mode Sparkle Cursor */}
+          {/* To disable sparkle cursor for performance, comment out the next line */}
+          <MouseFollower />
+
           {/* UI Components */}
-          {!isLoading && <AppContent />}
+          {!isLoading && (
+            <BrowserRouter>
+              <AppContent />
+            </BrowserRouter>
+          )}
         </div>
-      </BrowserRouter>
+      </MagicModeProvider>
     </ThemeProvider>
   );
 }

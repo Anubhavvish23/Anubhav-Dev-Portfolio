@@ -346,3 +346,39 @@ body {
 .btn-12:hover:before {
   --progress: 0;
 }
+
+.magic-bg {
+  background: radial-gradient(circle at center, #8b5cf6 0%, #111827 100%);
+  animation: pulseGlow 5s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.2);
+  }
+}
+
+.magic-cursor-on {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.3s;
+}
+.magic-cursor-off {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+/* Hide MouseFollower by default */
+.mouse-follower-root {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+body.magic-cursor-on .mouse-follower-root {
+  opacity: 1;
+  pointer-events: auto;
+}

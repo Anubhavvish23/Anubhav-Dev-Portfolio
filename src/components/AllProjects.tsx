@@ -72,7 +72,11 @@ const projects = [
 // Get all unique tags
 const allTags = Array.from(new Set(projects.reduce((acc: string[], project) => [...acc, ...project.tags], [])));
 
-const AllProjects = () => {
+interface AllProjectsProps {
+  magicMode?: boolean;
+}
+
+const AllProjects: React.FC<AllProjectsProps> = ({ magicMode }) => {
   const navigate = useNavigate();
   const [filteredProjects, setFilteredProjects] = useState(projects);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -162,7 +166,19 @@ const AllProjects = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-4xl font-bold">All Projects</h2>
-          <button onClick={() => navigate(-1)} className="custom-button">
+          <button 
+            onClick={() => {
+              console.log('Back to Home button clicked');
+           
+              try {
+                navigate('/');
+              } catch (error) {
+                console.error('Navigation error:', error);
+                window.location.href = '/';
+              }
+            }} 
+            className="custom-button"
+          >
             <span className="button_top">Back to Home</span>
           </button>
         </div>
@@ -199,8 +215,8 @@ const AllProjects = () => {
                   ? 'bg-yellow-500 text-white shadow-lg'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
               }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={magicMode ? { scale: 1.2, rotate: 5 } : { scale: 1.05 }}
+              whileTap={magicMode ? { scale: 0.95, rotate: -5 } : { scale: 0.95 }}
             >
               ⭐ Featured Only
             </motion.button>
@@ -210,8 +226,8 @@ const AllProjects = () => {
               <motion.button
                 onClick={clearFilters}
                 className="px-4 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-all duration-300"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={magicMode ? { scale: 1.2, rotate: 5 } : { scale: 1.05 }}
+                whileTap={magicMode ? { scale: 0.95, rotate: -5 } : { scale: 0.95 }}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
               >
@@ -231,8 +247,8 @@ const AllProjects = () => {
                     ? 'bg-blue-500 text-white shadow-lg'
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                 }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={magicMode ? { scale: 1.2, rotate: 5 } : { scale: 1.05 }}
+                whileTap={magicMode ? { scale: 0.95, rotate: -5 } : { scale: 0.95 }}
               >
                 {tag}
               </motion.button>
@@ -263,7 +279,7 @@ const AllProjects = () => {
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: index * 0.1 }}
-                  whileHover={{ scale: 1.02, y: -10 }}
+                  whileHover={magicMode ? { scale: 1.2, y: -10 } : { scale: 1.02, y: -10 }}
                   layout
                 >
                   <div className="relative overflow-hidden">
@@ -271,7 +287,7 @@ const AllProjects = () => {
                       src={project.image}
                       alt={project.title}
                       className="w-full h-48 object-cover"
-                      whileHover={{ scale: 1.1 }}
+                      whileHover={magicMode ? { scale: 1.2 } : { scale: 1.1 }}
                       transition={{ duration: 0.5 }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -283,21 +299,21 @@ const AllProjects = () => {
                     <motion.div
                       className="absolute inset-0 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                       initial={{ scale: 0 }}
-                      whileHover={{ scale: 1 }}
+                      whileHover={magicMode ? { scale: 1.2 } : { scale: 1 }}
                     >
                       <motion.a
                         href={project.demo}
                         className="p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-blue-500/50 transition-colors"
-                        whileHover={{ scale: 1.1, rotate: 360 }}
-                        whileTap={{ scale: 0.9 }}
+                        whileHover={magicMode ? { scale: 1.2, rotate: 360 } : { scale: 1.1, rotate: 360 }}
+                        whileTap={magicMode ? { scale: 0.95, rotate: -5 } : { scale: 0.95 }}
                       >
                         <Eye size={20} />
                       </motion.a>
                       <motion.a
                         href={project.github}
                         className="p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-purple-500/50 transition-colors"
-                        whileHover={{ scale: 1.1, rotate: 360 }}
-                        whileTap={{ scale: 0.9 }}
+                        whileHover={magicMode ? { scale: 1.2, rotate: 360 } : { scale: 1.1, rotate: 360 }}
+                        whileTap={magicMode ? { scale: 0.95, rotate: -5 } : { scale: 0.95 }}
                       >
                         <Github size={20} />
                       </motion.a>
@@ -306,7 +322,7 @@ const AllProjects = () => {
                   <div className="p-6">
                     <motion.h3
                       className="text-xl font-bold text-slate-900 mb-3 group-hover:gradient-text transition-all duration-300"
-                      whileHover={{ x: 5 }}
+                      whileHover={magicMode ? { x: 5 } : { x: 5 }}
                     >
                       {project.title}
                     </motion.h3>
@@ -321,7 +337,7 @@ const AllProjects = () => {
                           initial={{ opacity: 0, scale: 0 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: 0.5 + tagIndex * 0.1 }}
-                          whileHover={{ scale: 1.1, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
+                          whileHover={magicMode ? { scale: 1.2, backgroundColor: 'rgba(59, 130, 246, 0.1)' } : { scale: 1.1, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
                         >
                           {tag}
                         </motion.span>
@@ -331,8 +347,8 @@ const AllProjects = () => {
                       <motion.a
                         href={project.demo}
                         className="flex items-center gap-2 px-4 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg text-blue-700 hover:text-blue-800 transition-all duration-300 text-sm font-medium"
-                        whileHover={{ scale: 1.05, x: 5 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={magicMode ? { scale: 1.2, x: 5 } : { scale: 1.05, x: 5 }}
+                        whileTap={magicMode ? { scale: 0.95, x: -5 } : { scale: 0.95 }}
                       >
                         <ExternalLink size={16} />
                         Live Demo
@@ -340,8 +356,8 @@ const AllProjects = () => {
                       <motion.a
                         href={project.github}
                         className="flex items-center gap-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 rounded-lg text-purple-700 hover:text-purple-800 transition-all duration-300 text-sm font-medium"
-                        whileHover={{ scale: 1.05, x: 5 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={magicMode ? { scale: 1.2, x: 5 } : { scale: 1.05, x: 5 }}
+                        whileTap={magicMode ? { scale: 0.95, x: -5 } : { scale: 0.95 }}
                       >
                         <Github size={16} />
                         Code
@@ -367,8 +383,8 @@ const AllProjects = () => {
               <motion.button
                 onClick={clearFilters}
                 className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={magicMode ? { scale: 1.2 } : { scale: 1.05 }}
+                whileTap={magicMode ? { scale: 0.95 } : { scale: 0.95 }}
               >
                 Clear All Filters
               </motion.button>

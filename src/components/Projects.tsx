@@ -1,15 +1,99 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { ExternalLink, Github, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const Projects = () => {
+interface ProjectsProps {
+  magicMode?: boolean;
+}
+
+const getRandom = (min: number, max: number) => Math.random() * (max - min) + min;
+
+const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
   const navigate = useNavigate();
+
+  // Enhanced Chaotic Magic Mode state
+  const [titlePos, setTitlePos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
+  const [descPos, setDescPos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
+  const [projectsContainerPos, setProjectsContainerPos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
+  const [viewAllBtnPos, setViewAllBtnPos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
+
+  useEffect(() => {
+    if (!magicMode) {
+      setTitlePos({ x: 0, y: 0, rotate: 0, scale: 1 });
+      setDescPos({ x: 0, y: 0, rotate: 0, scale: 1 });
+      setProjectsContainerPos({ x: 0, y: 0, rotate: 0, scale: 1 });
+      setViewAllBtnPos({ x: 0, y: 0, rotate: 0, scale: 1 });
+      return;
+    }
+
+    let timers: number[] = [];
+
+    // Chaotic title animation
+    const chaosTitle = () => {
+      setTitlePos({
+        x: getRandom(-70, 70),
+        y: getRandom(-35, 35),
+        rotate: getRandom(-25, 25),
+        scale: getRandom(0.85, 1.15)
+      });
+      timers.push(window.setTimeout(chaosTitle, getRandom(1800, 3800)));
+    };
+
+    // Falling description
+    const fallDesc = () => {
+      setDescPos({
+        x: getRandom(-50, 50),
+        y: getRandom(-20, 20),
+        rotate: getRandom(-15, 15),
+        scale: getRandom(0.9, 1.1)
+      });
+      timers.push(window.setTimeout(fallDesc, getRandom(2200, 4800)));
+    };
+
+    // Spinning projects container
+    const spinProjectsContainer = () => {
+      setProjectsContainerPos({
+        x: getRandom(-40, 40),
+        y: getRandom(-15, 15),
+        rotate: getRandom(-20, 20),
+        scale: getRandom(0.95, 1.05)
+      });
+      timers.push(window.setTimeout(spinProjectsContainer, getRandom(3000, 6500)));
+    };
+
+    // Bouncing view all button
+    const bounceViewAllBtn = () => {
+      setViewAllBtnPos({
+        x: getRandom(-30, 30),
+        y: getRandom(-10, 10),
+        rotate: getRandom(-12, 12),
+        scale: getRandom(0.9, 1.1)
+      });
+      timers.push(window.setTimeout(bounceViewAllBtn, getRandom(2500, 5200)));
+    };
+
+    // Start all chaotic animations
+    chaosTitle();
+    fallDesc();
+    spinProjectsContainer();
+    bounceViewAllBtn();
+
+    return () => {
+      timers.forEach(timer => clearTimeout(timer));
+    };
+  }, [magicMode]);
+
+  // Continuous rotation for extra chaos
+  const continuousRotate = magicMode ? {
+    rotate: [0, 360],
+    transition: { duration: 12, repeat: Infinity, ease: "linear" }
+  } : {};
 
   const projects = [
     {
@@ -62,6 +146,7 @@ const Projects = () => {
           cursor: pointer;
           overflow: hidden;
           transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+          z-index: 10;
         }
 
         .animated-button svg {
@@ -143,160 +228,131 @@ const Projects = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="title text-5xl font-bold mb-8 text-slate-900 dark:text-white">Projects</h2>
-            <h2 className="title text-6xl font-bold mb-6 text-slate-900 dark:text-white">Featured Projects</h2>
-            <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+            <motion.h2
+              className="title text-5xl font-bold text-slate-900 dark:text-white"
+              animate={magicMode ? { ...titlePos } : {}}
+              transition={magicMode ? { duration: 1.5, type: 'spring' } : {}}
+              style={{ position: magicMode ? 'relative' : undefined }}
+            >
+              Featured Projects
+            </motion.h2>
+            <motion.p
+              className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed"
+              animate={magicMode ? { ...descPos } : {}}
+              transition={magicMode ? { duration: 2, type: 'spring' } : {}}
+              style={{ position: magicMode ? 'relative' : undefined }}
+            >
               A showcase of my recent work, demonstrating technical skills and creative problem-solving
-            </p>
+            </motion.p>
           </motion.div>
 
-          {/* Masonry Grid Layout */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <motion.div
+            animate={magicMode ? { ...projectsContainerPos } : {}}
+            transition={magicMode ? { duration: 2, type: 'spring' } : {}}
+            style={{ position: magicMode ? 'relative' : undefined }}
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"
+          >
             {projects.map((project, index) => (
               <motion.div
                 key={project.title}
-                className={`glass rounded-2xl overflow-hidden group cursor-pointer ${
-                  project.featured ? 'md:col-span-2 lg:col-span-1' : ''
-                }`}
                 initial={{ opacity: 0, y: 50 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.8, delay: index * 0.1 }}
-                whileHover={{ 
-                  scale: 1.02,
-                  y: -10,
+                transition={{ duration: 0.8, delay: index * 0.2 }}
+                className="group relative bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500"
+                whileHover={magicMode ? { 
+                  scale: 1.1, 
+                  rotate: getRandom(-10, 10),
+                  y: -10 
+                } : { 
+                  scale: 1.02, 
+                  y: -5 
                 }}
-                layout
               >
-                {/* Project Image */}
-                <div className="relative overflow-hidden">
+                <div className="relative h-48 overflow-hidden">
                   <motion.img
                     src={project.image}
                     alt={project.title}
-                    className="w-full h-48 object-cover"
-                    whileHover={{ scale: 1.1 }}
-                    transition={{ duration: 0.5 }}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    animate={magicMode ? continuousRotate : {}}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  
-                  {/* Hover Overlay */}
-                  <motion.div
-                    className="absolute inset-0 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    initial={{ scale: 0 }}
-                    whileHover={{ scale: 1 }}
-                  >
-                    <motion.a
-                      href={project.demo}
-                      className="p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-blue-500/50 transition-colors"
-                      whileHover={{ scale: 1.1, rotate: 360 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <Eye size={20} />
-                    </motion.a>
-                    <motion.a
-                      href={project.github}
-                      className="p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-purple-500/50 transition-colors"
-                      whileHover={{ scale: 1.1, rotate: 360 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <Github size={20} />
-                    </motion.a>
-                  </motion.div>
-
-                  {/* Featured Badge */}
-                  {project.featured && (
-                    <motion.div
-                      className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-3 py-1 rounded-full text-sm font-bold"
-                      animate={{ rotate: [0, 5, -5, 0] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    >
-                      Featured
-                    </motion.div>
-                  )}
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-500" />
                 </div>
-
-                {/* Project Content */}
+                
                 <div className="p-6">
-                  <motion.h3
-                    className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:gradient-text transition-all duration-300"
-                    whileHover={{ x: 5 }}
+                  <motion.h3 
+                    className="text-xl font-bold mb-2 text-slate-900 dark:text-white"
+                    whileHover={magicMode ? { scale: 1.1, rotate: 5 } : {}}
                   >
                     {project.title}
                   </motion.h3>
-                  
-                  <p className="text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">
+                  <p className="text-slate-600 dark:text-slate-300 mb-4 line-clamp-3">
                     {project.description}
                   </p>
-
-                  {/* Tags */}
+                  
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {project.tags.map((tag, tagIndex) => (
+                    {project.tags.map((tag) => (
                       <motion.span
                         key={tag}
-                        className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-sm text-slate-600 dark:text-slate-300"
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={inView ? { opacity: 1, scale: 1 } : {}}
-                        transition={{ delay: 0.5 + tagIndex * 0.1 }}
-                        whileHover={{ 
-                          scale: 1.1,
-                          backgroundColor: 'rgba(59, 130, 246, 0.1)'
-                        }}
+                        className="px-3 py-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded-full"
+                        whileHover={magicMode ? { scale: 1.2, rotate: 10 } : { scale: 1.05 }}
                       >
                         {tag}
                       </motion.span>
                     ))}
                   </div>
-
-                  {/* Action Buttons */}
+                  
                   <div className="flex gap-3">
                     <motion.a
-                      href={project.demo}
-                      className="flex items-center gap-2 px-4 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg text-blue-700 hover:text-blue-800 transition-all duration-300 text-sm font-medium"
-                      whileHover={{ scale: 1.05, x: 5 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <ExternalLink size={16} />
-                      Live Demo
-                    </motion.a>
-                    
-                    <motion.a
                       href={project.github}
-                      className="flex items-center gap-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 rounded-lg text-purple-700 hover:text-purple-800 transition-all duration-300 text-sm font-medium"
-                      whileHover={{ scale: 1.05, x: 5 }}
-                      whileTap={{ scale: 0.95 }}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg hover:bg-slate-700 dark:hover:bg-slate-200 transition-colors"
+                      whileHover={magicMode ? { scale: 1.2, rotate: 15 } : { scale: 1.05 }}
+                      whileTap={magicMode ? { scale: 0.8, rotate: -15 } : { scale: 0.95 }}
                     >
                       <Github size={16} />
                       Code
+                    </motion.a>
+                    <motion.a
+                      href={project.demo}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      whileHover={magicMode ? { scale: 1.2, rotate: 15 } : { scale: 1.05 }}
+                      whileTap={magicMode ? { scale: 0.8, rotate: -15 } : { scale: 0.95 }}
+                    >
+                      <Eye size={16} />
+                      Demo
                     </motion.a>
                   </div>
                 </div>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
 
-          {/* View More Button */}
           <motion.div
-            className="flex justify-center mt-12"
-            initial={{ opacity: 0, y: 30 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.8 }}
+            className="text-center"
+            style={{ position: 'relative', zIndex: 20 }}
           >
-            <button
+            <motion.button
+              onClick={() => {
+                console.log('View All Projects button clicked - before navigate');
+                navigate('/all-projects', { replace: false });
+                console.log('View All Projects button clicked - after navigate');
+              }}
               className="animated-button"
-              onClick={() => navigate('/projects')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <svg viewBox="0 0 24 24" className="arr-2" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-                ></path>
+              <svg className="arr-1" viewBox="0 0 24 24">
+                <path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4z"></path>
               </svg>
-              <span className="text">View All Projects</span>
+              <svg className="arr-2" viewBox="0 0 24 24">
+                <path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4z"></path>
+              </svg>
               <span className="circle"></span>
-              <svg viewBox="0 0 24 24" className="arr-1" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-                ></path>
-              </svg>
-            </button>
+              <span className="text">View All Projects</span>
+            </motion.button>
           </motion.div>
         </div>
       </section>
