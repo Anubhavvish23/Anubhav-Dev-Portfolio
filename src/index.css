@@ -390,6 +390,19 @@
   cursor: none;
 }
 
+/* Optimized cursor performance */
+.magic-mode-active .cursor-optimized {
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  pointer-events: none;
+}
+
+/* Smooth cursor transitions */
+.magic-mode-active .smooth-cursor {
+  transition: transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
 /* Performance optimizations */
 .magic-mode-active .chaos-element {
   will-change: transform, opacity, filter;
