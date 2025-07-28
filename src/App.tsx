@@ -23,6 +23,7 @@ import SocialMediaVisitor from './components/SocialMediaVisitor';
 import MagicToggle from './components/MagicToggle';
 import { MouseFollower } from 'react-mouse-follower';
 import './App.css';
+import { Analytics } from "@vercel/analytics/next";
 
 const AppContent = () => {
   const location = useLocation();
@@ -122,6 +123,7 @@ function App() {
           )}
         </div>
       </MagicModeProvider>
+      <Analytics />
     </ThemeProvider>
   );
 }
