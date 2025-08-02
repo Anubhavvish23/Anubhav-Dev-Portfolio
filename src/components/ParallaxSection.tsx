@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 
 interface ParallaxSectionProps {
@@ -11,7 +11,7 @@ interface ParallaxSectionProps {
 
 const ParallaxSection: React.FC<ParallaxSectionProps> = ({
   children,
-  speed = 0.5,
+  speed = 0.3, // Reduced default speed
   className = '',
   direction = 'up',
   offset = 0
@@ -25,8 +25,8 @@ const ParallaxSection: React.FC<ParallaxSectionProps> = ({
   const y = useTransform(scrollYProgress, [0, 1], [offset, offset - 100 * speed]);
   const x = useTransform(scrollYProgress, [0, 1], [offset, offset - 100 * speed]);
   
-  const springY = useSpring(y, { stiffness: 100, damping: 30 });
-  const springX = useSpring(x, { stiffness: 100, damping: 30 });
+  const springY = useSpring(y, { stiffness: 80, damping: 25 }); // Reduced stiffness and damping
+  const springX = useSpring(x, { stiffness: 80, damping: 25 });
 
   const transform = direction === 'up' || direction === 'down' ? springY : springX;
 
@@ -37,6 +37,8 @@ const ParallaxSection: React.FC<ParallaxSectionProps> = ({
       style={{
         y: direction === 'up' || direction === 'down' ? transform : 0,
         x: direction === 'left' || direction === 'right' ? transform : 0,
+        willChange: 'transform',
+        backfaceVisibility: 'hidden'
       }}
     >
       {children}
@@ -52,14 +54,18 @@ export const ParallaxBackground: React.FC<{ children: React.ReactNode }> = ({ ch
     offset: ["start end", "end start"]
   });
 
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-  const springBackgroundY = useSpring(backgroundY, { stiffness: 50, damping: 20 });
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]); // Reduced movement
+  const springBackgroundY = useSpring(backgroundY, { stiffness: 40, damping: 15 }); // Reduced stiffness
 
   return (
     <div ref={ref} className="relative overflow-hidden">
       <motion.div
         className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-900 dark:to-pink-900"
-        style={{ y: springBackgroundY }}
+        style={{ 
+          y: springBackgroundY,
+          willChange: 'transform',
+          backfaceVisibility: 'hidden'
+        }}
       />
       <div className="relative z-10">
         {children}
@@ -68,53 +74,48 @@ export const ParallaxBackground: React.FC<{ children: React.ReactNode }> = ({ ch
   );
 };
 
-// Floating Elements Component
+// Optimized Floating Elements Component
 export const FloatingElements: React.FC = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    // Throttle mouse movement updates
+    requestAnimationFrame(() => {
       setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    });
   }, []);
+
+  useEffect(() => {
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [handleMouseMove]);
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0">
-      {/* Floating circles */}
-      {[...Array(6)].map((_, i) => (
+      {/* Reduced floating circles */}
+      {[...Array(3)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-2 h-2 bg-blue-400 rounded-full opacity-20"
+          className="absolute w-1.5 h-1.5 bg-blue-400 rounded-full opacity-15"
           animate={{
-            x: [0, 100, 0],
-            y: [0, -100, 0],
-            scale: [1, 1.5, 1],
+            x: [0, 60, 0],
+            y: [0, -60, 0],
+            scale: [1, 1.3, 1],
           }}
           transition={{
-            duration: 10 + i * 2,
+            duration: 15 + i * 3,
             repeat: Infinity,
             ease: "easeInOut",
-            delay: i * 0.5,
+            delay: i * 1,
           }}
           style={{
-            left: `${20 + i * 15}%`,
-            top: `${30 + i * 10}%`,
+            left: `${20 + i * 25}%`,
+            top: `${30 + i * 20}%`,
+            willChange: 'transform',
+            backfaceVisibility: 'hidden'
           }}
         />
       ))}
-
-      {/* Mouse-following element */}
-      <motion.div
-        className="absolute w-4 h-4 bg-purple-400 rounded-full opacity-30 blur-sm"
-        animate={{
-          x: mousePosition.x - 8,
-          y: mousePosition.y - 8,
-        }}
-        transition={{ type: "spring", stiffness: 100, damping: 20 }}
-      />
     </div>
   );
 };
@@ -130,54 +131,51 @@ export const ParallaxText: React.FC<{ text: string; className?: string }> = ({
     offset: ["start end", "end start"]
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
   const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1, 0.8]);
 
   return (
     <motion.div
       ref={ref}
-      className={`text-center ${className}`}
-      style={{ y, opacity, scale }}
+      className={className}
+      style={{
+        y,
+        opacity,
+        willChange: 'transform, opacity',
+        backfaceVisibility: 'hidden'
+      }}
     >
-      <h2 className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-        {text}
-      </h2>
+      {text}
     </motion.div>
   );
 };
 
-// Parallax Card Component
+// Optimized Parallax Card Component
 export const ParallaxCard: React.FC<{ 
   children: React.ReactNode; 
   className?: string;
   speed?: number;
-}> = ({ children, className = "", speed = 0.3 }) => {
+}> = ({ children, className = "", speed = 0.2 }) => { // Reduced default speed
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"]
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [0, -50 * speed]);
-  const rotateX = useTransform(scrollYProgress, [0, 1], [0, 5]);
-  const rotateY = useTransform(scrollYProgress, [0, 1], [0, 5]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, -30 * speed]); // Reduced movement
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1, 0.95]);
+  const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
 
   return (
     <motion.div
       ref={ref}
-      className={`glass rounded-2xl p-6 ${className}`}
-      style={{ 
-        y, 
-        rotateX, 
-        rotateY,
-        transformStyle: "preserve-3d"
-      }}
-      whileHover={{ 
-        scale: 1.05, 
-        rotateX: 0, 
-        rotateY: 0,
-        transition: { duration: 0.3 }
+      className={className}
+      style={{
+        y,
+        scale,
+        opacity,
+        willChange: 'transform, opacity',
+        backfaceVisibility: 'hidden'
       }}
     >
       {children}
@@ -185,32 +183,38 @@ export const ParallaxCard: React.FC<{
   );
 };
 
-// Parallax Image Component
+// Optimized Parallax Image Component
 export const ParallaxImage: React.FC<{ 
   src: string; 
   alt: string;
   className?: string;
   speed?: number;
-}> = ({ src, alt, className = "", speed = 0.5 }) => {
+}> = ({ src, alt, className = "", speed = 0.3 }) => { // Reduced default speed
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"]
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [0, -100 * speed]);
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.1, 1]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, -40 * speed]); // Reduced movement
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.05, 1]);
 
   return (
     <motion.div
       ref={ref}
-      className={`overflow-hidden rounded-2xl ${className}`}
-      style={{ y, scale }}
+      className={className}
+      style={{
+        y,
+        scale,
+        willChange: 'transform',
+        backfaceVisibility: 'hidden'
+      }}
     >
       <img 
         src={src} 
         alt={alt} 
         className="w-full h-full object-cover"
+        loading="lazy"
       />
     </motion.div>
   );

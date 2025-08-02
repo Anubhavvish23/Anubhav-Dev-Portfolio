@@ -63,55 +63,52 @@ const Achievements: React.FC<AchievementsProps> = ({ magicMode }) => {
 
     let timers: number[] = [];
 
-    // Chaotic title animation
+    // Optimized chaotic animations with reduced frequency
     const chaosTitle = () => {
       setTitlePos({
-        x: getRandom(-90, 90),
-        y: getRandom(-45, 45),
-        rotate: getRandom(-35, 35),
-        scale: getRandom(0.8, 1.2)
-      });
-      timers.push(window.setTimeout(chaosTitle, getRandom(1800, 3800)));
-    };
-
-    // Falling description
-    const fallDesc = () => {
-      setDescPos({
-        x: getRandom(-60, 60),
+        x: getRandom(-50, 50),
         y: getRandom(-25, 25),
         rotate: getRandom(-20, 20),
-        scale: getRandom(0.85, 1.15)
-      });
-      timers.push(window.setTimeout(fallDesc, getRandom(2200, 4800)));
-    };
-
-    // Spinning timeline
-    const spinTimeline = () => {
-      setTimelinePos({
-        x: getRandom(-50, 50),
-        y: getRandom(-20, 20),
-        rotate: getRandom(-25, 25),
         scale: getRandom(0.9, 1.1)
       });
-      timers.push(window.setTimeout(spinTimeline, getRandom(3000, 6500)));
+      timers.push(window.setTimeout(chaosTitle, getRandom(5000, 8000)));
     };
 
-    // Bouncing stats
-    const bounceStats = () => {
-      setStatsPos({
-        x: getRandom(-40, 40),
+    const fallDesc = () => {
+      setDescPos({
+        x: getRandom(-35, 35),
         y: getRandom(-15, 15),
+        rotate: getRandom(-10, 10),
+        scale: getRandom(0.95, 1.05)
+      });
+      timers.push(window.setTimeout(fallDesc, getRandom(6000, 9000)));
+    };
+
+    const spinTimeline = () => {
+      setTimelinePos({
+        x: getRandom(-30, 30),
+        y: getRandom(-10, 10),
         rotate: getRandom(-15, 15),
         scale: getRandom(0.95, 1.05)
       });
-      timers.push(window.setTimeout(bounceStats, getRandom(2500, 5200)));
+      timers.push(window.setTimeout(spinTimeline, getRandom(7000, 10000)));
     };
 
-    // Start all chaotic animations
-    chaosTitle();
-    fallDesc();
-    spinTimeline();
-    bounceStats();
+    const bounceStats = () => {
+      setStatsPos({
+        x: getRandom(-25, 25),
+        y: getRandom(-8, 8),
+        rotate: getRandom(-10, 10),
+        scale: getRandom(0.98, 1.02)
+      });
+      timers.push(window.setTimeout(bounceStats, getRandom(8000, 11000)));
+    };
+
+    // Start animations with staggered delays
+    timers.push(window.setTimeout(chaosTitle, 1000));
+    timers.push(window.setTimeout(fallDesc, 2000));
+    timers.push(window.setTimeout(spinTimeline, 3000));
+    timers.push(window.setTimeout(bounceStats, 4000));
 
     return () => {
       timers.forEach(timer => clearTimeout(timer));

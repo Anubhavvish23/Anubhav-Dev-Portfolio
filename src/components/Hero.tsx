@@ -40,88 +40,83 @@ const Hero: React.FC<HeroProps> = ({ magicMode }) => {
 
     let timers: number[] = [];
 
-    // Chaotic h1 animation - like a broken building
+    // Optimized chaotic animations with reduced frequency
     const chaosH1 = () => {
       setH1Pos({
-        x: getRandom(-100, 100),
-        y: getRandom(-50, 50),
-        rotate: getRandom(-45, 45),
-        scale: getRandom(0.8, 1.2)
-      });
-      timers.push(window.setTimeout(chaosH1, getRandom(1000, 3000)));
-    };
-
-    // Falling description
-    const fallDesc = () => {
-      setDescPos({
-        x: getRandom(-80, 80),
+        x: getRandom(-60, 60),
         y: getRandom(-30, 30),
-        rotate: getRandom(-30, 30),
+        rotate: getRandom(-25, 25),
         scale: getRandom(0.9, 1.1)
       });
-      timers.push(window.setTimeout(fallDesc, getRandom(1500, 4000)));
+      timers.push(window.setTimeout(chaosH1, getRandom(3000, 6000)));
     };
 
-    // Spinning buttons
+    const fallDesc = () => {
+      setDescPos({
+        x: getRandom(-50, 50),
+        y: getRandom(-20, 20),
+        rotate: getRandom(-15, 15),
+        scale: getRandom(0.95, 1.05)
+      });
+      timers.push(window.setTimeout(fallDesc, getRandom(4000, 7000)));
+    };
+
     const spinBtn1 = () => {
       setBtn1({
-        x: getRandom(-60, 60),
-        y: getRandom(-20, 20),
-        rotate: getRandom(-180, 180),
-        scale: getRandom(0.7, 1.3)
+        x: getRandom(-40, 40),
+        y: getRandom(-15, 15),
+        rotate: getRandom(-90, 90),
+        scale: getRandom(0.8, 1.2)
       });
-      timers.push(window.setTimeout(spinBtn1, getRandom(2000, 5000)));
+      timers.push(window.setTimeout(spinBtn1, getRandom(5000, 8000)));
     };
 
     const spinBtn2 = () => {
       setBtn2({
-        x: getRandom(-60, 60),
-        y: getRandom(-20, 20),
-        rotate: getRandom(-180, 180),
-        scale: getRandom(0.7, 1.3)
+        x: getRandom(-40, 40),
+        y: getRandom(-15, 15),
+        rotate: getRandom(-90, 90),
+        scale: getRandom(0.8, 1.2)
       });
-      timers.push(window.setTimeout(spinBtn2, getRandom(2000, 5000)));
+      timers.push(window.setTimeout(spinBtn2, getRandom(5000, 8000)));
     };
 
-    // Floating image
     const floatImg = () => {
       setImgPos({
-        x: getRandom(-40, 40),
-        y: getRandom(-30, 30),
-        rotate: getRandom(-20, 20),
-        scale: getRandom(0.9, 1.1)
+        x: getRandom(-30, 30),
+        y: getRandom(-20, 20),
+        rotate: getRandom(-15, 15),
+        scale: getRandom(0.95, 1.05)
       });
-      timers.push(window.setTimeout(floatImg, getRandom(2500, 6000)));
+      timers.push(window.setTimeout(floatImg, getRandom(6000, 9000)));
     };
 
-    // Bouncing toggle
     const bounceToggle = () => {
       setTogglePos({
-        x: getRandom(-20, 20),
-        y: getRandom(-10, 10),
-        rotate: getRandom(-15, 15)
+        x: getRandom(-15, 15),
+        y: getRandom(-8, 8),
+        rotate: getRandom(-10, 10)
       });
-      timers.push(window.setTimeout(bounceToggle, getRandom(1000, 2500)));
+      timers.push(window.setTimeout(bounceToggle, getRandom(2000, 4000)));
     };
 
-    // Chaotic scroll indicator
     const chaosScroll = () => {
       setScrollPos({
-        x: getRandom(-30, 30),
-        y: getRandom(-15, 15),
-        rotate: getRandom(-90, 90)
+        x: getRandom(-20, 20),
+        y: getRandom(-10, 10),
+        rotate: getRandom(-45, 45)
       });
-      timers.push(window.setTimeout(chaosScroll, getRandom(1500, 3500)));
+      timers.push(window.setTimeout(chaosScroll, getRandom(3000, 5000)));
     };
 
-    // Start all chaotic animations
-    chaosH1();
-    fallDesc();
-    spinBtn1();
-    spinBtn2();
-    floatImg();
-    bounceToggle();
-    chaosScroll();
+    // Start animations with staggered delays
+    timers.push(window.setTimeout(chaosH1, 1000));
+    timers.push(window.setTimeout(fallDesc, 2000));
+    timers.push(window.setTimeout(spinBtn1, 3000));
+    timers.push(window.setTimeout(spinBtn2, 4000));
+    timers.push(window.setTimeout(floatImg, 5000));
+    timers.push(window.setTimeout(bounceToggle, 1000));
+    timers.push(window.setTimeout(chaosScroll, 2000));
 
     return () => {
       timers.forEach(timer => clearTimeout(timer));
@@ -229,7 +224,7 @@ const Hero: React.FC<HeroProps> = ({ magicMode }) => {
                 transition={{ duration: 0.8, delay: 0.8 }}
               >
                 <motion.a
-                  href="https://drive.google.com/file/d/1DPzQmTHPpEOY2Cz8xUuox6kvWseRwQ7e/view?usp=sharing"
+                  href="https://drive.google.com/file/d/1sXYMeLJya81Ly41IXXaJiJV4-xCSnYSm/view?usp=sharing"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-12 flex items-center gap-3 justify-center"

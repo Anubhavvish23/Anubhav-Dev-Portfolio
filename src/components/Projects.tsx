@@ -34,55 +34,52 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
 
     let timers: number[] = [];
 
-    // Chaotic title animation
+    // Optimized chaotic animations with reduced frequency
     const chaosTitle = () => {
       setTitlePos({
-        x: getRandom(-70, 70),
-        y: getRandom(-35, 35),
-        rotate: getRandom(-25, 25),
-        scale: getRandom(0.85, 1.15)
-      });
-      timers.push(window.setTimeout(chaosTitle, getRandom(1800, 3800)));
-    };
-
-    // Falling description
-    const fallDesc = () => {
-      setDescPos({
-        x: getRandom(-50, 50),
+        x: getRandom(-40, 40),
         y: getRandom(-20, 20),
         rotate: getRandom(-15, 15),
-        scale: getRandom(0.9, 1.1)
-      });
-      timers.push(window.setTimeout(fallDesc, getRandom(2200, 4800)));
-    };
-
-    // Spinning projects container
-    const spinProjectsContainer = () => {
-      setProjectsContainerPos({
-        x: getRandom(-40, 40),
-        y: getRandom(-15, 15),
-        rotate: getRandom(-20, 20),
         scale: getRandom(0.95, 1.05)
       });
-      timers.push(window.setTimeout(spinProjectsContainer, getRandom(3000, 6500)));
+      timers.push(window.setTimeout(chaosTitle, getRandom(5000, 8000)));
     };
 
-    // Bouncing view all button
-    const bounceViewAllBtn = () => {
-      setViewAllBtnPos({
+    const fallDesc = () => {
+      setDescPos({
         x: getRandom(-30, 30),
         y: getRandom(-10, 10),
-        rotate: getRandom(-12, 12),
-        scale: getRandom(0.9, 1.1)
+        rotate: getRandom(-8, 8),
+        scale: getRandom(0.95, 1.05)
       });
-      timers.push(window.setTimeout(bounceViewAllBtn, getRandom(2500, 5200)));
+      timers.push(window.setTimeout(fallDesc, getRandom(6000, 9000)));
     };
 
-    // Start all chaotic animations
-    chaosTitle();
-    fallDesc();
-    spinProjectsContainer();
-    bounceViewAllBtn();
+    const spinProjectsContainer = () => {
+      setProjectsContainerPos({
+        x: getRandom(-25, 25),
+        y: getRandom(-8, 8),
+        rotate: getRandom(-10, 10),
+        scale: getRandom(0.98, 1.02)
+      });
+      timers.push(window.setTimeout(spinProjectsContainer, getRandom(7000, 10000)));
+    };
+
+    const bounceViewAllBtn = () => {
+      setViewAllBtnPos({
+        x: getRandom(-20, 20),
+        y: getRandom(-5, 5),
+        rotate: getRandom(-8, 8),
+        scale: getRandom(0.95, 1.05)
+      });
+      timers.push(window.setTimeout(bounceViewAllBtn, getRandom(8000, 11000)));
+    };
+
+    // Start animations with staggered delays
+    timers.push(window.setTimeout(chaosTitle, 1000));
+    timers.push(window.setTimeout(fallDesc, 2000));
+    timers.push(window.setTimeout(spinProjectsContainer, 3000));
+    timers.push(window.setTimeout(bounceViewAllBtn, 4000));
 
     return () => {
       timers.forEach(timer => clearTimeout(timer));

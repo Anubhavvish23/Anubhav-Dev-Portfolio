@@ -44,103 +44,96 @@ const Skills: React.FC<SkillsProps> = ({ magicMode }) => {
 
     let timers: number[] = [];
 
-    // Chaotic title animation
+    // Optimized chaotic animations with reduced frequency
     const chaosTitle = () => {
       setTitlePos({
-        x: getRandom(-80, 80),
-        y: getRandom(-40, 40),
-        rotate: getRandom(-30, 30),
-        scale: getRandom(0.9, 1.1)
-      });
-      timers.push(window.setTimeout(chaosTitle, getRandom(1500, 3500)));
-    };
-
-    // Falling description
-    const fallDesc = () => {
-      setDescPos({
-        x: getRandom(-60, 60),
+        x: getRandom(-50, 50),
         y: getRandom(-25, 25),
         rotate: getRandom(-20, 20),
-        scale: getRandom(0.85, 1.15)
+        scale: getRandom(0.95, 1.05)
       });
-      timers.push(window.setTimeout(fallDesc, getRandom(2000, 4500)));
+      timers.push(window.setTimeout(chaosTitle, getRandom(4000, 7000)));
     };
 
-    // Spinning tech title
-    const spinTechTitle = () => {
-      setTechTitlePos({
-        x: getRandom(-50, 50),
-        y: getRandom(-20, 20),
-        rotate: getRandom(-45, 45),
-        scale: getRandom(0.8, 1.2)
-      });
-      timers.push(window.setTimeout(spinTechTitle, getRandom(1800, 4000)));
-    };
-
-    // Chaotic expertise title
-    const chaosExpertiseTitle = () => {
-      setExpertiseTitlePos({
-        x: getRandom(-50, 50),
-        y: getRandom(-20, 20),
-        rotate: getRandom(-45, 45),
-        scale: getRandom(0.8, 1.2)
-      });
-      timers.push(window.setTimeout(chaosExpertiseTitle, getRandom(2200, 5000)));
-    };
-
-    // Floating stack title
-    const floatStackTitle = () => {
-      setStackTitlePos({
+    const fallDesc = () => {
+      setDescPos({
         x: getRandom(-40, 40),
         y: getRandom(-15, 15),
-        rotate: getRandom(-25, 25),
-        scale: getRandom(0.9, 1.1)
+        rotate: getRandom(-10, 10),
+        scale: getRandom(0.95, 1.05)
       });
-      timers.push(window.setTimeout(floatStackTitle, getRandom(2500, 5500)));
+      timers.push(window.setTimeout(fallDesc, getRandom(5000, 8000)));
     };
 
-    // Bouncing skill bars
-    const bounceSkillBars = () => {
-      setSkillBarsPos({
+    const spinTechTitle = () => {
+      setTechTitlePos({
         x: getRandom(-30, 30),
         y: getRandom(-10, 10),
+        rotate: getRandom(-20, 20),
+        scale: getRandom(0.9, 1.1)
+      });
+      timers.push(window.setTimeout(spinTechTitle, getRandom(6000, 9000)));
+    };
+
+    const chaosExpertiseTitle = () => {
+      setExpertiseTitlePos({
+        x: getRandom(-30, 30),
+        y: getRandom(-10, 10),
+        rotate: getRandom(-20, 20),
+        scale: getRandom(0.9, 1.1)
+      });
+      timers.push(window.setTimeout(chaosExpertiseTitle, getRandom(7000, 10000)));
+    };
+
+    const floatStackTitle = () => {
+      setStackTitlePos({
+        x: getRandom(-25, 25),
+        y: getRandom(-8, 8),
         rotate: getRandom(-15, 15),
         scale: getRandom(0.95, 1.05)
       });
-      timers.push(window.setTimeout(bounceSkillBars, getRandom(3000, 6000)));
+      timers.push(window.setTimeout(floatStackTitle, getRandom(8000, 11000)));
     };
 
-    // Spinning radial charts
+    const bounceSkillBars = () => {
+      setSkillBarsPos({
+        x: getRandom(-20, 20),
+        y: getRandom(-5, 5),
+        rotate: getRandom(-10, 10),
+        scale: getRandom(0.98, 1.02)
+      });
+      timers.push(window.setTimeout(bounceSkillBars, getRandom(9000, 12000)));
+    };
+
     const spinRadialCharts = () => {
       setRadialChartsPos({
-        x: getRandom(-35, 35),
-        y: getRandom(-12, 12),
-        rotate: getRandom(-20, 20),
-        scale: getRandom(0.9, 1.1)
+        x: getRandom(-25, 25),
+        y: getRandom(-8, 8),
+        rotate: getRandom(-15, 15),
+        scale: getRandom(0.95, 1.05)
       });
-      timers.push(window.setTimeout(spinRadialCharts, getRandom(2800, 5200)));
+      timers.push(window.setTimeout(spinRadialCharts, getRandom(10000, 13000)));
     };
 
-    // Chaotic tech stack
     const chaosTechStack = () => {
       setTechStackPos({
-        x: getRandom(-45, 45),
-        y: getRandom(-18, 18),
-        rotate: getRandom(-30, 30),
-        scale: getRandom(0.85, 1.15)
+        x: getRandom(-30, 30),
+        y: getRandom(-10, 10),
+        rotate: getRandom(-15, 15),
+        scale: getRandom(0.9, 1.1)
       });
-      timers.push(window.setTimeout(chaosTechStack, getRandom(3200, 5800)));
+      timers.push(window.setTimeout(chaosTechStack, getRandom(11000, 14000)));
     };
 
-    // Start all chaotic animations
-    chaosTitle();
-    fallDesc();
-    spinTechTitle();
-    chaosExpertiseTitle();
-    floatStackTitle();
-    bounceSkillBars();
-    spinRadialCharts();
-    chaosTechStack();
+    // Start animations with staggered delays
+    timers.push(window.setTimeout(chaosTitle, 1000));
+    timers.push(window.setTimeout(fallDesc, 2000));
+    timers.push(window.setTimeout(spinTechTitle, 3000));
+    timers.push(window.setTimeout(chaosExpertiseTitle, 4000));
+    timers.push(window.setTimeout(floatStackTitle, 5000));
+    timers.push(window.setTimeout(bounceSkillBars, 6000));
+    timers.push(window.setTimeout(spinRadialCharts, 7000));
+    timers.push(window.setTimeout(chaosTechStack, 8000));
 
     return () => {
       timers.forEach(timer => clearTimeout(timer));

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ChaosCursorProps {
@@ -18,8 +18,25 @@ const ChaosCursor: React.FC<ChaosCursorProps> = ({ magicMode }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [sparkles, setSparkles] = useState<Sparkle[]>([]);
   const [trail, setTrail] = useState<Array<{ x: number; y: number; id: number }>>([]);
+  
+  const colors = useRef(['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff']);
+  const lastMouseMove = useRef(0);
+  const throttleDelay = 16; // ~60fps
 
-  const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff'];
+  // Memoize sparkle creation
+  const createSparkle = useCallback((x: number, y: number): Sparkle => ({
+    id: Date.now() + Math.random(),
+    x: x + (Math.random() - 0.5) * 30,
+    y: y + (Math.random() - 0.5) * 30,
+    size: Math.random() * 4 + 2,
+    color: colors.current[Math.floor(Math.random() * colors.current.length)],
+    delay: Math.random() * 0.2
+  }), []);
+
+  // Memoize sparkle removal
+  const removeSparkle = useCallback((id: number) => {
+    setSparkles(prev => prev.filter(s => s.id !== id));
+  }, []);
 
   useEffect(() => {
     if (!magicMode) {
@@ -29,43 +46,43 @@ const ChaosCursor: React.FC<ChaosCursorProps> = ({ magicMode }) => {
     }
 
     const handleMouseMove = (e: MouseEvent) => {
+      const now = Date.now();
+      
+      // Throttle mouse movement updates
+      if (now - lastMouseMove.current < throttleDelay) {
+        return;
+      }
+      lastMouseMove.current = now;
+
       // Use requestAnimationFrame for smoother updates
       requestAnimationFrame(() => {
         setMousePosition({ x: e.clientX, y: e.clientY });
       });
       
-      // Add to trail (throttled for performance)
+      // Add to trail (keep fewer positions for better performance)
       setTrail(prev => {
         const newTrail = [...prev, { x: e.clientX, y: e.clientY, id: Date.now() }];
-        return newTrail.slice(-8); // Keep last 8 positions for better performance
+        return newTrail.slice(-6); // Keep last 6 positions instead of 8
       });
 
-      // Randomly create sparkles (reduced frequency for better performance)
-      if (Math.random() < 0.15) {
-        const newSparkle: Sparkle = {
-          id: Date.now(),
-          x: e.clientX + (Math.random() - 0.5) * 40,
-          y: e.clientY + (Math.random() - 0.5) * 40,
-          size: Math.random() * 6 + 3,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          delay: Math.random() * 0.3
-        };
-        
+      // Create sparkles less frequently (reduced from 0.15 to 0.08)
+      if (Math.random() < 0.08 && sparkles.length < 5) {
+        const newSparkle = createSparkle(e.clientX, e.clientY);
         setSparkles(prev => [...prev, newSparkle]);
         
         // Remove sparkle after animation
         setTimeout(() => {
-          setSparkles(prev => prev.filter(s => s.id !== newSparkle.id));
-        }, 1500);
+          removeSparkle(newSparkle.id);
+        }, 1200); // Reduced from 1500ms
       }
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mousemove', handleMouseMove, { passive: true });
     
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [magicMode]);
+  }, [magicMode, createSparkle, removeSparkle, sparkles.length]);
 
   if (!magicMode) return null;
 
@@ -75,14 +92,14 @@ const ChaosCursor: React.FC<ChaosCursorProps> = ({ magicMode }) => {
       <motion.div
         className="fixed pointer-events-none z-[9999] mix-blend-difference"
         animate={{
-          x: mousePosition.x - 10,
-          y: mousePosition.y - 10,
+          x: mousePosition.x - 8,
+          y: mousePosition.y - 8,
         }}
         transition={{ 
           type: "spring", 
-          stiffness: 800, 
-          damping: 35,
-          mass: 0.5
+          stiffness: 600, // Reduced from 800
+          damping: 40,    // Increased from 35
+          mass: 0.6       // Increased from 0.5
         }}
         style={{
           willChange: 'transform',
@@ -90,7 +107,7 @@ const ChaosCursor: React.FC<ChaosCursorProps> = ({ magicMode }) => {
           transform: 'translateZ(0)'
         }}
       >
-        <div className="w-5 h-5 bg-white rounded-full shadow-lg" />
+        <div className="w-4 h-4 bg-white rounded-full shadow-md" />
       </motion.div>
 
       {/* Cursor trail */}
@@ -98,10 +115,10 @@ const ChaosCursor: React.FC<ChaosCursorProps> = ({ magicMode }) => {
         {trail.map((point, index) => (
           <motion.div
             key={point.id}
-            className="fixed pointer-events-none z-[9998]"
+            className="fixed pointer-events-none z-[9998] mix-blend-difference"
             initial={{ 
-              x: point.x - 5, 
-              y: point.y - 5,
+              x: point.x - 4, 
+              y: point.y - 4,
               opacity: 0.8,
               scale: 1
             }}
@@ -109,21 +126,23 @@ const ChaosCursor: React.FC<ChaosCursorProps> = ({ magicMode }) => {
               opacity: 0,
               scale: 0.5
             }}
+            exit={{ opacity: 0 }}
             transition={{ 
-              duration: 0.8,
+              duration: 0.6,
               ease: "easeOut"
             }}
             style={{
-              width: 10 - index * 0.5,
-              height: 10 - index * 0.5,
-              backgroundColor: colors[index % colors.length],
-              borderRadius: '50%',
-              filter: 'blur(1px)',
               willChange: 'transform, opacity',
-              backfaceVisibility: 'hidden',
-              transform: 'translateZ(0)'
+              backfaceVisibility: 'hidden'
             }}
-          />
+          >
+            <div 
+              className="w-2 h-2 bg-white rounded-full"
+              style={{
+                opacity: 1 - (index / trail.length)
+              }}
+            />
+          </motion.div>
         ))}
       </AnimatePresence>
 
@@ -134,25 +153,21 @@ const ChaosCursor: React.FC<ChaosCursorProps> = ({ magicMode }) => {
             key={sparkle.id}
             className="fixed pointer-events-none z-[9997]"
             initial={{ 
-              x: sparkle.x,
+              x: sparkle.x, 
               y: sparkle.y,
               opacity: 0,
               scale: 0,
               rotate: 0
             }}
             animate={{ 
-              opacity: 1,
-              scale: 1,
-              rotate: 360,
-              y: sparkle.y - 50
+              y: sparkle.y - 40,
+              opacity: [0, 1, 0],
+              scale: [0, 1, 0],
+              rotate: 180
             }}
-            exit={{ 
-              opacity: 0,
-              scale: 0,
-              rotate: 720
-            }}
+            exit={{ opacity: 0, scale: 0 }}
             transition={{ 
-              duration: 2,
+              duration: 1.2,
               delay: sparkle.delay,
               ease: "easeOut"
             }}
@@ -161,7 +176,9 @@ const ChaosCursor: React.FC<ChaosCursorProps> = ({ magicMode }) => {
               height: sparkle.size,
               backgroundColor: sparkle.color,
               borderRadius: '50%',
-              filter: 'blur(0.5px) drop-shadow(0 0 4px currentColor)'
+              filter: `blur(0.3px) drop-shadow(0 0 2px ${sparkle.color})`,
+              willChange: 'transform, opacity',
+              backfaceVisibility: 'hidden'
             }}
           />
         ))}

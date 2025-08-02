@@ -6,6 +6,7 @@ import Hero from './components/Hero';
 import About from './components/About';
 import Skills from './components/Skills';
 import Projects from './components/Projects';
+import Internships from './components/Internships';
 import Achievements from './components/Achievements';
 import Contact from './components/Contact';
 import Navigation from './components/Navigation';
@@ -23,7 +24,6 @@ import SocialMediaVisitor from './components/SocialMediaVisitor';
 import MagicToggle from './components/MagicToggle';
 import { MouseFollower } from 'react-mouse-follower';
 import './App.css';
-import { Analytics } from "@vercel/analytics/next";
 
 const AppContent = () => {
   const location = useLocation();
@@ -48,6 +48,7 @@ const AppContent = () => {
               <About magicMode={magicMode} />
               <Skills magicMode={magicMode} />
               <Projects magicMode={magicMode} />
+              <Internships magicMode={magicMode} />
               <Achievements magicMode={magicMode} />
               <Contact />
               {isHomePage && <ScrollEndHearts />}
@@ -86,25 +87,25 @@ function App() {
           <div className="fixed inset-0 z-0">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-50/20 via-white/40 to-white dark:bg-gray-900"></div>
             <motion.div
-              className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-100/30 dark:bg-gray-800/20 rounded-full blur-3xl"
+              className="absolute top-1/4 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-blue-100/20 dark:bg-gray-800/15 rounded-full blur-2xl"
               animate={{
-                x: [0, 100, 0],
-                y: [0, -100, 0],
+                x: [0, 50, 0],
+                y: [0, -50, 0],
               }}
               transition={{
-                duration: 20,
+                duration: 30,
                 repeat: Infinity,
                 ease: "linear"
               }}
             />
             <motion.div
-              className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-100/30 dark:bg-gray-800/20 rounded-full blur-3xl"
+              className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-purple-100/20 dark:bg-gray-800/15 rounded-full blur-2xl"
               animate={{
-                x: [0, -100, 0],
-                y: [0, 100, 0],
+                x: [0, -50, 0],
+                y: [0, 50, 0],
               }}
               transition={{
-                duration: 25,
+                duration: 35,
                 repeat: Infinity,
                 ease: "linear"
               }}
@@ -123,7 +124,6 @@ function App() {
           )}
         </div>
       </MagicModeProvider>
-      <Analytics />
     </ThemeProvider>
   );
 }
