@@ -221,7 +221,7 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
   ];
 
   return (
-    <section id="contact" className="py-20 relative bg-white dark:bg-black text-slate-900 dark:text-white">
+    <section id="contact" className={`py-20 relative bg-white dark:bg-black text-slate-900 dark:text-white ${magicMode ? 'scale-x-[-1]' : ''}`}>
       {/* Magic sparkles background */}
       <MagicContactSparkles magicMode={magicMode} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

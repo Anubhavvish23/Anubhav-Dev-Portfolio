@@ -171,10 +171,10 @@ const AllProjects: React.FC<AllProjectsProps> = ({ magicMode }) => {
               console.log('Back to Home button clicked');
            
               try {
-                navigate('/');
+                navigate('/#internships');
               } catch (error) {
                 console.error('Navigation error:', error);
-                window.location.href = '/';
+                window.location.href = '/#internships';
               }
             }} 
             className="custom-button"

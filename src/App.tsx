@@ -30,6 +30,16 @@ const AppContent = () => {
   const isHomePage = location.pathname === '/';
   const { magicMode } = useMagicMode();
 
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }, [location]);
+
   return (
     <div className="App">
       <SocialMediaVisitor />
@@ -50,7 +60,7 @@ const AppContent = () => {
               <Projects magicMode={magicMode} />
               <Internships magicMode={magicMode} />
               <Achievements magicMode={magicMode} />
-              <Contact />
+              <Contact magicMode={magicMode} />
               {isHomePage && <ScrollEndHearts />}
             </ParallaxBackground>
           </>

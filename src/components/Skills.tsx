@@ -225,7 +225,7 @@ const Skills: React.FC<SkillsProps> = ({ magicMode }) => {
   );
 
   return (
-    <section id="skills" className="py-20 relative bg-white dark:bg-black text-slate-900 dark:text-white">
+    <section id="skills" className={`py-20 relative bg-white dark:bg-black text-slate-900 dark:text-white ${magicMode ? 'scale-x-[-1]' : ''}`}>
       {/* Magic sparkles for stack proficiency */}
       <MagicStackSparkles />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

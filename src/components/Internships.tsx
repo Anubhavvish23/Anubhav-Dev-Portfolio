@@ -215,7 +215,7 @@ const Internships: React.FC<InternshipsProps> = ({ magicMode }) => {
   );
 
   return (
-    <section id="internships" className="py-16 sm:py-20 relative bg-white dark:bg-black text-slate-900 dark:text-white overflow-hidden">
+    <section id="internships" className={`py-16 sm:py-20 relative bg-white dark:bg-black text-slate-900 dark:text-white overflow-hidden ${magicMode ? 'scale-x-[-1]' : ''}`}>
       {/* Floating background elements */}
       <FloatingBackgroundElements />
       

@@ -73,17 +73,17 @@ const MagicToggle: React.FC = () => {
       <button
         ref={btnRef}
         aria-label="Toggle Magic Mode"
-        className="fixed left-4 bottom-4 z-50 bg-white/80 dark:bg-gray-900/80 rounded-full shadow-lg p-3 hover:scale-110 transition-transform md:hidden"
+        className="fixed left-4 bottom-4 z-50 bg-white/80 dark:bg-gray-900/80 rounded-full shadow-lg p-2 hover:scale-110 transition-transform md:hidden"
         onClick={handleClick}
       >
-        <span role="img" aria-label="magic">✨</span>
+        <span role="img" aria-label="magic">⚡</span>
       </button>
       
       {/* Desktop toggle */}
-      <div className="fixed right-6 top-6 z-50 hidden md:block group">
+      <div className="fixed left-6 bottom-6 z-50 hidden md:block group">
         <button
           aria-label="Toggle Magic Mode"
-          className={`rounded-full shadow-lg p-4 hover:scale-110 transition-all duration-300 flex items-center gap-2 hover:shadow-xl ${
+          className={`rounded-full shadow-lg p-3 hover:scale-110 transition-all duration-300 flex items-center gap-2 hover:shadow-xl ${
             magicMode 
               ? 'bg-gradient-to-r from-purple-500/90 to-pink-500/90 text-white shadow-purple-500/50' 
               : 'bg-white/90 dark:bg-gray-900/90 text-gray-900 dark:text-white'
@@ -91,13 +91,10 @@ const MagicToggle: React.FC = () => {
           onClick={handleToggle}
           disabled={isDisabled}
         >
-          <span role="img" aria-label="magic" className="text-lg">✨</span>
-          <span className="text-sm font-semibold hidden lg:inline">
-            {magicMode ? 'Magic ON' : 'Magic OFF'}
-          </span>
+          <span role="img" aria-label="magic" className="text-base">⚡</span>
         </button>
         {/* Tooltip */}
-        <div className="absolute right-0 top-full mt-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap">
+        <div className="absolute left-0 bottom-full mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap">
           Toggle Magic Mode (Ctrl/Cmd + M)
         </div>
       </div>
