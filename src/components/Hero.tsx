@@ -273,7 +273,7 @@ const Hero: React.FC<HeroProps> = ({ magicMode }) => {
                     }}
                   >
                     <motion.img
-                      src="https://media.licdn.com/dms/image/v2/D4D03AQFc5xP48HEmYQ/profile-displayphoto-shrink_800_800/B4DZbsboy8GwAc-/0/1747723390970?e=1756944000&v=beta&t=miNY1Z22GL09ygjvpyvS1QniDhzE0BvcP0cBtAEu824"
+                      src="/dp.jpg"
                       alt="Anubhav S"
                       className="w-full h-full object-cover"
                       initial={{ y: "100%" }}
