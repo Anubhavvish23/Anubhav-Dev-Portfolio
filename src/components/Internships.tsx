@@ -215,7 +215,7 @@ const Internships: React.FC<InternshipsProps> = ({ magicMode }) => {
   );
 
   return (
-    <section id="internships" className={`py-16 sm:py-20 relative bg-white dark:bg-black text-slate-900 dark:text-white overflow-hidden ${magicMode ? 'scale-x-[-1]' : ''}`}>
+    <section id="internships" className={`pt-24 pb-24 sm:pt-28 sm:pb-28 relative bg-white dark:bg-black text-slate-900 dark:text-white overflow-x-hidden scroll-mt-20 ${magicMode ? 'scale-x-[-1]' : ''}`}>
       {/* Floating background elements */}
       <FloatingBackgroundElements />
       
@@ -231,18 +231,6 @@ const Internships: React.FC<InternshipsProps> = ({ magicMode }) => {
             transition={{ duration: 0.6 }}
             className="text-center mb-16 sm:mb-20"
           >
-            <motion.div
-              className="inline-flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={inView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              <div className="p-2 sm:p-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full text-white">
-                <Briefcase className="w-4 h-4 sm:w-6 sm:h-6" />
-              </div>
-              <span className="text-sm sm:text-lg font-semibold text-slate-600 dark:text-slate-300">Professional Journey</span>
-            </motion.div>
-            
             <motion.h2
               className="title text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 text-black dark:text-white"
               animate={magicMode ? { ...titlePos } : {}}
@@ -366,7 +354,7 @@ const Internships: React.FC<InternshipsProps> = ({ magicMode }) => {
                               <p className="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300">{internship.role}</p>
                             </div>
                           </div>
-                          <div className="flex items-center space-x-1 sm:space-x-2 bg-white dark:bg-gray-800 px-2 sm:px-3 py-1 rounded-full">
+                          <div className="flex items-center space-x-1 sm:space-x-2 bg-white dark:bg-black dark:border dark:border-white/10 px-2 sm:px-3 py-1 rounded-full">
                             <Calendar className="w-3 h-3 text-slate-500" />
                             <span className="text-xs font-medium text-slate-600 dark:text-slate-300">{internship.year}</span>
                           </div>
@@ -381,7 +369,7 @@ const Internships: React.FC<InternshipsProps> = ({ magicMode }) => {
                             {internship.skills.map((skill, skillIndex) => (
                               <motion.span
                                 key={skill}
-                                className="px-2 py-1 bg-white dark:bg-gray-800 rounded-full text-xs font-medium text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-gray-700"
+                                className="px-2 py-1 bg-white dark:bg-black dark:border dark:border-white/10 rounded-full text-xs font-medium text-slate-700 dark:text-slate-200"
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={inView ? { opacity: 1, scale: 1 } : {}}
                                 transition={{ duration: 0.3, delay: 0.6 + index * 0.15 + skillIndex * 0.05 }}
@@ -393,7 +381,7 @@ const Internships: React.FC<InternshipsProps> = ({ magicMode }) => {
                           </div>
                         </div>
                         
-                        <div className="bg-white dark:bg-gray-800 rounded-lg p-2 sm:p-3 border border-slate-200 dark:border-gray-700">
+                        <div className="bg-white dark:bg-black dark:border dark:border-white/10 rounded-lg p-2 sm:p-3">
                           <div className="flex items-center space-x-2 mb-1 sm:mb-2">
                             <Target className="w-3 h-3 sm:w-4 sm:h-4 text-green-500" />
                             <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">Key Impact</span>

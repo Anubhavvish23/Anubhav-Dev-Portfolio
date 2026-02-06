@@ -73,7 +73,7 @@ const MagicToggle: React.FC = () => {
       <button
         ref={btnRef}
         aria-label="Toggle Magic Mode"
-        className="fixed left-4 bottom-4 z-50 bg-white/80 dark:bg-gray-900/80 rounded-full shadow-lg p-2 hover:scale-110 transition-transform md:hidden"
+        className="fixed left-4 bottom-4 z-50 bg-white/80 dark:bg-black/80 rounded-full shadow-lg p-2 hover:scale-110 transition-transform md:hidden"
         onClick={handleClick}
       >
         <span role="img" aria-label="magic">⚡</span>
@@ -86,7 +86,7 @@ const MagicToggle: React.FC = () => {
           className={`rounded-full shadow-lg p-3 hover:scale-110 transition-all duration-300 flex items-center gap-2 hover:shadow-xl ${
             magicMode 
               ? 'bg-gradient-to-r from-purple-500/90 to-pink-500/90 text-white shadow-purple-500/50' 
-              : 'bg-white/90 dark:bg-gray-900/90 text-gray-900 dark:text-white'
+              : 'bg-white/90 dark:bg-black/90 text-gray-900 dark:text-white'
           }`}
           onClick={handleToggle}
           disabled={isDisabled}
@@ -101,7 +101,7 @@ const MagicToggle: React.FC = () => {
       {showBar && (
         <div 
           ref={barRef}
-          className="fixed left-4 bottom-16 z-50 bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-3 flex items-center gap-3 max-w-[200px]"
+          className="fixed left-4 bottom-16 z-50 bg-white dark:bg-black rounded-2xl shadow-lg p-3 flex items-center gap-3 max-w-[200px]"
         >
           <span className="text-sm font-semibold text-gray-900 dark:text-white">Magic Mode</span>
           <button

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Trophy, Star, Zap, Code, Rocket, Users, BookOpen, Briefcase, Crown, Medal, Activity, Globe, Bot, Brain, Laptop2, UserCheck, Sparkles, ArrowRight } from 'lucide-react';
+import { Trophy, Star, Zap, Code, Rocket, Users, BookOpen, Briefcase, Crown, Medal, Activity, Globe, Bot, Brain, Laptop2, UserCheck, Sparkles, ArrowRight, Calendar, MapPin, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import Achievement3DCard from './Achievement3DCard';
+import StatCard from './StatCard';
 
 type FloatingIconProps = {
   children: React.ReactNode;
@@ -33,6 +35,11 @@ const Achievements: React.FC<AchievementsProps> = ({ magicMode }) => {
     triggerOnce: true,
     threshold: 0.1,
   });
+  const [statsRef, statsInView] = useInView({
+    triggerOnce: true,
+    threshold: 0.2,
+  });
+  const stats_visible = Boolean(statsInView);
 
   // Enhanced Chaotic Magic Mode state
   const [titlePos, setTitlePos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
@@ -163,15 +170,15 @@ const Achievements: React.FC<AchievementsProps> = ({ magicMode }) => {
     }
   ];
 
-  const stats = [
-    { number: "12+", label: "Projects Completed", icon: <Code className="w-6 h-6" /> },
-    { number: "3+", label: "Years Experience", icon: <Trophy className="w-6 h-6" /> },
-    { number: "30+", label: "GitHub Contributions", icon: <Activity className="w-6 h-6" /> },
-    { number: "10+", label: "Technologies Mastered", icon: <Sparkles className="w-6 h-6" /> }
+  const stats_config = [
+    { target: 4, suffix: "", label: "Total Internships", icon: <Briefcase className="w-6 h-6" /> },
+    { target: 3, suffix: "", label: "Years Experience", icon: <Calendar className="w-6 h-6" /> },
+    { target: 3, suffix: "", label: "Companies", icon: <MapPin className="w-6 h-6" /> },
+    { target: 12, suffix: "+", label: "Skills Gained", icon: <TrendingUp className="w-6 h-6" /> }
   ];
 
   return (
-    <section id="achievements" className="py-24 bg-white dark:bg-black text-slate-900 dark:text-white relative overflow-hidden min-h-screen">
+    <section id="achievements" className="pt-24 pb-24 sm:pt-28 sm:pb-28 bg-white dark:bg-black text-slate-900 dark:text-white relative overflow-x-hidden min-h-screen scroll-mt-20">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <FloatingIcon delay={0}>
@@ -207,7 +214,7 @@ const Achievements: React.FC<AchievementsProps> = ({ magicMode }) => {
           ref={ref}
           initial={{ opacity: 0, y: 50 }}
           animate={inViewRef ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
+          transition={{ type: 'spring', stiffness: 100, damping: 20 }}
           className="text-center mb-20"
         >
           <motion.h2
@@ -237,97 +244,50 @@ const Achievements: React.FC<AchievementsProps> = ({ magicMode }) => {
           </motion.p>
         </motion.div>
 
-        {/* Timeline */}
+        {/* Timeline with 3D Cards */}
         <motion.div 
           className="relative mb-24"
           animate={magicMode ? { ...timelinePos } : {}}
           transition={magicMode ? { duration: 2, type: 'spring' } : {}}
           style={{ position: magicMode ? 'relative' : undefined }}
         >
-          {/* Central timeline line with animated dots */}
           <div className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-slate-900 dark:bg-white h-full rounded-full hidden md:block">
-            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-slate-900 dark:bg-white rounded-full animate-ping"></div>
-            <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-slate-400 dark:bg-slate-600 rounded-full animate-pulse"></div>
-            <div className="absolute top-2/3 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-slate-400 dark:bg-slate-600 rounded-full animate-pulse" style={{animationDelay: '1s'}}></div>
-            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-slate-900 dark:bg-white rounded-full animate-ping" style={{animationDelay: '2s'}}></div>
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-slate-900 dark:bg-white rounded-full animate-ping" />
+            <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-slate-400 dark:bg-slate-600 rounded-full animate-pulse" />
+            <div className="absolute top-2/3 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-slate-400 dark:bg-slate-600 rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
+            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-slate-900 dark:bg-white rounded-full animate-ping" style={{ animationDelay: '2s' }} />
           </div>
 
-          {/* Timeline Items */}
           <div className="space-y-16">
-            {achievementsTimeline.map((year, yearIndex) => (
+            {achievementsTimeline.map((year_data, yearIndex) => (
               <motion.div
-                key={year.year}
+                key={year_data.year}
                 className={`flex flex-col md:flex-row items-center ${yearIndex % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
                 initial={{ opacity: 0, x: yearIndex % 2 === 0 ? -50 : 50 }}
                 animate={inViewRef ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.8, delay: yearIndex * 0.2 }}
               >
-                {/* Year Card */}
-                <motion.div
-                  className={`w-full md:w-1/2 ${yearIndex % 2 === 0 ? 'md:pr-8 md:text-right' : 'md:pl-8 md:text-left'} mb-8 md:mb-0`}
-                  whileHover={magicMode ? { scale: 1.1, rotate: 5 } : { scale: 1.02 }}
-                >
-                  <motion.div
-                    className="glass rounded-2xl p-6 relative group cursor-pointer"
-                    whileHover={magicMode ? { 
-                      scale: 1.05, 
-                      rotate: getRandom(-8, 8),
-                      y: -5 
-                    } : { 
-                      scale: 1.02, 
-                      y: -2 
-                    }}
-                  >
-                    <div className="flex items-center gap-4 mb-4">
-                      <motion.div
-                        className="text-blue-500 group-hover:text-purple-500 transition-colors duration-300"
-                        whileHover={magicMode ? { scale: 1.3, rotate: 360 } : { scale: 1.2 }}
-                        animate={magicMode ? continuousRotate : {}}
-                      >
-                        {year.icon}
-                      </motion.div>
-                      <div>
-                        <h3 className="text-2xl font-bold text-slate-900 dark:text-white">{year.year}</h3>
-                        <p className="text-slate-600 dark:text-slate-300 font-medium">{year.theme}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-3">
-                      {year.items.map((item, itemIndex) => (
-                        <motion.div
-                          key={itemIndex}
-                          className="flex items-start gap-3"
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={inViewRef ? { opacity: 1, x: 0 } : {}}
-                          transition={{ duration: 0.5, delay: 0.5 + itemIndex * 0.1 }}
-                          whileHover={magicMode ? { scale: 1.05, rotate: 2 } : {}}
-                        >
-                          <motion.div
-                            className="text-blue-400 mt-1 flex-shrink-0"
-                            whileHover={magicMode ? { scale: 1.2, rotate: 180 } : { scale: 1.1 }}
-                          >
-                            {item.icon}
-                          </motion.div>
-                          <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">{item.text}</p>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </motion.div>
-                </motion.div>
+                <div className={`w-full md:w-1/2 ${yearIndex % 2 === 0 ? 'md:pr-8 md:flex md:justify-end' : 'md:pl-8 md:flex md:justify-start'} mb-8 md:mb-0`}>
+                  <Achievement3DCard
+                    year={year_data.year}
+                    theme={year_data.theme}
+                    items={year_data.items}
+                    index={yearIndex}
+                    in_view={!!inViewRef}
+                  />
+                </div>
 
-                {/* Timeline Center Point */}
-                <div className="w-16 h-16 bg-slate-900 dark:bg-white rounded-full flex items-center justify-center relative z-10 shadow-lg">
+                <div className="w-16 h-16 bg-slate-900 dark:bg-white rounded-full flex items-center justify-center relative z-10 shadow-lg flex-shrink-0">
                   <motion.div
                     className="text-white dark:text-slate-900"
                     whileHover={magicMode ? { scale: 1.3, rotate: 360 } : { scale: 1.2 }}
                     animate={magicMode ? continuousRotate : {}}
                   >
-                    {year.icon}
+                    {year_data.icon}
                   </motion.div>
                 </div>
 
-                {/* Empty space for alignment - hidden on mobile */}
-                <div className="hidden md:block w-1/2"></div>
+                <div className="hidden md:block w-1/2" />
               </motion.div>
             ))}
           </div>
@@ -335,47 +295,25 @@ const Achievements: React.FC<AchievementsProps> = ({ magicMode }) => {
 
         {/* Stats Section */}
         <motion.div
+          ref={statsRef}
           animate={magicMode ? { ...statsPos } : {}}
           transition={magicMode ? { duration: 2, type: 'spring' } : {}}
           style={{ position: magicMode ? 'relative' : undefined }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
-          {stats.map((stat, index) => (
-            <motion.div
+          {stats_config.map((stat, index) => (
+            <StatCard
               key={stat.label}
-              className="text-center"
-              initial={{ opacity: 0, y: 30 }}
-              animate={inViewRef ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.8 + index * 0.1 }}
-              whileHover={magicMode ? { scale: 1.1, rotate: 5 } : { scale: 1.05 }}
-            >
-              <motion.div
-                className="glass rounded-2xl p-6 mb-4"
-                whileHover={magicMode ? { 
-                  scale: 1.1, 
-                  rotate: getRandom(-10, 10),
-                  y: -8 
-                } : { 
-                  scale: 1.05, 
-                  y: -5 
-                }}
-              >
-                <motion.div
-                  className="text-blue-500 mb-4 mx-auto w-fit"
-                  whileHover={magicMode ? { scale: 1.4, rotate: 360 } : { scale: 1.2 }}
-                  animate={magicMode ? continuousRotate : {}}
-                >
-                  {stat.icon}
-                </motion.div>
-                <motion.h3 
-                  className="text-3xl font-bold text-slate-900 dark:text-white mb-2"
-                  whileHover={magicMode ? { scale: 1.2, rotate: 3 } : {}}
-                >
-                  {stat.number}
-                </motion.h3>
-                <p className="text-slate-600 dark:text-slate-300 font-medium">{stat.label}</p>
-              </motion.div>
-            </motion.div>
+              target={stat.target}
+              suffix={stat.suffix}
+              label={stat.label}
+              icon={stat.icon}
+              index={index}
+              in_view={stats_visible}
+              magic_mode={magicMode}
+              continuous_rotate={continuousRotate}
+              get_random={getRandom}
+            />
           ))}
         </motion.div>
       </div>

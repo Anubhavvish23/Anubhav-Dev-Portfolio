@@ -131,12 +131,47 @@ const AllProjects: React.FC<AllProjectsProps> = ({ magicMode }) => {
   };
 
   return (
-    <section className="py-20 min-h-screen bg-white dark:bg-slate-900">
+    <section className="relative z-10 py-20 min-h-screen text-white pb-16 dark">
+      <div className="all-projects-pattern" />
       <style>{`
+        .all-projects-pattern {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          --color: #1e1e1e;
+          background-color: #0c0c0c;
+          background-image: linear-gradient(
+              0deg,
+              transparent 24%,
+              var(--color) 25%,
+              var(--color) 26%,
+              transparent 27%,
+              transparent 74%,
+              var(--color) 75%,
+              var(--color) 76%,
+              transparent 77%,
+              transparent
+            ),
+            linear-gradient(
+              90deg,
+              transparent 24%,
+              var(--color) 25%,
+              var(--color) 26%,
+              transparent 27%,
+              transparent 74%,
+              var(--color) 75%,
+              var(--color) 76%,
+              transparent 77%,
+              transparent
+            );
+          background-size: 55px 55px;
+          z-index: -1;
+        }
         button.custom-button {
           --button_radius: 0.75em;
-          --button_color: #e8e8e8;
-          --button_outline_color: #000000;
+          --button_color: #1e293b;
+          --button_outline_color: #ffffff;
           font-size: 17px;
           font-weight: bold;
           border: none;
@@ -161,11 +196,12 @@ const AllProjects: React.FC<AllProjectsProps> = ({ magicMode }) => {
         .custom-button:active .button_top {
           transform: translateY(0);
         }
+
       `}</style>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-4xl font-bold">All Projects</h2>
+          <h2 className="text-4xl font-bold text-white">All Projects</h2>
           <button 
             onClick={() => {
               console.log('Back to Home button clicked');
@@ -193,7 +229,7 @@ const AllProjects: React.FC<AllProjectsProps> = ({ magicMode }) => {
               placeholder="Search projects by title, description, or technology..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-black dark:border-white/20 dark:text-white"
             />
             {searchQuery && (
               <button
@@ -213,7 +249,7 @@ const AllProjects: React.FC<AllProjectsProps> = ({ magicMode }) => {
               className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
                 showFeatured
                   ? 'bg-yellow-500 text-white shadow-lg'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-black dark:border dark:border-white/10 dark:text-gray-300 dark:hover:border-white/20'
               }`}
               whileHover={magicMode ? { scale: 1.2, rotate: 5 } : { scale: 1.05 }}
               whileTap={magicMode ? { scale: 0.95, rotate: -5 } : { scale: 0.95 }}
@@ -245,7 +281,7 @@ const AllProjects: React.FC<AllProjectsProps> = ({ magicMode }) => {
                 className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 ${
                   selectedTags.includes(tag)
                     ? 'bg-blue-500 text-white shadow-lg'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-black dark:border dark:border-white/10 dark:text-gray-300 dark:hover:border-white/20'
                 }`}
                 whileHover={magicMode ? { scale: 1.2, rotate: 5 } : { scale: 1.05 }}
                 whileTap={magicMode ? { scale: 0.95, rotate: -5 } : { scale: 0.95 }}

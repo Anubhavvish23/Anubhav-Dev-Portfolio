@@ -1,0 +1,125 @@
+.social-btns-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-btns-up {
+  display: flex;
+  flex-direction: row;
+  gap: 0.25rem;
+  justify-content: center;
+}
+
+.social-btns-down {
+  display: flex;
+  flex-direction: row;
+  gap: 0.25rem;
+  justify-content: center;
+}
+
+.social-btns-card {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  outline: none;
+  border: none;
+  background: white;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+  transition: 0.2s ease-in-out;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.dark .social-btns-card {
+  background: #1e293b;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 5px -1px, rgba(0, 0, 0, 0.5) 0px 1px 3px -1px;
+}
+
+.social-btns-card:hover {
+  transform: scale(1.05);
+}
+
+.social-btns-card .social-btns-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.social-btns-card.card1 {
+  border-radius: 90px 5px 5px 5px;
+}
+
+.social-btns-card.card1:hover {
+  background-color: #cc39a4;
+}
+
+.social-btns-card.card2 {
+  border-radius: 5px 90px 5px 5px;
+}
+
+.social-btns-card.card2:hover {
+  background-color: #ea4335;
+}
+
+.social-btns-card.card3 {
+  border-radius: 5px 5px 5px 90px;
+}
+
+.social-btns-card.card3:hover {
+  background-color: black;
+}
+
+.dark .social-btns-card.card3:hover {
+  background-color: white;
+}
+
+.social-btns-card.card4 {
+  border-radius: 5px 5px 90px 5px;
+}
+
+.social-btns-card.card4:hover {
+  background-color: #25d366;
+}
+
+.social-btns-card .icon-instagram {
+  color: #cc39a4;
+}
+
+.social-btns-card .icon-mail {
+  color: #ea4335;
+}
+
+.social-btns-card .icon-github {
+  color: #333;
+}
+
+.dark .social-btns-card .icon-github {
+  color: #e2e8f0;
+}
+
+.social-btns-card .icon-phone {
+  color: #25d366;
+}
+
+.social-btns-card.card1:hover .icon-instagram,
+.social-btns-card.card2:hover .icon-mail,
+.social-btns-card.card3:hover .icon-github,
+.social-btns-card.card4:hover .icon-phone {
+  color: white;
+}
+
+.dark .social-btns-card.card3:hover .icon-github {
+  color: black;
+}

@@ -1,0 +1,216 @@
+.proficiency-card {
+  width: 400px;
+  height: 100px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  padding: 14px 20px;
+  background-color: #ffffff;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 18px;
+}
+
+.dark .proficiency-card {
+  background-color: #0f0f0f;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 8px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.proficiency-wave {
+  position: absolute;
+  transform: rotate(90deg);
+  left: -38px;
+  top: 40px;
+  width: 100px;
+  fill: rgba(0, 0, 0, 0.2);
+}
+
+.dark .proficiency-wave {
+  fill: rgba(255, 255, 255, 0.15);
+}
+
+.proficiency-icon-container {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #0f0f0f;
+  border-radius: 50%;
+  margin-left: 10px;
+}
+
+.dark .proficiency-icon-container {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.proficiency-icon-emoji {
+  font-size: 22px;
+}
+
+.proficiency-text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  flex-grow: 1;
+}
+
+.proficiency-name,
+.proficiency-sub {
+  margin: 0;
+  cursor: default;
+}
+
+.proficiency-name {
+  color: #1e293b;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.dark .proficiency-name {
+  color: #f8fafc;
+}
+
+.proficiency-sub {
+  font-size: 15px;
+  color: #64748b;
+}
+
+.dark .proficiency-sub {
+  color: #94a3b8;
+}
+
+.proficiency-check-icon {
+  width: 18px;
+  height: 18px;
+  color: #3b82f6;
+}
+
+.dark .proficiency-check-icon {
+  color: #60a5fa;
+}
+
+.proficiency-icon-container {
+  color: white;
+}
+
+.dark .proficiency-icon-container {
+  color: #0f0f0f;
+}
+
+@media (max-width: 640px) {
+  .proficiency-card {
+    width: 100%;
+    max-width: 400px;
+    height: 90px;
+    padding: 12px 16px;
+  }
+
+  .proficiency-icon-emoji {
+    font-size: 20px;
+  }
+
+  .proficiency-name {
+    font-size: 17px;
+  }
+
+  .proficiency-sub {
+    font-size: 14px;
+  }
+}
+
+.stat-card {
+  width: 100%;
+  min-width: 280px;
+  max-width: 380px;
+  height: 100px;
+  border-radius: 10px;
+  padding: 14px 20px;
+  gap: 18px;
+}
+
+.stat-card .stat-wave {
+  width: 100px;
+  left: -40px;
+  top: 40px;
+  fill: rgba(0, 0, 0, 0.2);
+}
+
+.dark .stat-card .stat-wave {
+  fill: rgba(255, 255, 255, 0.15);
+}
+
+.stat-card .stat-icon-container {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  background-color: #0f0f0f;
+  border-radius: 12px;
+  margin-left: 10px;
+  color: white;
+}
+
+.dark .stat-card .stat-icon-container {
+  background-color: #f8fafc;
+  color: #0f0f0f;
+}
+
+.stat-card .stat-icon-container svg {
+  width: 24px;
+  height: 24px;
+  color: white;
+  stroke: white;
+}
+
+.dark .stat-card .stat-icon-container svg {
+  color: #0f0f0f;
+  stroke: #0f0f0f;
+}
+
+.stat-card .stat-name {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.stat-card .stat-sub {
+  font-size: 15px;
+}
+
+.stat-card .stat-check-icon {
+  width: 22px;
+  height: 22px;
+  color: #0f0f0f;
+}
+
+.dark .stat-card .stat-check-icon {
+  color: #f8fafc;
+}
+
+@media (max-width: 640px) {
+  .stat-card {
+    width: 100%;
+    max-width: 380px;
+    height: 90px;
+    padding: 12px 16px;
+  }
+
+  .stat-card .stat-icon-container {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+  }
+
+  .stat-card .stat-name {
+    font-size: 20px;
+  }
+
+  .stat-card .stat-sub {
+    font-size: 14px;
+  }
+}

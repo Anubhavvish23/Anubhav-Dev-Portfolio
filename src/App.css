@@ -9,11 +9,28 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+  min-height: 100%;
+  height: 100%;
+  overflow-x: hidden;
 }
 
 body {
   font-family: 'Inter', sans-serif;
   cursor: none;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+@supports (min-height: 100dvh) {
+  body {
+    min-height: 100dvh;
+  }
+}
+
+#root {
+  min-height: 100%;
 }
 
 /* Custom scrollbar */

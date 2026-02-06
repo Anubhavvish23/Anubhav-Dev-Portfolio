@@ -1,9 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { MapPin, Code, Heart, Zap } from 'lucide-react';
+import { Code, Heart, Zap } from 'lucide-react';
 import ChaosText from './ChaosText';
 import ChaosCard from './ChaosCard';
+import BrowserCard from './BrowserCard';
 
 interface AboutProps {
   magicMode: boolean;
@@ -34,7 +35,7 @@ const About: React.FC<AboutProps> = ({ magicMode }) => {
   ];
 
   return (
-    <section id="about" className="py-20 relative bg-white dark:bg-black text-slate-900 dark:text-white">
+    <section id="about" className="pt-24 pb-24 sm:pt-28 sm:pb-28 relative bg-white dark:bg-black text-slate-900 dark:text-white scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           ref={ref}
@@ -62,31 +63,19 @@ const About: React.FC<AboutProps> = ({ magicMode }) => {
           </ChaosText>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="grid md:grid-cols-2 gap-12 items-stretch">
           {/* Bio Section */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="space-y-6"
+            className="min-h-full"
           >
-            <ChaosCard 
-              magicMode={magicMode} 
-              className="glass rounded-2xl p-8"
-              animationType="card"
-            >
-              <ChaosText 
-                magicMode={magicMode} 
-                element="h3" 
-                className="text-2xl font-bold text-slate-900 dark:text-white mb-4"
-                animationType="text"
-              >
-                My Story
-              </ChaosText>
+            <BrowserCard tab_label="My Story">
               <ChaosText 
                 magicMode={magicMode} 
                 element="p" 
-                className="text-slate-600 dark:text-slate-300 leading-relaxed mb-4"
+                className="leading-relaxed mb-4"
                 animationType="text"
               >
                 Started my journey in computer science with a fascination for how technology can solve real-world problems. 
@@ -96,34 +85,13 @@ const About: React.FC<AboutProps> = ({ magicMode }) => {
               <ChaosText 
                 magicMode={magicMode} 
                 element="p" 
-                className="text-slate-600 dark:text-slate-300 leading-relaxed"
+                className="leading-relaxed"
                 animationType="text"
               >
                 When I'm not coding, you'll find me exploring new frameworks, contributing to open source projects, 
                 or sharing knowledge with the developer community.
               </ChaosText>
-            </ChaosCard>
-
-            {/* Location */}
-            <motion.div
-              className="flex items-center gap-3 text-slate-600 dark:text-slate-300"
-              whileHover={{ scale: 1.05 }}
-            >
-              <motion.div
-                animate={{ y: [0, -5, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <MapPin className="w-6 h-6 text-blue-400" />
-              </motion.div>
-              <ChaosText 
-                magicMode={magicMode} 
-                element="span" 
-                className="text-lg"
-                animationType="text"
-              >
-                Based in India
-              </ChaosText>
-            </motion.div>
+            </BrowserCard>
           </motion.div>
 
           {/* Cards Section */}

@@ -137,7 +137,7 @@ const Hero: React.FC<HeroProps> = ({ magicMode }) => {
         rel="stylesheet" 
       />
       
-      <section id="home" className="min-h-screen flex items-center justify-center relative bg-white dark:bg-gray-900 mt-16">
+      <section id="home" className="min-h-[calc(100dvh-4rem)] min-h-[calc(100vh-4rem)] flex items-center justify-center relative bg-white dark:bg-black mt-16 py-8 sm:py-12">
         {/* Modern Animated Toggle Switch */}
         <motion.div 
           className="absolute top-4 left-4 z-50"
@@ -149,7 +149,7 @@ const Hero: React.FC<HeroProps> = ({ magicMode }) => {
             aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
             onClick={toggleTheme}
             className={`w-14 h-8 flex items-center rounded-full p-1 transition-colors duration-500 focus:outline-none shadow-lg
-              ${isDark ? 'bg-gradient-to-r from-gray-700 via-gray-900 to-black' : 'bg-gradient-to-r from-yellow-300 via-yellow-400 to-orange-400'}`}
+              ${isDark ? 'bg-black' : 'bg-gradient-to-r from-yellow-300 via-yellow-400 to-orange-400'}`}
             animate={magicMode ? continuousRotate : {}}
           >
             <span
@@ -203,6 +203,8 @@ const Hero: React.FC<HeroProps> = ({ magicMode }) => {
               >
                 <TypeAnimation
                   sequence={[
+                    'Content Creator',
+                    2000,
                     'Full Stack Developer',
                     2000,
                     'UI/UX Enthusiast',
@@ -344,7 +346,7 @@ const Hero: React.FC<HeroProps> = ({ magicMode }) => {
           <motion.div
             animate={magicMode ? { y: [0, 20, 0], rotate: [0, 180, 360] } : { y: [0, 8, 0] }}
             transition={magicMode ? { duration: 3, repeat: Infinity, ease: "easeInOut" } : { duration: 2, repeat: Infinity }}
-            className="text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-full bg-gray-100 border border-gray-200 shadow-sm"
+            className="text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-white transition-colors p-2 rounded-full bg-gray-100 dark:bg-black dark:border dark:border-white/10 border border-gray-200 shadow-sm"
           >
             <ChevronDown size={24} />
           </motion.div>

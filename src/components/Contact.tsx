@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Mail, Phone, MapPin, Send, Github, Linkedin, Twitter, Instagram } from 'lucide-react';
+import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import ContactCard from './ContactCard';
+import SocialButtons from './SocialButtons';
 
 interface ContactProps {
   magicMode?: boolean;
@@ -213,15 +215,8 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
     }
   ];
 
-  const socialLinks = [
-    { icon: <Github className="w-6 h-6" />, href: "https://github.com/Anubhavvish23", label: "GitHub" },
-    { icon: <Linkedin className="w-6 h-6" />, href: "http://www.linkedin.com/in/anubhav-s-14a380229", label: "LinkedIn" },
-    { icon: <Twitter className="w-6 h-6" />, href: "#", label: "Twitter" },
-    { icon: <Instagram className="w-6 h-6" />, href: "https://www.instagram.com/aanubhavv.23?igsh=MXJxOTU1OHFwbnM0ZA==", label: "Instagram" }
-  ];
-
   return (
-    <section id="contact" className={`py-20 relative bg-white dark:bg-black text-slate-900 dark:text-white ${magicMode ? 'scale-x-[-1]' : ''}`}>
+    <section id="contact" className={`pt-24 pb-24 sm:pt-28 sm:pb-28 relative bg-white dark:bg-black text-slate-900 dark:text-white scroll-mt-20 ${magicMode ? 'scale-x-[-1]' : ''}`}>
       {/* Magic sparkles background */}
       <MagicContactSparkles magicMode={magicMode} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -256,15 +251,15 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
             initial={{ opacity: 0, x: -50 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="space-y-6"
+            className="flex justify-center"
           >
-            <motion.div 
-              className="glass rounded-2xl p-8"
-              animate={magicMode ? { ...formPos } : {}}
-              transition={magicMode ? { duration: 2, type: 'spring' } : {}}
-              style={{ position: magicMode ? 'relative' : undefined }}
-            >
-              <h3 className="title text-3xl font-bold text-slate-900 dark:text-white mb-6">Send Message</h3>
+            <ContactCard>
+              <motion.div
+                animate={magicMode ? { ...formPos } : {}}
+                transition={magicMode ? { duration: 2, type: 'spring' } : {}}
+                style={{ position: magicMode ? 'relative' : undefined }}
+              >
+                <h3 className="title text-3xl font-bold text-slate-900 dark:text-white mb-6">Send Message</h3>
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Name Field */}
@@ -276,7 +271,7 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
                     onChange={handleInputChange}
                     onFocus={() => setFocusedField('name')}
                     onBlur={() => setFocusedField(null)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-slate-900 placeholder-transparent focus:outline-none focus:border-blue-500 transition-all duration-300"
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-3 text-slate-900 dark:text-white placeholder-transparent focus:outline-none focus:border-blue-500 transition-all duration-300"
                     placeholder="Your Name"
                     required
                     whileHover={magicMode ? { scale: 1.02, rotate: 1 } : {}}
@@ -284,7 +279,7 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
                   <motion.label
                     className={`absolute left-4 text-slate-500 pointer-events-none transition-all duration-300 ${
                       focusedField === 'name' || formData.name
-                        ? '-top-2 text-sm bg-white px-2 text-blue-500'
+                        ? '-top-2 text-sm bg-white dark:bg-slate-800 px-2 text-blue-500'
                         : 'top-3'
                     }`}
                     animate={{
@@ -305,7 +300,7 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
                     onChange={handleInputChange}
                     onFocus={() => setFocusedField('email')}
                     onBlur={() => setFocusedField(null)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-slate-900 placeholder-transparent focus:outline-none focus:border-blue-500 transition-all duration-300"
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-3 text-slate-900 dark:text-white placeholder-transparent focus:outline-none focus:border-blue-500 transition-all duration-300"
                     placeholder="Your Email"
                     required
                     whileHover={magicMode ? { scale: 1.02, rotate: 1 } : {}}
@@ -313,7 +308,7 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
                   <motion.label
                     className={`absolute left-4 text-slate-500 pointer-events-none transition-all duration-300 ${
                       focusedField === 'email' || formData.email
-                        ? '-top-2 text-sm bg-white px-2 text-blue-500'
+                        ? '-top-2 text-sm bg-white dark:bg-slate-800 px-2 text-blue-500'
                         : 'top-3'
                     }`}
                     animate={{
@@ -334,7 +329,7 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
                     onChange={handleInputChange}
                     onFocus={() => setFocusedField('subject')}
                     onBlur={() => setFocusedField(null)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-slate-900 placeholder-transparent focus:outline-none focus:border-blue-500 transition-all duration-300"
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-3 text-slate-900 dark:text-white placeholder-transparent focus:outline-none focus:border-blue-500 transition-all duration-300"
                     placeholder="Subject"
                     required
                     whileHover={magicMode ? { scale: 1.02, rotate: 1 } : {}}
@@ -342,7 +337,7 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
                   <motion.label
                     className={`absolute left-4 text-slate-500 pointer-events-none transition-all duration-300 ${
                       focusedField === 'subject' || formData.subject
-                        ? '-top-2 text-sm bg-white px-2 text-blue-500'
+                        ? '-top-2 text-sm bg-white dark:bg-slate-800 px-2 text-blue-500'
                         : 'top-3'
                     }`}
                     animate={{
@@ -363,7 +358,7 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
                     onFocus={() => setFocusedField('message')}
                     onBlur={() => setFocusedField(null)}
                     rows={5}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-slate-900 placeholder-transparent focus:outline-none focus:border-blue-500 transition-all duration-300 resize-none"
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-3 text-slate-900 dark:text-white placeholder-transparent focus:outline-none focus:border-blue-500 transition-all duration-300 resize-none"
                     placeholder="Your Message"
                     required
                     whileHover={magicMode ? { scale: 1.02, rotate: 1 } : {}}
@@ -371,7 +366,7 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
                   <motion.label
                     className={`absolute left-4 text-slate-500 pointer-events-none transition-all duration-300 ${
                       focusedField === 'message' || formData.message
-                        ? '-top-2 text-sm bg-white px-2 text-blue-500'
+                        ? '-top-2 text-sm bg-white dark:bg-slate-800 px-2 text-blue-500'
                         : 'top-3'
                     }`}
                     animate={{
@@ -394,7 +389,8 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
                   Send Message
                 </motion.button>
               </form>
-            </motion.div>
+              </motion.div>
+            </ContactCard>
           </motion.div>
 
           {/* Contact Info */}
@@ -445,35 +441,12 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
               style={{ position: magicMode ? 'relative' : undefined }}
             >
               <h3 className="title text-2xl font-bold text-slate-900 dark:text-white mb-4">Follow Me</h3>
-              
-              <div className="flex gap-4">
-                {socialLinks.map((social, index) => (
-                  <motion.a
-                    key={social.label}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-3 glass rounded-full hover:glass-strong transition-all duration-300 group"
-                    whileHover={magicMode ? { scale: 1.3, rotate: 15 } : { scale: 1.1 }}
-                    whileTap={magicMode ? { scale: 0.8, rotate: -15 } : { scale: 0.95 }}
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={inView ? { opacity: 1, scale: 1 } : {}}
-                    transition={{ duration: 0.5, delay: 1 + index * 0.1 }}
-                  >
-                    <motion.div
-                      className="text-slate-600 dark:text-slate-300 group-hover:text-blue-500 transition-colors duration-300"
-                      whileHover={magicMode ? { rotate: 360 } : {}}
-                    >
-                      {social.icon}
-                    </motion.div>
-                  </motion.a>
-                ))}
-              </div>
+              <SocialButtons />
             </motion.div>
           </motion.div>
         </div>
         {/* Visitor Counter Badge - Added at the bottom of Contact page */}
-        <div className="flex justify-center items-center text-sm mt-8 mb-4 w-full">
+        <div className="flex justify-center items-center text-sm mt-8 mb-8 pb-16 w-full">
           <img
             src="https://hits.sh/anubhav-dev-portfolio.vercel.app.svg?style=flat-square&label=visitors&color=blue"
             alt="Visitor Counter"

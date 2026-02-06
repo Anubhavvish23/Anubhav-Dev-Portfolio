@@ -58,9 +58,9 @@ export const ParallaxBackground: React.FC<{ children: React.ReactNode }> = ({ ch
   const springBackgroundY = useSpring(backgroundY, { stiffness: 40, damping: 15 }); // Reduced stiffness
 
   return (
-    <div ref={ref} className="relative overflow-hidden">
+    <div ref={ref} className="relative overflow-x-hidden">
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-900 dark:to-pink-900"
+        className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-black dark:via-black dark:to-black"
         style={{ 
           y: springBackgroundY,
           willChange: 'transform',

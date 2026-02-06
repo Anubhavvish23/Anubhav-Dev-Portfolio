@@ -18,6 +18,7 @@ import ScrollProgress from './components/ScrollProgress';
 import Scene3D from './components/Scene3D';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import AllProjects from './components/AllProjects';
+import NotFound404 from './components/NotFound404';
 import ScrollEndHearts from './components/ScrollEndHearts';
 import { ParallaxBackground, FloatingElements } from './components/ParallaxSection';
 import SocialMediaVisitor from './components/SocialMediaVisitor';
@@ -66,9 +67,8 @@ const AppContent = () => {
           </>
         } />
         <Route path="/all-projects" element={<AllProjects magicMode={magicMode} />} />
+        <Route path="*" element={<NotFound404 />} />
       </Routes>
-
-      {/* <ProjectStats /> */}
     </div>
   );
 };
@@ -83,7 +83,7 @@ function App() {
   return (
     <ThemeProvider>
       <MagicModeProvider>
-        <div className={`relative min-h-screen bg-white dark:bg-gray-900 text-slate-900 dark:text-white overflow-x-hidden transition-colors duration-500`}>
+        <div className={`relative min-h-[100dvh] min-h-screen bg-white dark:bg-black text-slate-900 dark:text-white overflow-x-hidden overflow-y-auto transition-colors duration-500`}>
           {/* Magic Mode Toggle */}
           <MagicToggle />
 
@@ -95,9 +95,9 @@ function App() {
 
           {/* Animated Background */}
           <div className="fixed inset-0 z-0">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-50/20 via-white/40 to-white dark:bg-gray-900"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-50/20 via-white/40 to-white dark:bg-black"></div>
             <motion.div
-              className="absolute top-1/4 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-blue-100/20 dark:bg-gray-800/15 rounded-full blur-2xl"
+              className="absolute top-1/4 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-blue-100/20 dark:bg-black/20 rounded-full blur-2xl"
               animate={{
                 x: [0, 50, 0],
                 y: [0, -50, 0],
@@ -109,7 +109,7 @@ function App() {
               }}
             />
             <motion.div
-              className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-purple-100/20 dark:bg-gray-800/15 rounded-full blur-2xl"
+              className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-purple-100/20 dark:bg-black/20 rounded-full blur-2xl"
               animate={{
                 x: [0, -50, 0],
                 y: [0, 50, 0],

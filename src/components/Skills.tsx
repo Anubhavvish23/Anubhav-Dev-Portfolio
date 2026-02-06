@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import ParallaxSection, { ParallaxCard, ParallaxText } from './ParallaxSection';
+import ParallaxSection, { ParallaxCard } from './ParallaxSection';
+import Marquee from './Marquee';
+import SwitchCard from './SwitchCard';
+import ProficiencyCard from './ProficiencyCard';
 
 const CIcon = () => (
   <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-600 text-white font-bold text-lg">C</span>
@@ -174,6 +177,8 @@ const Skills: React.FC<SkillsProps> = ({ magicMode }) => {
     { name: 'ML', icon: '📊', progress: 78 },
   ];
 
+  const marquee_items = ['React', 'TypeScript', 'Node.js', 'Python', 'MongoDB', 'PostgreSQL', 'Docker', 'AWS', 'Git', 'Figma', 'MERN', 'Django', 'Gen AI', 'Framer Motion', 'Tailwind'];
+
   const radialSkills = [
     { name: 'Frontend', percentage: 80 },
     { name: 'Backend', percentage: 80 },
@@ -181,13 +186,13 @@ const Skills: React.FC<SkillsProps> = ({ magicMode }) => {
     { name: 'Design', percentage: 82 },
   ];
 
-  const stackProgress = [
+  const stack_progress = [
     { name: 'MERN Stack', icon: '🌐', progress: 92 },
     { name: 'Django', icon: '🦄', progress: 80 },
     { name: 'Full Stack', icon: '🧑‍💻', progress: 95 },
     { name: 'Gen AI', icon: '🤖', progress: 75 },
-    { name: 'ML', icon: '��', progress: 78 },
-    { name: 'Data Visualization', icon: '📊', progress: 80 },
+    { name: 'ML', icon: '📊', progress: 78 },
+    { name: 'Data Visualization', icon: '📈', progress: 80 },
   ];
 
   // Magic sparkles for stack proficiency
@@ -225,7 +230,7 @@ const Skills: React.FC<SkillsProps> = ({ magicMode }) => {
   );
 
   return (
-    <section id="skills" className={`py-20 relative bg-white dark:bg-black text-slate-900 dark:text-white ${magicMode ? 'scale-x-[-1]' : ''}`}>
+    <section id="skills" className={`pt-24 pb-24 sm:pt-28 sm:pb-28 relative bg-white dark:bg-black text-slate-900 dark:text-white scroll-mt-20 ${magicMode ? 'scale-x-[-1]' : ''}`}>
       {/* Magic sparkles for stack proficiency */}
       <MagicStackSparkles />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -234,7 +239,7 @@ const Skills: React.FC<SkillsProps> = ({ magicMode }) => {
             ref={ref}
             initial={{ opacity: 0, y: 50 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
+            transition={{ type: 'spring', stiffness: 100, damping: 20 }}
             className="text-center mb-16"
           >
             <motion.h2
@@ -256,13 +261,15 @@ const Skills: React.FC<SkillsProps> = ({ magicMode }) => {
           </motion.div>
         </ParallaxSection>
 
+        <Marquee items={marquee_items} className="mb-12 -mx-4" />
+
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Left Column - Skill Bars */}
           <ParallaxSection speed={0.2} direction="left">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.2 }}
               className="space-y-6"
             >
               <motion.h3
@@ -280,7 +287,13 @@ const Skills: React.FC<SkillsProps> = ({ magicMode }) => {
               >
                 {skills.map((skill, index) => (
                   <ParallaxCard key={skill.name} speed={0.1 + index * 0.05} className="p-4">
-                    <div className="space-y-2">
+                    <motion.div
+                      className="space-y-2"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={inView ? { opacity: 1, x: 0 } : {}}
+                      transition={{ type: 'spring', stiffness: 200, damping: 25, delay: 0.3 + index * 0.08 }}
+                      whileHover={{ x: 4 }}
+                    >
                       <div className="flex justify-between items-center">
                         <span className="font-medium">{skill.name}</span>
                         <span className="text-slate-600 dark:text-slate-300">{skill.level}%</span>
@@ -290,10 +303,10 @@ const Skills: React.FC<SkillsProps> = ({ magicMode }) => {
                           className="h-full bg-black rounded-full shadow-md border border-white"
                           initial={{ width: 0 }}
                           animate={inView ? { width: `${skill.level}%` } : {}}
-                          transition={{ duration: 1.5, delay: 0.5 + index * 0.1 }}
+                          transition={{ type: 'spring', stiffness: 50, damping: 20, delay: 0.5 + index * 0.1 }}
                         />
                       </div>
-                    </div>
+                    </motion.div>
                   </ParallaxCard>
                 ))}
               </motion.div>
@@ -304,7 +317,7 @@ const Skills: React.FC<SkillsProps> = ({ magicMode }) => {
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.4 }}
             className="space-y-8"
           >
             <motion.h3
@@ -383,24 +396,20 @@ const Skills: React.FC<SkillsProps> = ({ magicMode }) => {
             transition={magicMode ? { duration: 2, type: 'spring' } : {}}
             style={{ position: magicMode ? 'relative' : undefined }}
           >
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              {techStack.slice(0, 10).map((tech, index) => (
-                <ParallaxCard key={tech.name} speed={0.1 + index * 0.05} className="p-4 text-center">
-                  <motion.div
-                    className="text-3xl mb-2"
-                    whileHover={{ scale: 1.2, rotate: 360 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    {tech.icon}
-                  </motion.div>
-                  <span className="text-sm font-medium">{tech.name}</span>
-                </ParallaxCard>
-              ))}
-            </div>
+            <SwitchCard>
+              <div className="switch-tech-grid">
+                {techStack.slice(0, 10).map((tech) => (
+                  <div key={tech.name} className="switch-tech-item">
+                    <span className="switch-tech-icon">{tech.icon}</span>
+                    <span>{tech.name}</span>
+                  </div>
+                ))}
+              </div>
+            </SwitchCard>
           </motion.div>
         </motion.div>
 
-        {/* Stack Progress Section */}
+        {/* Stack Proficiency Section */}
         <motion.div
           className="mt-16"
           initial={{ opacity: 0, y: 50 }}
@@ -408,31 +417,23 @@ const Skills: React.FC<SkillsProps> = ({ magicMode }) => {
           transition={{ duration: 0.8, delay: 0.8 }}
         >
           <motion.h3
-            className="text-3xl font-bold mb-8 text-center text-black font-[cursive]"
+            className="text-3xl font-bold mb-8 text-center text-black dark:text-white font-[cursive]"
             animate={magicMode ? { ...stackTitlePos } : {}}
             transition={magicMode ? { duration: 1.5, type: 'spring' } : {}}
             style={{ position: magicMode ? 'relative' : undefined }}
           >
             Stack Proficiency
           </motion.h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {stackProgress.map((stack, index) => (
-              <ParallaxCard key={stack.name} speed={0.1 + index * 0.1} className="p-6">
-                <div className="flex items-center gap-4 mb-4">
-                  <span className="text-2xl">{stack.icon}</span>
-                  <div>
-                    <h4 className="font-semibold">{stack.name}</h4>
-                    <span className="text-slate-600 dark:text-slate-300">{stack.progress}%</span>
-                  </div>
-                </div>
-                <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
-                    initial={{ width: 0 }}
-                    animate={inView ? { width: `${stack.progress}%` } : {}}
-                    transition={{ duration: 1.5, delay: 1.2 + index * 0.1 }}
-                  />
-                </div>
+          <div className="grid grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {stack_progress.map((stack, index) => (
+              <ParallaxCard key={stack.name} speed={0.1 + index * 0.1}>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ type: 'spring', stiffness: 200, damping: 25, delay: 0.9 + index * 0.08 }}
+                >
+                  <ProficiencyCard name={stack.name} icon={stack.icon} progress={stack.progress} />
+                </motion.div>
               </ParallaxCard>
             ))}
           </div>

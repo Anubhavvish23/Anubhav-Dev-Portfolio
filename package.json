@@ -8,8 +8,7 @@
     "build": "vite build",
     "type-check": "tsc --noEmit",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "postinstall": "chmod +x node_modules/.bin/vite"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",
@@ -22,6 +21,7 @@
     "lucide-react": "^0.292.0",
     "react": "^18.3.1",
     "react-dom": "^18.2.0",
+    "react-icons": "^5.5.0",
     "react-intersection-observer": "^9.16.0",
     "react-mouse-follower": "^2.0.3",
     "react-router-dom": "^7.6.3",

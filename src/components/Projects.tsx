@@ -92,6 +92,26 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
     transition: { duration: 12, repeat: Infinity, ease: "linear" }
   } : {};
 
+  const container_variants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.12,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  const card_variants = {
+    hidden: { opacity: 0, y: 40 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { type: 'spring', stiffness: 300, damping: 24 }
+    }
+  };
+
   const projects = [
     {
       title: "Ai Image Generator",
@@ -214,15 +234,40 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
           height: 220px;
           opacity: 1;
         }
+
+        .dark .animated-button {
+          color: #ffffff;
+          box-shadow: 0 0 0 2px #ffffff;
+        }
+
+        .dark .animated-button svg {
+          fill: #ffffff;
+        }
+
+        .dark .animated-button .circle {
+          background-color: #ffffff;
+        }
+
+        .dark .animated-button:hover {
+          color: #000000;
+        }
+
+        .dark .animated-button:hover svg {
+          fill: #000000;
+        }
+
+        .dark .animated-button:active {
+          box-shadow: 0 0 0 4px #ffffff;
+        }
       `}</style>
 
-      <section id="projects" className="py-20 relative bg-white dark:bg-black text-slate-900 dark:text-white">
+      <section id="projects" className="pt-24 pb-24 sm:pt-28 sm:pb-28 relative bg-white dark:bg-black text-slate-900 dark:text-white scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             ref={ref}
             initial={{ opacity: 0, y: 50 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
+            transition={{ type: 'spring', stiffness: 100, damping: 20 }}
             className="text-center mb-16"
           >
             <motion.h2
@@ -249,21 +294,27 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
             style={{ position: magicMode ? 'relative' : undefined }}
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"
           >
-            {projects.map((project, index) => (
+            <motion.div
+              className="contents"
+              variants={container_variants}
+              initial="hidden"
+              animate={inView ? 'show' : 'hidden'}
+            >
+            {projects.map((project) => (
               <motion.div
                 key={project.title}
-                initial={{ opacity: 0, y: 50 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.8, delay: index * 0.2 }}
-                className="group relative bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500"
+                variants={card_variants}
+                className="group relative bg-white dark:bg-black dark:border dark:border-white/10 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-500"
                 whileHover={magicMode ? { 
-                  scale: 1.1, 
-                  rotate: getRandom(-10, 10),
-                  y: -10 
+                  scale: 1.05, 
+                  rotate: getRandom(-5, 5),
+                  y: -8 
                 } : { 
                   scale: 1.02, 
-                  y: -5 
+                  y: -6 
                 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
               >
                 <div className="relative h-48 overflow-hidden">
                   <motion.img
@@ -290,7 +341,7 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
                     {project.tags.map((tag) => (
                       <motion.span
                         key={tag}
-                        className="px-3 py-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded-full"
+                        className="px-3 py-1 bg-slate-100 dark:bg-black dark:border dark:border-white/10 text-slate-700 dark:text-slate-300 text-sm rounded-full"
                         whileHover={magicMode ? { scale: 1.2, rotate: 10 } : { scale: 1.05 }}
                       >
                         {tag}
@@ -325,6 +376,7 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
                 </div>
               </motion.div>
             ))}
+            </motion.div>
           </motion.div>
 
           <motion.div
@@ -332,14 +384,11 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
             style={{ position: 'relative', zIndex: 20 }}
           >
             <motion.button
-              onClick={() => {
-                console.log('View All Projects button clicked - before navigate');
-                navigate('/all-projects', { replace: false });
-                console.log('View All Projects button clicked - after navigate');
-              }}
+              onClick={() => navigate('/all-projects', { replace: false })}
               className="animated-button"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               <svg className="arr-1" viewBox="0 0 24 24">
                 <path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4z"></path>
