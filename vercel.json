@@ -1,6 +1,7 @@
 {
+  "buildCommand": "node node_modules/vite/bin/vite.js build",
   "rewrites": [
-    { "source": "/favicon.ico", "destination": "/favicon.svg" },
-    { "source": "/(.*)", "destination": "/" }
+    {"source": "/favicon.ico", "destination": "/favicon.svg"},
+    {"source": "/(.*)", "destination": "/"}
   ]
 }
