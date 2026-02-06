@@ -2,6 +2,9 @@
   display: flex;
   justify-content: center;
   padding: 24px 0;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
 }
 
 .switch-card {
@@ -302,25 +305,180 @@
   font-size: 12px;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .switch-card-wrapper {
+    padding: 24px 8px;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
   .switch-card {
     width: 100%;
-    max-width: 380px;
-    height: 180px;
+    max-width: 100%;
+    height: 200px;
+    flex-shrink: 1;
+    min-width: 0;
   }
 
   .switch-joy-con {
-    width: 52px;
-    height: 180px;
+    width: 56px;
+    height: 200px;
+  }
+
+  .switch-screen-outline {
+    padding: 10px 14px;
   }
 
   .switch-screen-border {
-    min-width: 200px;
+    min-width: 0;
+    flex: 1 1 180px;
+    border-top-width: 12px;
+    border-bottom-width: 12px;
+    border-left-width: 18px;
+    border-right-width: 18px;
+  }
+
+  .switch-screen {
+    padding: 8px;
   }
 
   .switch-screen .switch-tech-grid {
     grid-template-columns: repeat(5, 1fr);
-    gap: 4px 6px;
+    gap: 4px 8px;
+  }
+
+  .switch-screen .switch-tech-item {
+    font-size: 9px;
+  }
+
+  .switch-screen .switch-tech-item .switch-tech-icon {
+    font-size: 16px;
+  }
+
+  .switch-joystick {
+    height: 22px;
+    width: 22px;
+  }
+
+  .switch-joystick-inner {
+    width: 18px;
+    height: 18px;
+  }
+
+  .switch-joy-con-left .switch-joystick {
+    top: 40px;
+  }
+
+  .switch-joy-con-right .switch-joystick {
+    top: 95px;
+    left: 16px;
+  }
+
+  .switch-joy-con-left .switch-numpad-container {
+    top: 88px;
+    left: 14px;
+    width: 44px;
+    height: 44px;
+    font-size: 9px;
+  }
+
+  .switch-joy-con-right .switch-numpad-container {
+    top: 32px;
+    left: 10px;
+    width: 44px;
+    height: 44px;
+    font-size: 9px;
+  }
+
+  .switch-numpad-button {
+    width: 12px;
+    height: 12px;
+  }
+
+  .switch-numpad-middle {
+    gap: 14px;
+  }
+
+  .switch-joy-con-left .switch-minus {
+    top: 18px;
+    width: 10px;
+    right: 6px;
+  }
+
+  .switch-plus-symbol {
+    width: 10px;
+    height: 10px;
+    top: 14px;
+    left: 8px;
+  }
+
+  .switch-record-button {
+    top: 108px;
+    left: 32px;
+    width: 8px;
+    height: 8px;
+  }
+
+  .switch-record-button-inner {
+    width: 4px;
+    height: 4px;
+  }
+
+  .switch-home-button-border {
+    top: 148px;
+    left: 14px;
+    height: 16px;
+    width: 16px;
+  }
+
+  .switch-home-button {
+    width: 12px;
+    height: 12px;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .switch-card-wrapper {
+    justify-content: center;
+  }
+
+  .switch-card {
+    width: 100%;
+    max-width: min(320px, calc(100vw - 24px));
+    height: 155px;
+    min-width: 0;
+  }
+
+  .switch-joy-con {
+    width: 32px;
+    height: 155px;
+    flex-shrink: 0;
+  }
+
+  .switch-screen-outline {
+    padding: 6px 8px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .switch-screen-border {
+    min-width: 0;
+    flex: 1 1 120px;
+    border-top-width: 10px;
+    border-bottom-width: 10px;
+    border-left-width: 14px;
+    border-right-width: 14px;
+  }
+
+  .switch-screen {
+    padding: 6px;
+  }
+
+  .switch-screen .switch-tech-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2px 6px;
   }
 
   .switch-screen .switch-tech-item {
@@ -329,5 +487,87 @@
 
   .switch-screen .switch-tech-item .switch-tech-icon {
     font-size: 14px;
+  }
+
+  .switch-joystick {
+    height: 20px;
+    width: 20px;
+  }
+
+  .switch-joystick-inner {
+    width: 14px;
+    height: 14px;
+  }
+
+  .switch-joy-con-left .switch-joystick {
+    top: 28px;
+  }
+
+  .switch-joy-con-right .switch-joystick {
+    top: 68px;
+    left: 10px;
+  }
+
+  .switch-joy-con-left .switch-numpad-container {
+    top: 62px;
+    left: 8px;
+    width: 32px;
+    height: 32px;
+    font-size: 8px;
+  }
+
+  .switch-joy-con-right .switch-numpad-container {
+    top: 22px;
+    left: 6px;
+    width: 32px;
+    height: 32px;
+    font-size: 8px;
+  }
+
+  .switch-numpad-button {
+    width: 10px;
+    height: 10px;
+  }
+
+  .switch-numpad-middle {
+    gap: 10px;
+  }
+
+  .switch-joy-con-left .switch-minus {
+    top: 14px;
+    width: 8px;
+    right: 4px;
+  }
+
+  .switch-plus-symbol {
+    width: 8px;
+    height: 8px;
+    top: 12px;
+    left: 6px;
+  }
+
+  .switch-record-button {
+    top: 82px;
+    left: 22px;
+    width: 6px;
+    height: 6px;
+  }
+
+  .switch-record-button-inner {
+    width: 3px;
+    height: 3px;
+  }
+
+  .switch-home-button-border {
+    top: 108px;
+    left: 10px;
+    height: 12px;
+    width: 12px;
+  }
+
+  .switch-home-button {
+    width: 10px;
+    height: 10px;
+    font-size: 8px;
   }
 }

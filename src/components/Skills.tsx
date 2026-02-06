@@ -395,6 +395,7 @@ const Skills: React.FC<SkillsProps> = ({ magicMode }) => {
             animate={magicMode ? { ...techStackPos } : {}}
             transition={magicMode ? { duration: 2, type: 'spring' } : {}}
             style={{ position: magicMode ? 'relative' : undefined }}
+            className="w-full overflow-x-auto overflow-y-visible min-w-0"
           >
             <SwitchCard>
               <div className="switch-tech-grid">
@@ -424,9 +425,9 @@ const Skills: React.FC<SkillsProps> = ({ magicMode }) => {
           >
             Stack Proficiency
           </motion.h3>
-          <div className="grid grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto w-full px-2">
             {stack_progress.map((stack, index) => (
-              <ParallaxCard key={stack.name} speed={0.1 + index * 0.1}>
+              <ParallaxCard key={stack.name} speed={0.1 + index * 0.1} className="w-full">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
