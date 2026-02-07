@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import { useTheme } from '../contexts/ThemeContext';
 import ParallaxSection, { ParallaxCard } from './ParallaxSection';
 import Marquee from './Marquee';
 import SwitchCard from './SwitchCard';
 import ProficiencyCard from './ProficiencyCard';
+import ExpertiseCard from './ExpertiseCard';
 
 const CIcon = () => (
   <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-600 text-white font-bold text-lg">C</span>
@@ -17,6 +19,7 @@ interface SkillsProps {
 const getRandom = (min: number, max: number) => Math.random() * (max - min) + min;
 
 const Skills: React.FC<SkillsProps> = ({ magicMode }) => {
+  const { isDark } = useTheme();
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -333,45 +336,7 @@ const Skills: React.FC<SkillsProps> = ({ magicMode }) => {
               transition={magicMode ? { duration: 2, type: 'spring' } : {}}
               style={{ position: magicMode ? 'relative' : undefined }}
             >
-              <div className="grid grid-cols-2 gap-6">
-                {radialSkills.map((skill, index) => (
-                  <ParallaxCard key={skill.name} speed={0.15 + index * 0.1} className="p-6 text-center">
-                    <div className="relative w-24 h-24 mx-auto mb-4">
-                      <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                        <circle
-                          cx="50"
-                          cy="50"
-                          r="40"
-                          stroke="currentColor"
-                          strokeWidth="8"
-                          fill="none"
-                          className="text-slate-200 dark:text-slate-700"
-                        />
-                        <motion.circle
-                          cx="50"
-                          cy="50"
-                          r="40"
-                          stroke="currentColor"
-                          strokeWidth="8"
-                          fill="none"
-                          strokeLinecap="round"
-                          className="text-black"
-                          initial={{ strokeDasharray: 0, strokeDashoffset: 0 }}
-                          animate={inView ? { 
-                            strokeDasharray: `${2 * Math.PI * 40}`,
-                            strokeDashoffset: `${2 * Math.PI * 40 * (1 - skill.percentage / 100)}`
-                          } : {}}
-                          transition={{ duration: 2, delay: 1 + index * 0.2 }}
-                        />
-                      </svg>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-lg font-bold">{skill.percentage}%</span>
-                      </div>
-                    </div>
-                    <h4 className="font-semibold">{skill.name}</h4>
-                  </ParallaxCard>
-                ))}
-              </div>
+              <ExpertiseCard items={radialSkills} is_dark={isDark} />
             </motion.div>
           </motion.div>
         </div>

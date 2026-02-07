@@ -2,15 +2,18 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Code, Heart, Zap } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 import ChaosText from './ChaosText';
 import ChaosCard from './ChaosCard';
 import BrowserCard from './BrowserCard';
+import AboutCard from './AboutCard';
 
 interface AboutProps {
   magicMode: boolean;
 }
 
 const About: React.FC<AboutProps> = ({ magicMode }) => {
+  const { isDark } = useTheme();
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -99,46 +102,27 @@ const About: React.FC<AboutProps> = ({ magicMode }) => {
             initial={{ opacity: 0, x: 50 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="space-y-6"
+            className="space-y-6 relative"
           >
-            {cards.map((card, index) => (
-              <ChaosCard
+            <svg style={{ position: 'absolute', width: 0, height: 0 }}>
+              <filter id="about-unopaq" y="-100%" height="300%" x="-100%" width="300%">
+                <feColorMatrix values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 5 0" />
+              </filter>
+              <filter id="about-unopaq2" y="-100%" height="300%" x="-100%" width="300%">
+                <feColorMatrix values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 10 0" />
+              </filter>
+              <filter id="about-unopaq3" y="-100%" height="300%" x="-100%" width="300%">
+                <feColorMatrix values="1 0 0 1 0 0 1 0 1 0 0 0 1 1 0 0 0 0 2 0" />
+              </filter>
+            </svg>
+            {cards.map((card) => (
+              <AboutCard
                 key={card.title}
-                magicMode={magicMode}
-                className="glass rounded-xl p-6 hover:glass-strong transition-all duration-300 cursor-pointer group"
-                animationType="card"
-              >
-                <div className="flex items-start gap-4">
-                  <motion.div
-                    className="text-blue-400 group-hover:text-purple-400 transition-colors duration-300"
-                    whileHover={{ 
-                      scale: 1.2,
-                      rotate: 360,
-                    }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    {card.icon}
-                  </motion.div>
-                  <div>
-                    <ChaosText 
-                      magicMode={magicMode} 
-                      element="h4" 
-                      className="text-xl font-semibold text-slate-900 dark:text-white mb-2"
-                      animationType="text"
-                    >
-                      {card.title}
-                    </ChaosText>
-                    <ChaosText 
-                      magicMode={magicMode} 
-                      element="p" 
-                      className="text-slate-600 dark:text-slate-300"
-                      animationType="text"
-                    >
-                      {card.description}
-                    </ChaosText>
-                  </div>
-                </div>
-              </ChaosCard>
+                title={card.title}
+                description={card.description}
+                icon={card.icon}
+                is_dark={isDark}
+              />
             ))}
           </motion.div>
         </div>

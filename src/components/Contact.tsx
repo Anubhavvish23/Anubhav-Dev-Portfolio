@@ -271,7 +271,7 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
                     onChange={handleInputChange}
                     onFocus={() => setFocusedField('name')}
                     onBlur={() => setFocusedField(null)}
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-3 text-slate-900 dark:text-white placeholder-transparent focus:outline-none focus:border-blue-500 transition-all duration-300"
+                    className="w-full bg-slate-50 dark:bg-[#0f0f0f] border border-slate-200 dark:border-[#262626] rounded-lg px-4 py-3 text-slate-900 dark:text-white placeholder-transparent focus:outline-none focus:border-blue-500 transition-all duration-300"
                     placeholder="Your Name"
                     required
                     whileHover={magicMode ? { scale: 1.02, rotate: 1 } : {}}
@@ -279,7 +279,7 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
                   <motion.label
                     className={`absolute left-4 text-slate-500 pointer-events-none transition-all duration-300 ${
                       focusedField === 'name' || formData.name
-                        ? '-top-2 text-sm bg-white dark:bg-slate-800 px-2 text-blue-500'
+                        ? '-top-2 text-sm bg-white dark:bg-[#0a0a0a] px-2 text-blue-500'
                         : 'top-3'
                     }`}
                     animate={{
@@ -300,7 +300,7 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
                     onChange={handleInputChange}
                     onFocus={() => setFocusedField('email')}
                     onBlur={() => setFocusedField(null)}
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-3 text-slate-900 dark:text-white placeholder-transparent focus:outline-none focus:border-blue-500 transition-all duration-300"
+                    className="w-full bg-slate-50 dark:bg-[#0f0f0f] border border-slate-200 dark:border-[#262626] rounded-lg px-4 py-3 text-slate-900 dark:text-white placeholder-transparent focus:outline-none focus:border-blue-500 transition-all duration-300"
                     placeholder="Your Email"
                     required
                     whileHover={magicMode ? { scale: 1.02, rotate: 1 } : {}}
@@ -308,7 +308,7 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
                   <motion.label
                     className={`absolute left-4 text-slate-500 pointer-events-none transition-all duration-300 ${
                       focusedField === 'email' || formData.email
-                        ? '-top-2 text-sm bg-white dark:bg-slate-800 px-2 text-blue-500'
+                        ? '-top-2 text-sm bg-white dark:bg-[#0a0a0a] px-2 text-blue-500'
                         : 'top-3'
                     }`}
                     animate={{
@@ -329,7 +329,7 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
                     onChange={handleInputChange}
                     onFocus={() => setFocusedField('subject')}
                     onBlur={() => setFocusedField(null)}
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-3 text-slate-900 dark:text-white placeholder-transparent focus:outline-none focus:border-blue-500 transition-all duration-300"
+                    className="w-full bg-slate-50 dark:bg-[#0f0f0f] border border-slate-200 dark:border-[#262626] rounded-lg px-4 py-3 text-slate-900 dark:text-white placeholder-transparent focus:outline-none focus:border-blue-500 transition-all duration-300"
                     placeholder="Subject"
                     required
                     whileHover={magicMode ? { scale: 1.02, rotate: 1 } : {}}
@@ -337,7 +337,7 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
                   <motion.label
                     className={`absolute left-4 text-slate-500 pointer-events-none transition-all duration-300 ${
                       focusedField === 'subject' || formData.subject
-                        ? '-top-2 text-sm bg-white dark:bg-slate-800 px-2 text-blue-500'
+                        ? '-top-2 text-sm bg-white dark:bg-[#0a0a0a] px-2 text-blue-500'
                         : 'top-3'
                     }`}
                     animate={{
@@ -358,7 +358,7 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
                     onFocus={() => setFocusedField('message')}
                     onBlur={() => setFocusedField(null)}
                     rows={5}
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-3 text-slate-900 dark:text-white placeholder-transparent focus:outline-none focus:border-blue-500 transition-all duration-300 resize-none"
+                    className="w-full bg-slate-50 dark:bg-[#0f0f0f] border border-slate-200 dark:border-[#262626] rounded-lg px-4 py-3 text-slate-900 dark:text-white placeholder-transparent focus:outline-none focus:border-blue-500 transition-all duration-300 resize-none"
                     placeholder="Your Message"
                     required
                     whileHover={magicMode ? { scale: 1.02, rotate: 1 } : {}}
@@ -366,7 +366,7 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
                   <motion.label
                     className={`absolute left-4 text-slate-500 pointer-events-none transition-all duration-300 ${
                       focusedField === 'message' || formData.message
-                        ? '-top-2 text-sm bg-white dark:bg-slate-800 px-2 text-blue-500'
+                        ? '-top-2 text-sm bg-white dark:bg-[#0a0a0a] px-2 text-blue-500'
                         : 'top-3'
                     }`}
                     animate={{
@@ -381,7 +381,7 @@ const Contact: React.FC<ContactProps> = ({ magicMode = false }) => {
                 {/* Submit Button */}
                 <motion.button
                   type="submit"
-                  className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-3 px-6 rounded-lg font-semibold hover:bg-slate-700 dark:hover:bg-slate-200 transition-colors duration-300 flex items-center justify-center gap-2"
+                  className="w-full bg-slate-900 dark:bg-white text-white dark:text-black py-3 px-6 rounded-lg font-semibold hover:bg-slate-700 dark:hover:bg-slate-200 transition-colors duration-300 flex items-center justify-center gap-2"
                   whileHover={magicMode ? { scale: 1.1, rotate: 5 } : { scale: 1.02 }}
                   whileTap={magicMode ? { scale: 0.9, rotate: -5 } : { scale: 0.98 }}
                 >

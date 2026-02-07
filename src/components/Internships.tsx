@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Briefcase, Calendar, MapPin, ExternalLink, Rocket, Code, Bot, Users, TrendingUp, Award, Star, Zap, ArrowRight, Sparkles, Target } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
+import { Briefcase, Calendar, MapPin, Rocket, Code, Bot, Users, TrendingUp, Sparkles, ArrowRight } from 'lucide-react';
 import ParallaxSection, { ParallaxCard } from './ParallaxSection';
+import ExperienceCard from './ExperienceCard';
 
 interface InternshipsProps {
   magicMode?: boolean;
@@ -11,6 +13,7 @@ interface InternshipsProps {
 const getRandom = (min: number, max: number) => Math.random() * (max - min) + min;
 
 const Internships: React.FC<InternshipsProps> = ({ magicMode }) => {
+  const { isDark } = useTheme();
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -333,62 +336,16 @@ const Internships: React.FC<InternshipsProps> = ({ magicMode }) => {
                   {/* Content card */}
                   <div className="w-full lg:w-5/12 lg:ml-8 lg:mr-8">
                     <ParallaxCard speed={0.1 + index * 0.05}>
-                      <motion.div
-                        className={`p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 ${internship.bgColor} ${internship.borderColor} hover:shadow-lg transition-all duration-300 ${internship.glowColor}`}
-                        whileHover={{ 
-                          scale: 1.01, 
-                          y: -2
-                        }}
-                      >
-                        <div className="flex items-start justify-between mb-3 sm:mb-4">
-                          <div className="flex items-center space-x-2 sm:space-x-3">
-                            <motion.div
-                              className={`p-2 sm:p-2 rounded-lg sm:rounded-xl bg-gradient-to-r ${internship.color} text-white`}
-                              whileHover={{ rotate: 180, scale: 1.05 }}
-                              transition={{ duration: 0.4 }}
-                            >
-                              {internship.icon}
-                            </motion.div>
-                            <div>
-                              <h3 className="text-base sm:text-lg font-bold text-black dark:text-white">{internship.company}</h3>
-                              <p className="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300">{internship.role}</p>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-1 sm:space-x-2 bg-white dark:bg-black dark:border dark:border-white/10 px-2 sm:px-3 py-1 rounded-full">
-                            <Calendar className="w-3 h-3 text-slate-500" />
-                            <span className="text-xs font-medium text-slate-600 dark:text-slate-300">{internship.year}</span>
-                          </div>
-                        </div>
-                        
-                        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-3 sm:mb-4 leading-relaxed">
-                          {internship.description}
-                        </p>
-                        
-                        <div className="mb-3 sm:mb-4">
-                          <div className="flex flex-wrap gap-1 sm:gap-2 mb-2 sm:mb-3">
-                            {internship.skills.map((skill, skillIndex) => (
-                              <motion.span
-                                key={skill}
-                                className="px-2 py-1 bg-white dark:bg-black dark:border dark:border-white/10 rounded-full text-xs font-medium text-slate-700 dark:text-slate-200"
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={inView ? { opacity: 1, scale: 1 } : {}}
-                                transition={{ duration: 0.3, delay: 0.6 + index * 0.15 + skillIndex * 0.05 }}
-                                whileHover={{ scale: 1.05 }}
-                              >
-                                {skill}
-                              </motion.span>
-                            ))}
-                          </div>
-                        </div>
-                        
-                        <div className="bg-white dark:bg-black dark:border dark:border-white/10 rounded-lg p-2 sm:p-3">
-                          <div className="flex items-center space-x-2 mb-1 sm:mb-2">
-                            <Target className="w-3 h-3 sm:w-4 sm:h-4 text-green-500" />
-                            <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">Key Impact</span>
-                          </div>
-                          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300">{internship.impact}</p>
-                        </div>
-                      </motion.div>
+                      <ExperienceCard
+                        company={internship.company}
+                        role={internship.role}
+                        year={internship.year}
+                        icon={internship.icon}
+                        description={internship.description}
+                        skills={internship.skills}
+                        impact={internship.impact}
+                        is_dark={isDark}
+                      />
                     </ParallaxCard>
                   </div>
                 </motion.div>
