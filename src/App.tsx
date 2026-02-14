@@ -19,7 +19,6 @@ import Scene3D from './components/Scene3D';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import AllProjects from './components/AllProjects';
 import NotFound404 from './components/NotFound404';
-import ScrollEndHearts from './components/ScrollEndHearts';
 import { ParallaxBackground, FloatingElements } from './components/ParallaxSection';
 import SocialMediaVisitor from './components/SocialMediaVisitor';
 import MagicToggle from './components/MagicToggle';
@@ -62,7 +61,6 @@ const AppContent = () => {
               <Internships magicMode={magicMode} />
               <Achievements magicMode={magicMode} />
               <Contact magicMode={magicMode} />
-              {isHomePage && <ScrollEndHearts />}
             </ParallaxBackground>
           </>
         } />
