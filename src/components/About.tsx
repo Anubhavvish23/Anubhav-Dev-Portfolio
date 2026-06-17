@@ -93,7 +93,7 @@ const About: React.FC<AboutProps> = ({ magicMode }) => {
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="w-full max-w-[400px] flex flex-col gap-4 h-full min-h-[330px]"
+              className="w-full max-w-[400px] flex flex-col gap-4"
             >
             {cards.map((card) => (
               <AboutCard
