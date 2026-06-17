@@ -1,26 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Trophy, Star, Zap, Code, Rocket, Users, BookOpen, Briefcase, Crown, Medal, Activity, Globe, Bot, Brain, Laptop2, UserCheck, Sparkles, ArrowRight, Calendar, MapPin, TrendingUp } from 'lucide-react';
+import { Trophy, Star, Zap, Code, Rocket, Users, BookOpen, Briefcase, Crown, Medal, Activity, Globe, Bot, Brain, Laptop2, UserCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import Achievement3DCard from './Achievement3DCard';
-import StatCard from './StatCard';
-
-type FloatingIconProps = {
-  children: React.ReactNode;
-  delay?: number;
-};
-
-const FloatingIcon = ({ children, delay = 0 }: FloatingIconProps) => (
-    <div 
-      className="absolute animate-bounce opacity-20"
-      style={{
-        animationDelay: `${delay}s`,
-        animationDuration: '3s'
-      }}
-    >
-      {children}
-    </div>
-  );
 
 interface AchievementsProps {
   magicMode?: boolean;
@@ -29,110 +11,68 @@ interface AchievementsProps {
 const getRandom = (min: number, max: number) => Math.random() * (max - min) + min;
 
 const Achievements: React.FC<AchievementsProps> = ({ magicMode }) => {
-  const [inView, setInView] = React.useState(false);
-  const [activeYear, setActiveYear] = React.useState(0);
-  const [ref, inViewRef] = useInView({
+  const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
-  const [statsRef, statsInView] = useInView({
-    triggerOnce: true,
-    threshold: 0.2,
-  });
-  const stats_visible = Boolean(statsInView);
-
-  // Enhanced Chaotic Magic Mode state
-  const [titlePos, setTitlePos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
-  const [descPos, setDescPos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
-  const [timelinePos, setTimelinePos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
-  const [statsPos, setStatsPos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
-
-  React.useEffect(() => {
-    const timer = setTimeout(() => setInView(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
-
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveYear(prev => (prev + 1) % 3);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
+  const [title_pos, set_title_pos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
+  const [desc_pos, set_desc_pos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
+  const [timeline_pos, set_timeline_pos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
 
   useEffect(() => {
     if (!magicMode) {
-      setTitlePos({ x: 0, y: 0, rotate: 0, scale: 1 });
-      setDescPos({ x: 0, y: 0, rotate: 0, scale: 1 });
-      setTimelinePos({ x: 0, y: 0, rotate: 0, scale: 1 });
-      setStatsPos({ x: 0, y: 0, rotate: 0, scale: 1 });
+      set_title_pos({ x: 0, y: 0, rotate: 0, scale: 1 });
+      set_desc_pos({ x: 0, y: 0, rotate: 0, scale: 1 });
+      set_timeline_pos({ x: 0, y: 0, rotate: 0, scale: 1 });
       return;
     }
 
     let timers: number[] = [];
 
-    // Optimized chaotic animations with reduced frequency
-    const chaosTitle = () => {
-      setTitlePos({
+    const chaos_title = () => {
+      set_title_pos({
         x: getRandom(-50, 50),
         y: getRandom(-25, 25),
         rotate: getRandom(-20, 20),
         scale: getRandom(0.9, 1.1)
       });
-      timers.push(window.setTimeout(chaosTitle, getRandom(5000, 8000)));
+      timers.push(window.setTimeout(chaos_title, getRandom(5000, 8000)));
     };
 
-    const fallDesc = () => {
-      setDescPos({
+    const fall_desc = () => {
+      set_desc_pos({
         x: getRandom(-35, 35),
         y: getRandom(-15, 15),
         rotate: getRandom(-10, 10),
         scale: getRandom(0.95, 1.05)
       });
-      timers.push(window.setTimeout(fallDesc, getRandom(6000, 9000)));
+      timers.push(window.setTimeout(fall_desc, getRandom(6000, 9000)));
     };
 
-    const spinTimeline = () => {
-      setTimelinePos({
+    const spin_timeline = () => {
+      set_timeline_pos({
         x: getRandom(-30, 30),
         y: getRandom(-10, 10),
         rotate: getRandom(-15, 15),
         scale: getRandom(0.95, 1.05)
       });
-      timers.push(window.setTimeout(spinTimeline, getRandom(7000, 10000)));
+      timers.push(window.setTimeout(spin_timeline, getRandom(7000, 10000)));
     };
 
-    const bounceStats = () => {
-      setStatsPos({
-        x: getRandom(-25, 25),
-        y: getRandom(-8, 8),
-        rotate: getRandom(-10, 10),
-        scale: getRandom(0.98, 1.02)
-      });
-      timers.push(window.setTimeout(bounceStats, getRandom(8000, 11000)));
-    };
-
-    // Start animations with staggered delays
-    timers.push(window.setTimeout(chaosTitle, 1000));
-    timers.push(window.setTimeout(fallDesc, 2000));
-    timers.push(window.setTimeout(spinTimeline, 3000));
-    timers.push(window.setTimeout(bounceStats, 4000));
+    timers.push(window.setTimeout(chaos_title, 1000));
+    timers.push(window.setTimeout(fall_desc, 2000));
+    timers.push(window.setTimeout(spin_timeline, 3000));
 
     return () => {
       timers.forEach(timer => clearTimeout(timer));
     };
   }, [magicMode]);
 
-  // Continuous rotation for extra chaos
-  const continuousRotate = magicMode ? {
-    rotate: [0, 360],
-    transition: { duration: 12, repeat: Infinity, ease: "linear" }
-  } : {};
-
-  const achievementsTimeline = [
+  const achievements_timeline = [
     {
       year: '2023',
       theme: 'Foundation',
-      icon: <Star className="w-6 h-6" />,
+      icon: <Star className="w-5 h-5 sm:w-6 sm:h-6" />,
       items: [
         { icon: <Trophy className="w-5 h-5" />, text: 'Won my first hackathon (Robotics/IoT).' },
         { icon: <Zap className="w-5 h-5" />, text: 'Built a line-following robot using Raspberry Pi.' },
@@ -143,7 +83,7 @@ const Achievements: React.FC<AchievementsProps> = ({ magicMode }) => {
     {
       year: '2024',
       theme: 'Breakthrough',
-      icon: <Rocket className="w-6 h-6" />,
+      icon: <Rocket className="w-5 h-5 sm:w-6 sm:h-6" />,
       items: [
         { icon: <Globe className="w-5 h-5" />, text: 'Represented my college at Delhi Startup Mahakumbh, addressed by PM Modi and top founders.' },
         { icon: <Trophy className="w-5 h-5" />, text: 'Won a robotics hackathon.' },
@@ -157,7 +97,7 @@ const Achievements: React.FC<AchievementsProps> = ({ magicMode }) => {
     {
       year: '2025',
       theme: 'Leadership',
-      icon: <Crown className="w-6 h-6" />,
+      icon: <Crown className="w-5 h-5 sm:w-6 sm:h-6" />,
       items: [
         { icon: <Briefcase className="w-5 h-5" />, text: 'Interned as a Product Management Intern at Gully Group.' },
         { icon: <Users className="w-5 h-5" />, text: 'Conducted a Hackathon at my college as lead organizer.' },
@@ -170,73 +110,27 @@ const Achievements: React.FC<AchievementsProps> = ({ magicMode }) => {
     }
   ];
 
-  const stats_config = [
-    { target: 4, suffix: "", label: "Total Internships", icon: <Briefcase className="w-6 h-6" /> },
-    { target: 3, suffix: "", label: "Years Experience", icon: <Calendar className="w-6 h-6" /> },
-    { target: 3, suffix: "", label: "Companies", icon: <MapPin className="w-6 h-6" /> },
-    { target: 12, suffix: "+", label: "Skills Gained", icon: <TrendingUp className="w-6 h-6" /> }
-  ];
-
   return (
-    <section id="achievements" className="pt-24 pb-24 sm:pt-28 sm:pb-28 bg-white dark:bg-black text-slate-900 dark:text-white relative overflow-x-hidden min-h-screen scroll-mt-20">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <FloatingIcon delay={0}>
-          <div className="top-20 left-20 relative">
-            <Code className="w-8 h-8 text-gray-300" />
-          </div>
-        </FloatingIcon>
-        <FloatingIcon delay={1}>
-          <div className="top-40 right-32 relative">
-            <Rocket className="w-10 h-10 text-gray-300" />
-          </div>
-        </FloatingIcon>
-        <FloatingIcon delay={2}>
-          <div className="bottom-32 left-1/4 relative">
-            <Trophy className="w-7 h-7 text-gray-300" />
-          </div>
-        </FloatingIcon>
-        <FloatingIcon delay={1.5}>
-          <div className="bottom-40 right-20 relative">
-            <Brain className="w-9 h-9 text-gray-300" />
-          </div>
-        </FloatingIcon>
-        
-        {/* Geometric shapes */}
-        <div className="absolute top-16 left-16 w-32 h-32 border-2 border-gray-200 rounded-full animate-spin opacity-30" style={{animationDuration: '20s'}}></div>
-        <div className="absolute bottom-16 right-16 w-48 h-48 border-2 border-gray-200 rounded-full animate-spin opacity-20" style={{animationDuration: '25s', animationDirection: 'reverse'}}></div>
-        <div className="absolute top-1/2 left-8 w-24 h-24 border-2 border-gray-200 rotate-45 animate-pulse opacity-20"></div>
-      </div>
-
+    <section id="achievements" className="pt-24 pb-24 sm:pt-28 sm:pb-28 bg-white dark:bg-black text-slate-900 dark:text-white relative overflow-x-hidden scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header */}
         <motion.div
           ref={ref}
-          initial={{ opacity: 0, y: 50 }}
-          animate={inViewRef ? { opacity: 1, y: 0 } : {}}
-          transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-          className="text-center mb-20"
+          initial={{ opacity: 0, y: 30 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16 sm:mb-20"
         >
           <motion.h2
-            className="title text-6xl md:text-8xl mb-6 text-slate-900 dark:text-white"
-            animate={magicMode ? { ...titlePos } : {}}
+            className="title text-4xl font-bold mb-4 sm:mb-6 text-black dark:text-white"
+            animate={magicMode ? { ...title_pos } : {}}
             transition={magicMode ? { duration: 1.5, type: 'spring' } : {}}
             style={{ position: magicMode ? 'relative' : undefined }}
           >
             Achievements
           </motion.h2>
-          <div className="flex justify-center items-center gap-4 mb-8">
-            <div className="w-12 h-1 bg-slate-900 dark:bg-white animate-pulse"></div>
-            <motion.div
-              animate={magicMode ? continuousRotate : {}}
-            >
-              <Sparkles className="w-6 h-6 text-slate-900 dark:text-white animate-spin" style={{animationDuration: '3s'}} />
-            </motion.div>
-            <div className="w-12 h-1 bg-slate-900 dark:bg-white animate-pulse"></div>
-          </div>
           <motion.p
-            className="text-xl text-slate-600 dark:text-slate-300 max-w-4xl mx-auto leading-relaxed font-medium"
-            animate={magicMode ? { ...descPos } : {}}
+            className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed px-4"
+            animate={magicMode ? { ...desc_pos } : {}}
             transition={magicMode ? { duration: 2, type: 'spring' } : {}}
             style={{ position: magicMode ? 'relative' : undefined }}
           >
@@ -244,77 +138,40 @@ const Achievements: React.FC<AchievementsProps> = ({ magicMode }) => {
           </motion.p>
         </motion.div>
 
-        {/* Timeline with 3D Cards */}
-        <motion.div 
-          className="relative mb-24"
-          animate={magicMode ? { ...timelinePos } : {}}
-          transition={magicMode ? { duration: 2, type: 'spring' } : {}}
-          style={{ position: magicMode ? 'relative' : undefined }}
-        >
-          <div className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-slate-900 dark:bg-white h-full rounded-full hidden md:block">
-            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-slate-900 dark:bg-white rounded-full animate-ping" />
-            <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-slate-400 dark:bg-slate-600 rounded-full animate-pulse" />
-            <div className="absolute top-2/3 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-slate-400 dark:bg-slate-600 rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
-            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-slate-900 dark:bg-white rounded-full animate-ping" style={{ animationDelay: '2s' }} />
-          </div>
-
-          <div className="space-y-16">
-            {achievementsTimeline.map((year_data, yearIndex) => (
-              <motion.div
-                key={year_data.year}
-                className={`flex flex-col md:flex-row items-center ${yearIndex % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
-                initial={{ opacity: 0, x: yearIndex % 2 === 0 ? -50 : 50 }}
-                animate={inViewRef ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.8, delay: yearIndex * 0.2 }}
-              >
-                <div className={`w-full md:w-1/2 ${yearIndex % 2 === 0 ? 'md:pr-8 md:flex md:justify-end' : 'md:pl-8 md:flex md:justify-start'} mb-8 md:mb-0`}>
-                  <Achievement3DCard
-                    year={year_data.year}
-                    theme={year_data.theme}
-                    items={year_data.items}
-                    index={yearIndex}
-                    in_view={!!inViewRef}
-                  />
-                </div>
-
-                <div className="w-16 h-16 bg-slate-900 dark:bg-white rounded-full flex items-center justify-center relative z-10 shadow-lg flex-shrink-0">
-                  <motion.div
-                    className="text-white dark:text-slate-900"
-                    whileHover={magicMode ? { scale: 1.3, rotate: 360 } : { scale: 1.2 }}
-                    animate={magicMode ? continuousRotate : {}}
-                  >
-                    {year_data.icon}
-                  </motion.div>
-                </div>
-
-                <div className="hidden md:block w-1/2" />
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Stats Section */}
         <motion.div
-          ref={statsRef}
-          animate={magicMode ? { ...statsPos } : {}}
+          className="mb-16 sm:mb-20 max-w-5xl mx-auto"
+          animate={magicMode ? { ...timeline_pos } : {}}
           transition={magicMode ? { duration: 2, type: 'spring' } : {}}
           style={{ position: magicMode ? 'relative' : undefined }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
-          {stats_config.map((stat, index) => (
-            <StatCard
-              key={stat.label}
-              target={stat.target}
-              suffix={stat.suffix}
-              label={stat.label}
-              icon={stat.icon}
-              index={index}
-              in_view={stats_visible}
-              magic_mode={magicMode}
-              continuous_rotate={continuousRotate}
-              get_random={getRandom}
-            />
-          ))}
+         
+
+          <div className="relative">
+            <div className="hidden lg:block absolute left-1/2 -translate-x-1/2 w-px h-full bg-black dark:bg-white rounded-full" />
+
+            <div className="space-y-8 lg:space-y-10">
+              {achievements_timeline.map((year_data, year_index) => (
+                <motion.div
+                  key={year_data.year}
+                  className="lg:grid lg:grid-cols-2 lg:gap-x-10 items-center"
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.6, delay: 0.2 + year_index * 0.12 }}
+                >
+                  <div className={`w-full max-w-[400px] mx-auto ${year_index % 2 === 0 ? 'lg:col-start-2' : 'lg:col-start-1'}`}>
+                    <Achievement3DCard
+                      year={year_data.year}
+                      theme={year_data.theme}
+                      icon={year_data.icon}
+                      items={year_data.items}
+                      index={year_index}
+                      in_view={inView}
+                    />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>

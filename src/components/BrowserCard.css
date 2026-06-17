@@ -1,11 +1,13 @@
 .browser-card {
   display: flex;
+  width: 100%;
 }
 
 .browser-card__browser {
   width: 100%;
   max-width: 100%;
-  min-height: 420px;
+  min-height: 330px;
+  height: 100%;
   flex: 1;
   background: white;
   border-radius: 7px;
@@ -22,7 +24,7 @@
 
 .browser-card__tabs-head {
   background-color: #000000;
-  height: 40px;
+  height: 36px;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -119,9 +121,9 @@
 
 .browser-card__head-browser {
   width: 100%;
-  height: 40px;
+  height: 36px;
   background-color: #000000;
-  padding: 7px;
+  padding: 6px;
   display: flex;
   border-radius: 0;
   gap: 5px;
@@ -186,10 +188,10 @@
 
 .browser-card__content {
   flex: 1;
-  padding: 20px;
+  padding: 18px;
   color: #333;
-  font-size: 18px;
-  line-height: 1.7;
+  font-size: 15px;
+  line-height: 1.65;
   overflow-y: auto;
 }
 

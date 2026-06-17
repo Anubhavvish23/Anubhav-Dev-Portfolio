@@ -22,8 +22,8 @@
 
 .social-btns-card {
   position: relative;
-  width: 90px;
-  height: 90px;
+  width: 72px;
+  height: 72px;
   outline: none;
   border: none;
   background: white;
@@ -47,8 +47,8 @@
 }
 
 .social-btns-card .social-btns-icon {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
   display: block;
   position: absolute;
@@ -58,7 +58,7 @@
 }
 
 .social-btns-card.card1 {
-  border-radius: 90px 5px 5px 5px;
+  border-radius: 72px 5px 5px 5px;
 }
 
 .social-btns-card.card1:hover {
@@ -66,7 +66,7 @@
 }
 
 .social-btns-card.card2 {
-  border-radius: 5px 90px 5px 5px;
+  border-radius: 5px 72px 5px 5px;
 }
 
 .social-btns-card.card2:hover {
@@ -74,7 +74,7 @@
 }
 
 .social-btns-card.card3 {
-  border-radius: 5px 5px 5px 90px;
+  border-radius: 5px 5px 5px 72px;
 }
 
 .social-btns-card.card3:hover {
@@ -86,7 +86,7 @@
 }
 
 .social-btns-card.card4 {
-  border-radius: 5px 5px 90px 5px;
+  border-radius: 5px 5px 72px 5px;
 }
 
 .social-btns-card.card4:hover {

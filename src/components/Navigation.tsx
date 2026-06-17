@@ -62,6 +62,10 @@ const Navigation = () => {
                   if (item.isExternal) {
                     e.preventDefault();
                     navigate(item.href);
+                  } else if (item.href.startsWith('#')) {
+                    window.setTimeout(() => {
+                      (document.activeElement as HTMLElement | null)?.blur?.();
+                    }, 300);
                   }
                 }}
                 className="relative text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white transition-colors duration-300"
@@ -114,6 +118,10 @@ const Navigation = () => {
                     if (item.isExternal) {
                       e.preventDefault();
                       navigate(item.href);
+                    } else if (item.href.startsWith('#')) {
+                      window.setTimeout(() => {
+                        (document.activeElement as HTMLElement | null)?.blur?.();
+                      }, 300);
                     }
                   }}
                   className="block text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white transition-colors duration-300"

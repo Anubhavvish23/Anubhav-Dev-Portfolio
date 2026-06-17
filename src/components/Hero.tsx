@@ -215,6 +215,7 @@ const Hero: React.FC<HeroProps> = ({ magicMode }) => {
                   wrapper="span"
                   speed={50}
                   repeat={Infinity}
+                  cursor={false}
                 />
               </motion.div>
 

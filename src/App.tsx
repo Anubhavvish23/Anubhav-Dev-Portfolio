@@ -14,7 +14,6 @@ import CustomCursor from './components/CustomCursor';
 import ChaosCursor from './components/ChaosCursor';
 import MagicParticles from './components/MagicParticles';
 import LoadingScreen from './components/LoadingScreen';
-import ScrollProgress from './components/ScrollProgress';
 import Scene3D from './components/Scene3D';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import AllProjects from './components/AllProjects';
@@ -36,6 +35,9 @@ const AppContent = () => {
       const el = document.getElementById(id);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        window.setTimeout(() => {
+          (document.activeElement as HTMLElement | null)?.blur?.();
+        }, 300);
       }
     }
   }, [location]);
@@ -46,7 +48,6 @@ const AppContent = () => {
       <CustomCursor />
       <ChaosCursor magicMode={magicMode} />
       <MagicParticles magicMode={magicMode} />
-      <ScrollProgress />
       <Navigation />
       
       <Routes>
@@ -119,7 +120,6 @@ function App() {
               }}
             />
           </div>
-
           {/* Magic Mode Sparkle Cursor */}
           {/* To disable sparkle cursor for performance, comment out the next line */}
           <MouseFollower />

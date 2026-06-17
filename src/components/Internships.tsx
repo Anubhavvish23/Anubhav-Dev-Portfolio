@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { useTheme } from '../contexts/ThemeContext';
-import { Briefcase, Calendar, MapPin, Rocket, Code, Bot, Users, TrendingUp, Sparkles, ArrowRight } from 'lucide-react';
+import { Briefcase, Calendar, MapPin, Code, Users, TrendingUp, Sparkles, ArrowRight, Building2, Laptop2 } from 'lucide-react';
 import ParallaxSection, { ParallaxCard } from './ParallaxSection';
 import ExperienceCard from './ExperienceCard';
 
@@ -90,40 +90,10 @@ const Internships: React.FC<InternshipsProps> = ({ magicMode }) => {
 
   const internships = [
     {
-      company: "ComedKares",
-      role: "Rapid Prototyping",
-      year: "2022",
-      icon: <Rocket className="w-5 h-5 sm:w-6 sm:h-6" />,
-      color: "from-blue-500 to-cyan-500",
-      bgColor: "bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20",
-      borderColor: "border-blue-200 dark:border-blue-800",
-      glowColor: "shadow-blue-500/20",
-      description: "Specialized in rapid prototyping techniques and innovative product development methodologies.",
-      skills: ["Prototyping", "Innovation", "Product Development"],
-      impact: "Reduced development time by 40%"
-    },
-    {
-      company: "ComedKares",
-      role: "Robotics",
-      year: "2023",
-      icon: <Bot className="w-5 h-5 sm:w-6 sm:h-6" />,
-      color: "from-green-500 to-emerald-500",
-      bgColor: "bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20",
-      borderColor: "border-green-200 dark:border-green-800",
-      glowColor: "shadow-green-500/20",
-      description: "Focused on robotics engineering, automation systems, and intelligent machine learning applications.",
-      skills: ["Robotics", "Automation", "Machine Learning"],
-      impact: "Improved efficiency by 60%"
-    },
-    {
       company: "Rc Labs",
       role: "Software Developer Intern",
       year: "2023",
       icon: <Code className="w-5 h-5 sm:w-6 sm:h-6" />,
-      color: "from-purple-500 to-pink-500",
-      bgColor: "bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20",
-      borderColor: "border-purple-200 dark:border-purple-800",
-      glowColor: "shadow-purple-500/20",
       description: "Full-stack development experience with modern technologies and agile development practices.",
       skills: ["Full-Stack Development", "Agile", "Modern Technologies"],
       impact: "Delivered 5+ production applications"
@@ -133,63 +103,41 @@ const Internships: React.FC<InternshipsProps> = ({ magicMode }) => {
       role: "Project Management Intern",
       year: "2024",
       icon: <Users className="w-5 h-5 sm:w-6 sm:h-6" />,
-      color: "from-orange-500 to-red-500",
-      bgColor: "bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20",
-      borderColor: "border-orange-200 dark:border-orange-800",
-      glowColor: "shadow-orange-500/20",
       description: "Led cross-functional teams, managed project timelines, and delivered successful project outcomes.",
       skills: ["Project Management", "Team Leadership", "Strategic Planning"],
       impact: "Managed 3+ concurrent projects"
+    },
+    {
+      company: "Notarc",
+      role: "Operations Lead & Co-Founder",
+      year: "2024 – 2025",
+      icon: <Building2 className="w-5 h-5 sm:w-6 sm:h-6" />,
+      description: "Co-founded the company as operations lead and software developer, managing drone workshops and the business website.",
+      skills: ["Operations", "Software Development", "Business Management"],
+      impact: "Led workshops and built the company web presence"
+    },
+    {
+      company: "Inunity",
+      role: "Software Developer & Program Mentor",
+      year: "2025 – Present",
+      icon: <Laptop2 className="w-5 h-5 sm:w-6 sm:h-6" />,
+      description: "Handled cross-platform projects, published apps, and built dashboards while mentoring program participants.",
+      skills: ["Cross-Platform Development", "App Publishing", "Mentorship"],
+      impact: "Shipped apps and dashboards across platforms"
     }
   ];
 
   const stats = [
-    { label: "Total Internships", value: "4", icon: <Briefcase className="w-4 h-4 sm:w-5 sm:h-5" />, color: "from-blue-500 to-cyan-500" },
-    { label: "Years Experience", value: "3", icon: <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />, color: "from-green-500 to-emerald-500" },
-    { label: "Companies", value: "3", icon: <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />, color: "from-purple-500 to-pink-500" },
-    { label: "Skills Gained", value: "12+", icon: <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />, color: "from-orange-500 to-red-500" }
+    { label: "Total Internships", value: "4", icon: <Briefcase className="w-5 h-5" /> },
+    { label: "Years Experience", value: "3+", icon: <Calendar className="w-5 h-5" /> },
+    { label: "Companies", value: "4", icon: <MapPin className="w-5 h-5" /> },
+    { label: "Skills Gained", value: "14+", icon: <TrendingUp className="w-5 h-5" /> }
   ];
 
-  // Optimized magic sparkles - reduced count and complexity
-  const MagicInternshipSparkles = () => (
-    <>
-      {magicMode && (
-        <div className="pointer-events-none absolute inset-0 z-0">
-          {[...Array(8)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute rounded-full shadow-lg"
-              style={{
-                width: 4 + Math.random() * 6,
-                height: 4 + Math.random() * 6,
-                left: `${20 + Math.random() * 60}%`,
-                top: `${30 + Math.random() * 40}%`,
-                background: `linear-gradient(45deg, ${['#3b82f6', '#8b5cf6', '#06b6d4'][Math.floor(Math.random() * 3)]}30, ${['#ec4899', '#f59e0b', '#10b981'][Math.floor(Math.random() * 3)]}30)`,
-                filter: 'blur(1px)'
-              }}
-              animate={{
-                y: [0, -20 + Math.random() * 40, 0],
-                opacity: [0.3, 0.8, 0.3],
-                scale: [1, 1.2, 1]
-              }}
-              transition={{
-                duration: 3 + Math.random() * 2,
-                repeat: Infinity,
-                delay: Math.random() * 2,
-                ease: 'easeInOut'
-              }}
-            />
-          ))}
-        </div>
-      )}
-    </>
-  );
-
-  // Optimized floating background elements - reduced complexity
   const FloatingBackgroundElements = () => (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       <motion.div
-        className="absolute top-20 left-10 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-r from-blue-400/5 to-purple-400/5 rounded-full blur-2xl"
+        className="absolute top-20 left-10 w-24 h-24 sm:w-32 sm:h-32 bg-slate-200/30 rounded-full blur-2xl"
         animate={{
           x: [0, 30, 0],
           y: [0, -20, 0],
@@ -202,7 +150,7 @@ const Internships: React.FC<InternshipsProps> = ({ magicMode }) => {
         }}
       />
       <motion.div
-        className="absolute bottom-20 right-10 w-32 h-32 sm:w-40 sm:h-40 bg-gradient-to-r from-green-400/5 to-cyan-400/5 rounded-full blur-2xl"
+        className="absolute bottom-20 right-10 w-32 h-32 sm:w-40 sm:h-40 bg-slate-200/30 rounded-full blur-2xl"
         animate={{
           x: [0, -30, 0],
           y: [0, 30, 0],
@@ -219,12 +167,8 @@ const Internships: React.FC<InternshipsProps> = ({ magicMode }) => {
 
   return (
     <section id="internships" className={`pt-24 pb-24 sm:pt-28 sm:pb-28 relative bg-white dark:bg-black text-slate-900 dark:text-white overflow-x-hidden scroll-mt-20 ${magicMode ? 'scale-x-[-1]' : ''}`}>
-      {/* Floating background elements */}
       <FloatingBackgroundElements />
-      
-      {/* Magic sparkles for internships */}
-      <MagicInternshipSparkles />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <ParallaxSection speed={0.2}>
           <motion.div
@@ -235,7 +179,7 @@ const Internships: React.FC<InternshipsProps> = ({ magicMode }) => {
             className="text-center mb-16 sm:mb-20"
           >
             <motion.h2
-              className="title text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 text-black dark:text-white"
+              className="title text-4xl font-bold mb-4 sm:mb-6 text-black dark:text-white"
               animate={magicMode ? { ...titlePos } : {}}
               transition={magicMode ? { duration: 1, type: 'spring' } : {}}
               style={{ position: magicMode ? 'relative' : undefined }}
@@ -253,88 +197,63 @@ const Internships: React.FC<InternshipsProps> = ({ magicMode }) => {
           </motion.div>
         </ParallaxSection>
 
-        {/* Optimized Stats Section */}
         <motion.div
-          className="mb-16 sm:mb-20"
+          className="mb-24 sm:mb-32 max-w-4xl mx-auto pb-8 border-b border-slate-200/80 dark:border-slate-800/80"
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 justify-items-center">
             {stats.map((stat, index) => (
-              <ParallaxCard key={stat.label} speed={0.05 + index * 0.05}>
-                <motion.div
-                  className="p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-300"
-                  whileHover={{ 
-                    scale: 1.02, 
-                    y: -5
-                  }}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-                >
-                  <div className="flex flex-col items-center space-y-3 sm:space-y-4">
-                    <motion.div
-                      className={`p-3 sm:p-4 bg-gradient-to-r ${stat.color} rounded-xl sm:rounded-2xl text-white shadow-md`}
-                      whileHover={{ rotate: 180, scale: 1.05 }}
-                      transition={{ duration: 0.4 }}
-                    >
-                      {stat.icon}
-                    </motion.div>
-                    <div className="text-center">
-                      <motion.div 
-                        className="text-2xl sm:text-3xl lg:text-4xl font-bold text-black dark:text-white mb-1 sm:mb-2"
-                        initial={{ scale: 0 }}
-                        animate={inView ? { scale: 1 } : {}}
-                        transition={{ duration: 0.4, delay: 0.4 + index * 0.1, type: "spring" }}
-                      >
-                        {stat.value}
-                      </motion.div>
-                      <div className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300">{stat.label}</div>
-                    </div>
-                  </div>
-                </motion.div>
-              </ParallaxCard>
+              <motion.div
+                key={stat.label}
+                className="w-full max-w-[200px] min-h-[148px] bg-white border border-slate-200 rounded-xl px-4 py-5 flex flex-col items-center justify-center text-center shadow-sm"
+                initial={{ opacity: 0, y: 16 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.45, delay: 0.25 + index * 0.08 }}
+              >
+                <div className="w-10 h-10 rounded-lg bg-slate-100 text-slate-900 flex items-center justify-center mb-3">
+                  {stat.icon}
+                </div>
+                <p className="text-3xl font-bold text-slate-900 tabular-nums leading-none mb-2">
+                  {stat.value}
+                </p>
+                <p className="text-xs sm:text-sm text-slate-600 leading-snug">
+                  {stat.label}
+                </p>
+              </motion.div>
             ))}
           </div>
         </motion.div>
 
-        {/* Responsive Timeline Section */}
         <motion.div
-          className="mb-16"
+          className="mb-16 pt-8 sm:pt-12"
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
+          <h3 className="title text-4xl font-bold text-center mb-10 sm:mb-12 text-slate-900 dark:text-white max-w-4xl mx-auto">
+            My Journey
+          </h3>
+
           <motion.div
             animate={magicMode ? { ...timelinePos } : {}}
             transition={magicMode ? { duration: 1.5, type: 'spring' } : {}}
             style={{ position: magicMode ? 'relative' : undefined }}
             className="relative"
           >
-            {/* Timeline line - hidden on mobile */}
-            <div className="hidden lg:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-blue-500 via-purple-500 to-orange-500 rounded-full opacity-30" />
-            
-            <div className="space-y-8 lg:space-y-12">
+            <div className="hidden lg:block absolute left-1/2 -translate-x-1/2 w-px h-full bg-black dark:bg-white rounded-full" />
+
+            <div className="space-y-6 lg:space-y-8">
               {internships.map((internship, index) => (
                 <motion.div
                   key={`${internship.company}-${internship.role}`}
-                  className={`lg:flex lg:items-center ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}
-                  initial={{ opacity: 0, x: 0, y: 30 }}
-                  animate={inView ? { opacity: 1, x: 0, y: 0 } : {}}
-                  transition={{ duration: 0.6, delay: 0.5 + index * 0.15 }}
+                  className="lg:grid lg:grid-cols-2 lg:gap-x-10 items-center"
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.6, delay: 0.5 + index * 0.12 }}
                 >
-                  {/* Timeline dot - hidden on mobile */}
-                  <div className="hidden lg:block relative z-10">
-                    <motion.div
-                      className={`w-4 h-4 sm:w-6 sm:h-6 bg-gradient-to-r ${internship.color} rounded-full shadow-md border-2 border-white dark:border-gray-900`}
-                      whileHover={{ scale: 1.2 }}
-                      transition={{ duration: 0.2 }}
-                    />
-                  </div>
-                  
-                  {/* Content card */}
-                  <div className="w-full lg:w-5/12 lg:ml-8 lg:mr-8">
+                  <div className={`w-full max-w-[360px] mx-auto ${index % 2 === 0 ? 'lg:col-start-2' : 'lg:col-start-1'}`}>
                     <ParallaxCard speed={0.1 + index * 0.05}>
                       <ExperienceCard
                         company={internship.company}
@@ -345,6 +264,7 @@ const Internships: React.FC<InternshipsProps> = ({ magicMode }) => {
                         skills={internship.skills}
                         impact={internship.impact}
                         is_dark={isDark}
+                        compact
                       />
                     </ParallaxCard>
                   </div>

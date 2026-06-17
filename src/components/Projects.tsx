@@ -150,10 +150,9 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
           position: relative;
           display: flex;
           align-items: center;
-          gap: 4px;
+          justify-content: center;
           padding: 16px 36px;
-          border: 4px solid;
-          border-color: transparent;
+          border: 4px solid transparent;
           font-size: 16px;
           background-color: inherit;
           border-radius: 100px;
@@ -164,22 +163,6 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
           overflow: hidden;
           transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
           z-index: 10;
-        }
-
-        .animated-button svg {
-          position: absolute;
-          width: 24px;
-          fill: #000000;
-          z-index: 9;
-          transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-
-        .animated-button .arr-1 {
-          right: 16px;
-        }
-
-        .animated-button .arr-2 {
-          left: -25%;
         }
 
         .animated-button .circle {
@@ -198,7 +181,6 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
         .animated-button .text {
           position: relative;
           z-index: 1;
-          transform: translateX(-12px);
           transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
@@ -206,22 +188,6 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
           box-shadow: 0 0 0 12px transparent;
           color: #ffffff;
           border-radius: 12px;
-        }
-
-        .animated-button:hover .arr-1 {
-          right: -25%;
-        }
-
-        .animated-button:hover .arr-2 {
-          left: 16px;
-        }
-
-        .animated-button:hover .text {
-          transform: translateX(12px);
-        }
-
-        .animated-button:hover svg {
-          fill: #ffffff;
         }
 
         .animated-button:active {
@@ -240,20 +206,12 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
           box-shadow: 0 0 0 2px #ffffff;
         }
 
-        .dark .animated-button svg {
-          fill: #ffffff;
-        }
-
         .dark .animated-button .circle {
           background-color: #ffffff;
         }
 
         .dark .animated-button:hover {
           color: #000000;
-        }
-
-        .dark .animated-button:hover svg {
-          fill: #000000;
         }
 
         .dark .animated-button:active {
@@ -271,7 +229,7 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
             className="text-center mb-16"
           >
             <motion.h2
-              className="title text-5xl font-bold text-slate-900 dark:text-white"
+              className="title text-4xl font-bold text-slate-900 dark:text-white"
               animate={magicMode ? { ...titlePos } : {}}
               transition={magicMode ? { duration: 1.5, type: 'spring' } : {}}
               style={{ position: magicMode ? 'relative' : undefined }}
@@ -288,23 +246,24 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
             </motion.p>
           </motion.div>
 
-          <motion.div
-            animate={magicMode ? { ...projectsContainerPos } : {}}
-            transition={magicMode ? { duration: 2, type: 'spring' } : {}}
-            style={{ position: magicMode ? 'relative' : undefined }}
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"
-          >
+          <div className="max-w-5xl mx-auto">
             <motion.div
-              className="contents"
-              variants={container_variants}
-              initial="hidden"
-              animate={inView ? 'show' : 'hidden'}
+              animate={magicMode ? { ...projectsContainerPos } : {}}
+              transition={magicMode ? { duration: 2, type: 'spring' } : {}}
+              style={{ position: magicMode ? 'relative' : undefined }}
+              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 justify-items-start"
             >
-            {projects.map((project) => (
               <motion.div
-                key={project.title}
-                variants={card_variants}
-                className="group relative bg-white dark:bg-black dark:border dark:border-white/10 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-500"
+                className="contents"
+                variants={container_variants}
+                initial="hidden"
+                animate={inView ? 'show' : 'hidden'}
+              >
+              {projects.map((project) => (
+                <motion.div
+                  key={project.title}
+                  variants={card_variants}
+                  className="group relative w-full max-w-[340px] h-full flex flex-col bg-white border border-slate-200 dark:bg-white dark:border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-500"
                 whileHover={magicMode ? { 
                   scale: 1.05, 
                   rotate: getRandom(-5, 5),
@@ -316,7 +275,7 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 25 }}
               >
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative h-44 flex-shrink-0 overflow-hidden">
                   <motion.img
                     src={project.image}
                     alt={project.title}
@@ -326,14 +285,14 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
                   <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-500" />
                 </div>
                 
-                <div className="p-6">
+                <div className="p-5 flex flex-col flex-1 min-h-[220px]">
                   <motion.h3 
-                    className="text-xl font-bold mb-2 text-slate-900 dark:text-white"
+                    className="text-lg font-bold mb-2 text-slate-900"
                     whileHover={magicMode ? { scale: 1.1, rotate: 5 } : {}}
                   >
                     {project.title}
                   </motion.h3>
-                  <p className="text-slate-600 dark:text-slate-300 mb-4 line-clamp-3">
+                  <p className="text-sm text-slate-600 mb-4 line-clamp-3 flex-1">
                     {project.description}
                   </p>
                   
@@ -341,7 +300,7 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
                     {project.tags.map((tag) => (
                       <motion.span
                         key={tag}
-                        className="px-3 py-1 bg-slate-100 dark:bg-black dark:border dark:border-white/10 text-slate-700 dark:text-slate-300 text-sm rounded-full"
+                        className="px-2.5 py-1 bg-slate-100 text-slate-700 text-xs rounded-full"
                         whileHover={magicMode ? { scale: 1.2, rotate: 10 } : { scale: 1.05 }}
                       >
                         {tag}
@@ -349,12 +308,12 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
                     ))}
                   </div>
                   
-                  <div className="flex gap-3">
+                  <div className="flex gap-3 mt-auto">
                     <motion.a
                       href={project.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg hover:bg-slate-700 dark:hover:bg-slate-200 transition-colors"
+                      className="flex items-center gap-2 px-3 py-2 bg-slate-900 text-white text-sm rounded-lg hover:bg-slate-700 transition-colors"
                       whileHover={magicMode ? { scale: 1.2, rotate: 15 } : { scale: 1.05 }}
                       whileTap={magicMode ? { scale: 0.8, rotate: -15 } : { scale: 0.95 }}
                     >
@@ -365,7 +324,7 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
                       href={project.demo}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
                       whileHover={magicMode ? { scale: 1.2, rotate: 15 } : { scale: 1.05 }}
                       whileTap={magicMode ? { scale: 0.8, rotate: -15 } : { scale: 0.95 }}
                     >
@@ -379,27 +338,22 @@ const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
             </motion.div>
           </motion.div>
 
-          <motion.div
-            className="text-center"
-            style={{ position: 'relative', zIndex: 20 }}
-          >
-            <motion.button
-              onClick={() => navigate('/all-projects', { replace: false })}
-              className="animated-button"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            <motion.div
+              className="flex justify-center"
+              style={{ position: 'relative', zIndex: 20 }}
             >
-              <svg className="arr-1" viewBox="0 0 24 24">
-                <path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4z"></path>
-              </svg>
-              <svg className="arr-2" viewBox="0 0 24 24">
-                <path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4z"></path>
-              </svg>
-              <span className="circle"></span>
-              <span className="text">View All Projects</span>
-            </motion.button>
-          </motion.div>
+              <motion.button
+                onClick={() => navigate('/all-projects', { replace: false })}
+                className="animated-button"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+              >
+                <span className="circle"></span>
+                <span className="text">View All Projects</span>
+              </motion.button>
+            </motion.div>
+          </div>
         </div>
       </section>
     </>

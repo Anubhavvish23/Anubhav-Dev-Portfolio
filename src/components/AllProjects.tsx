@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, Github, Eye, Search, X } from 'lucide-react';
+import { Github, Eye, Search, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const projects = [
@@ -131,48 +131,13 @@ const AllProjects: React.FC<AllProjectsProps> = ({ magicMode }) => {
   };
 
   return (
-    <section className="relative z-10 py-20 min-h-screen text-white pb-16 dark">
-      <div className="all-projects-pattern" />
+    <section className="relative z-10 pt-24 pb-24 sm:pt-28 sm:pb-28 min-h-screen bg-white dark:bg-black text-slate-900 dark:text-white scroll-mt-20">
       <style>{`
-        .all-projects-pattern {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          --color: #1e1e1e;
-          background-color: #0c0c0c;
-          background-image: linear-gradient(
-              0deg,
-              transparent 24%,
-              var(--color) 25%,
-              var(--color) 26%,
-              transparent 27%,
-              transparent 74%,
-              var(--color) 75%,
-              var(--color) 76%,
-              transparent 77%,
-              transparent
-            ),
-            linear-gradient(
-              90deg,
-              transparent 24%,
-              var(--color) 25%,
-              var(--color) 26%,
-              transparent 27%,
-              transparent 74%,
-              var(--color) 75%,
-              var(--color) 76%,
-              transparent 77%,
-              transparent
-            );
-          background-size: 55px 55px;
-          z-index: -1;
-        }
         button.custom-button {
           --button_radius: 0.75em;
           --button_color: #1e293b;
-          --button_outline_color: #ffffff;
-          font-size: 17px;
+          --button_outline_color: #1e293b;
+          font-size: 15px;
           font-weight: bold;
           border: none;
           cursor: pointer;
@@ -185,8 +150,8 @@ const AllProjects: React.FC<AllProjectsProps> = ({ magicMode }) => {
           border: 2px solid var(--button_outline_color);
           border-radius: var(--button_radius);
           padding: 0.75em 1.5em;
-          background: var(--button_color);
-          color: var(--button_outline_color);
+          background: #ffffff;
+          color: var(--button_color);
           transform: translateY(-0.2em);
           transition: transform 0.1s ease;
         }
@@ -196,24 +161,21 @@ const AllProjects: React.FC<AllProjectsProps> = ({ magicMode }) => {
         .custom-button:active .button_top {
           transform: translateY(0);
         }
-
+        .dark button.custom-button {
+          --button_outline_color: #ffffff;
+        }
+        .dark .custom-button .button_top {
+          background: #0a0a0a;
+          color: #ffffff;
+        }
       `}</style>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-4xl font-bold text-white">All Projects</h2>
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <h2 className="title text-4xl font-bold text-slate-900 dark:text-white text-center sm:text-left">All Projects</h2>
           <button 
-            onClick={() => {
-              console.log('Back to Home button clicked');
-           
-              try {
-                navigate('/#internships');
-              } catch (error) {
-                console.error('Navigation error:', error);
-                window.location.href = '/#internships';
-              }
-            }} 
-            className="custom-button"
+            onClick={() => navigate('/#projects')}
+            className="custom-button mx-auto sm:mx-0"
           >
             <span className="button_top">Back to Home</span>
           </button>
@@ -229,7 +191,7 @@ const AllProjects: React.FC<AllProjectsProps> = ({ magicMode }) => {
               placeholder="Search projects by title, description, or technology..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-black dark:border-white/20 dark:text-white"
+              className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-slate-900 dark:bg-black dark:border-white/20 dark:text-white"
             />
             {searchQuery && (
               <button
@@ -302,7 +264,7 @@ const AllProjects: React.FC<AllProjectsProps> = ({ magicMode }) => {
           {filteredProjects.length > 0 ? (
             <motion.div
               key={`${selectedTags.join(',')}-${searchQuery}-${showFeatured}`}
-              className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
@@ -311,89 +273,70 @@ const AllProjects: React.FC<AllProjectsProps> = ({ magicMode }) => {
               {filteredProjects.map((project, index) => (
                 <motion.div
                   key={`${project.title}-${index}`}
-                  className="glass rounded-2xl overflow-hidden group cursor-pointer"
+                  className="w-full max-w-[340px] h-full flex flex-col bg-white border border-slate-200 dark:bg-white dark:border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 group"
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: index * 0.1 }}
-                  whileHover={magicMode ? { scale: 1.2, y: -10 } : { scale: 1.02, y: -10 }}
+                  whileHover={magicMode ? { scale: 1.05, y: -6 } : { scale: 1.02, y: -4 }}
                   layout
                 >
-                  <div className="relative overflow-hidden">
+                  <div className="relative h-44 flex-shrink-0 overflow-hidden">
                     <motion.img
                       src={project.image}
                       alt={project.title}
-                      className="w-full h-48 object-cover"
-                      whileHover={magicMode ? { scale: 1.2 } : { scale: 1.1 }}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       transition={{ duration: 0.5 }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
                     {project.featured && (
                       <div className="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-                        ⭐ Featured
+                        Featured
                       </div>
                     )}
-                    <motion.div
-                      className="absolute inset-0 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      initial={{ scale: 0 }}
-                      whileHover={magicMode ? { scale: 1.2 } : { scale: 1 }}
-                    >
-                      <motion.a
-                        href={project.demo}
-                        className="p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-blue-500/50 transition-colors"
-                        whileHover={magicMode ? { scale: 1.2, rotate: 360 } : { scale: 1.1, rotate: 360 }}
-                        whileTap={magicMode ? { scale: 0.95, rotate: -5 } : { scale: 0.95 }}
-                      >
-                        <Eye size={20} />
-                      </motion.a>
-                      <motion.a
-                        href={project.github}
-                        className="p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-purple-500/50 transition-colors"
-                        whileHover={magicMode ? { scale: 1.2, rotate: 360 } : { scale: 1.1, rotate: 360 }}
-                        whileTap={magicMode ? { scale: 0.95, rotate: -5 } : { scale: 0.95 }}
-                      >
-                        <Github size={20} />
-                      </motion.a>
-                    </motion.div>
                   </div>
-                  <div className="p-6">
+                  <div className="p-5 flex flex-col flex-1 min-h-[220px]">
                     <motion.h3
-                      className="text-xl font-bold text-slate-900 mb-3 group-hover:gradient-text transition-all duration-300"
-                      whileHover={magicMode ? { x: 5 } : { x: 5 }}
+                      className="text-lg font-bold text-slate-900 mb-2"
                     >
                       {project.title}
                     </motion.h3>
-                    <p className="text-slate-600 mb-4 leading-relaxed">
+                    <p className="text-sm text-slate-600 mb-4 line-clamp-3 flex-1 leading-relaxed">
                       {project.description}
                     </p>
                     <div className="flex flex-wrap gap-2 mb-4">
                       {project.tags.map((tag, tagIndex) => (
                         <motion.span
                           key={tag}
-                          className="px-3 py-1 bg-slate-100 rounded-full text-sm text-slate-600"
+                          className="px-2.5 py-1 bg-slate-100 rounded-full text-xs text-slate-700"
                           initial={{ opacity: 0, scale: 0 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: 0.5 + tagIndex * 0.1 }}
-                          whileHover={magicMode ? { scale: 1.2, backgroundColor: 'rgba(59, 130, 246, 0.1)' } : { scale: 1.1, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
                         >
                           {tag}
                         </motion.span>
                       ))}
                     </div>
-                    <div className="flex gap-3">
-                      <motion.a
-                        href={project.demo}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg text-blue-700 hover:text-blue-800 transition-all duration-300 text-sm font-medium"
-                        whileHover={magicMode ? { scale: 1.2, x: 5 } : { scale: 1.05, x: 5 }}
-                        whileTap={magicMode ? { scale: 0.95, x: -5 } : { scale: 0.95 }}
-                      >
-                        <ExternalLink size={16} />
-                        Live Demo
-                      </motion.a>
+                    <div className="flex gap-3 mt-auto">
+                      {project.demo && (
+                        <motion.a
+                          href={project.demo}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <Eye size={16} />
+                          Demo
+                        </motion.a>
+                      )}
                       <motion.a
                         href={project.github}
-                        className="flex items-center gap-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 rounded-lg text-purple-700 hover:text-purple-800 transition-all duration-300 text-sm font-medium"
-                        whileHover={magicMode ? { scale: 1.2, x: 5 } : { scale: 1.05, x: 5 }}
-                        whileTap={magicMode ? { scale: 0.95, x: -5 } : { scale: 0.95 }}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-3 py-2 bg-slate-900 text-white text-sm rounded-lg hover:bg-slate-700 transition-colors"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                       >
                         <Github size={16} />
                         Code
