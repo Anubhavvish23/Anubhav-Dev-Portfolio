@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { MagicModeProvider, useMagicMode } from './contexts/MagicModeContext';
@@ -14,7 +14,6 @@ import CustomCursor from './components/CustomCursor';
 import ChaosCursor from './components/ChaosCursor';
 import MagicParticles from './components/MagicParticles';
 import LoadingScreen from './components/LoadingScreen';
-import Scene3D from './components/Scene3D';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import AllProjects from './components/AllProjects';
 import NotFound404 from './components/NotFound404';
@@ -22,12 +21,15 @@ import { ParallaxBackground, FloatingElements } from './components/ParallaxSecti
 import SocialMediaVisitor from './components/SocialMediaVisitor';
 import MagicToggle from './components/MagicToggle';
 import { MouseFollower } from 'react-mouse-follower';
+import { usePerformanceProfile } from './hooks/usePerformanceProfile';
 import './App.css';
+
+const Scene3D = React.lazy(() => import('./components/Scene3D'));
 
 const AppContent = () => {
   const location = useLocation();
-  const isHomePage = location.pathname === '/';
   const { magicMode } = useMagicMode();
+  const { enable_parallax } = usePerformanceProfile();
 
   useEffect(() => {
     if (location.hash) {
@@ -52,7 +54,7 @@ const AppContent = () => {
       
       <Routes>
         <Route path="/" element={
-          <>
+          enable_parallax ? (
             <ParallaxBackground>
               <FloatingElements />
               <Hero magicMode={magicMode} />
@@ -63,7 +65,17 @@ const AppContent = () => {
               <Achievements magicMode={magicMode} />
               <Contact magicMode={magicMode} />
             </ParallaxBackground>
-          </>
+          ) : (
+            <>
+              <Hero magicMode={magicMode} />
+              <About magicMode={magicMode} />
+              <Skills magicMode={magicMode} />
+              <Projects magicMode={magicMode} />
+              <Internships magicMode={magicMode} />
+              <Achievements magicMode={magicMode} />
+              <Contact magicMode={magicMode} />
+            </>
+          )
         } />
         <Route path="/all-projects" element={<AllProjects magicMode={magicMode} />} />
         <Route path="*" element={<NotFound404 />} />
@@ -74,55 +86,87 @@ const AppContent = () => {
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const [show_3d_scene, set_show_3d_scene] = useState(false);
+  const {
+    enable_3d_scene,
+    enable_mouse_follower,
+    enable_heavy_effects,
+    prefers_reduced_motion,
+  } = usePerformanceProfile();
 
   const handleLoadingComplete = () => {
     setIsLoading(false);
   };
 
+  useEffect(() => {
+    if (isLoading || !enable_3d_scene) {
+      set_show_3d_scene(false);
+      return;
+    }
+
+    let cancelled = false;
+    const mount_3d = () => {
+      if (!cancelled) set_show_3d_scene(true);
+    };
+
+    const idle_id = window.requestIdleCallback?.(mount_3d, { timeout: 1200 });
+    const timeout_id = idle_id === undefined ? window.setTimeout(mount_3d, 800) : undefined;
+
+    return () => {
+      cancelled = true;
+      if (idle_id !== undefined) window.cancelIdleCallback(idle_id);
+      if (timeout_id !== undefined) window.clearTimeout(timeout_id);
+    };
+  }, [isLoading, enable_3d_scene]);
+
   return (
     <ThemeProvider>
       <MagicModeProvider>
-        <div className={`relative min-h-[100dvh] min-h-screen bg-white dark:bg-black text-slate-900 dark:text-white overflow-x-hidden overflow-y-auto transition-colors duration-500`}>
+        <div className={`relative min-h-[100dvh] min-h-screen bg-white dark:bg-black text-slate-900 dark:text-white overflow-x-hidden overflow-y-auto transition-colors duration-500 ${prefers_reduced_motion ? 'reduce-motion' : ''}`}>
           {/* Magic Mode Toggle */}
           <MagicToggle />
 
           {/* Loading Screen */}
           {isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
 
-          {/* 3D Background Scene */}
-          {!isLoading && <Scene3D />}
+          {show_3d_scene && (
+            <Suspense fallback={null}>
+              <Scene3D />
+            </Suspense>
+          )}
 
-          {/* Animated Background */}
           <div className="fixed inset-0 z-0">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-50/20 via-white/40 to-white dark:bg-black"></div>
-            <motion.div
-              className="absolute top-1/4 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-blue-100/20 dark:bg-black/20 rounded-full blur-2xl"
-              animate={{
-                x: [0, 50, 0],
-                y: [0, -50, 0],
-              }}
-              transition={{
-                duration: 30,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-            />
-            <motion.div
-              className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-purple-100/20 dark:bg-black/20 rounded-full blur-2xl"
-              animate={{
-                x: [0, -50, 0],
-                y: [0, 50, 0],
-              }}
-              transition={{
-                duration: 35,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-            />
+            {enable_heavy_effects && (
+              <>
+                <motion.div
+                  className="absolute top-1/4 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-blue-100/20 dark:bg-black/20 rounded-full blur-2xl"
+                  animate={{
+                    x: [0, 50, 0],
+                    y: [0, -50, 0],
+                  }}
+                  transition={{
+                    duration: 30,
+                    repeat: Infinity,
+                    ease: "linear"
+                  }}
+                />
+                <motion.div
+                  className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-purple-100/20 dark:bg-black/20 rounded-full blur-2xl"
+                  animate={{
+                    x: [0, -50, 0],
+                    y: [0, 50, 0],
+                  }}
+                  transition={{
+                    duration: 35,
+                    repeat: Infinity,
+                    ease: "linear"
+                  }}
+                />
+              </>
+            )}
           </div>
-          {/* Magic Mode Sparkle Cursor */}
-          {/* To disable sparkle cursor for performance, comment out the next line */}
-          <MouseFollower />
+          {enable_mouse_follower && <MouseFollower />}
 
           {/* UI Components */}
           {!isLoading && (

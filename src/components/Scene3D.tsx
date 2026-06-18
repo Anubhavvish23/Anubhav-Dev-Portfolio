@@ -87,7 +87,11 @@ const FloatingGeometry = () => {
 const Scene3D = () => {
   return (
     <div className="fixed inset-0 z-0 pointer-events-none">
-      <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
+      <Canvas
+        camera={{ position: [0, 0, 5], fov: 75 }}
+        dpr={[1, 1.5]}
+        gl={{ antialias: false, powerPreference: 'high-performance' }}
+      >
         <FloatingGeometry />
       </Canvas>
     </div>

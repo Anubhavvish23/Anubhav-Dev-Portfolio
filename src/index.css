@@ -277,6 +277,15 @@
 
 /* Accessibility: Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
+  .reduce-motion *,
+  .reduce-motion *::before,
+  .reduce-motion *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
   .magic-mode-active .chaos-float,
   .magic-mode-active .chaos-rotate,
   .magic-mode-active .chaos-skew,
