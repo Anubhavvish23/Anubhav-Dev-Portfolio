@@ -148,6 +148,41 @@ const Internships: React.FC<Internships_props> = () => {
   });
 
   useEffect(() => {
+    if (!is_narrow) return;
+
+    const section = section_ref.current;
+    if (!section) return;
+
+    mode_ref.current = 'free';
+    set_is_locked(false);
+    document.documentElement.classList.remove('journey-map-locked');
+    get_lenis()?.start?.();
+
+    const update_from_scroll = () => {
+      const rect = section.getBoundingClientRect();
+      const scrollable = Math.max(1, section.offsetHeight - window.innerHeight);
+      const next = Math.min(1, Math.max(0, -rect.top / scrollable));
+      progress_ref.current = next;
+      progress.set(next);
+    };
+
+    update_from_scroll();
+    window.addEventListener('scroll', update_from_scroll, { passive: true });
+    window.addEventListener('resize', update_from_scroll);
+
+    const lenis = get_lenis();
+    lenis?.on?.('scroll', update_from_scroll);
+
+    return () => {
+      window.removeEventListener('scroll', update_from_scroll);
+      window.removeEventListener('resize', update_from_scroll);
+      lenis?.off?.('scroll', update_from_scroll);
+    };
+  }, [is_narrow, progress]);
+
+  useEffect(() => {
+    if (is_narrow) return;
+
     const section = section_ref.current;
     if (!section) return;
 
@@ -295,8 +330,9 @@ const Internships: React.FC<Internships_props> = () => {
       document.documentElement.classList.remove('journey-map-locked');
       get_lenis_control()?.start();
       mode_ref.current = 'free';
+      set_is_locked(false);
     };
-  }, [progress, path_length]);
+  }, [is_narrow, progress, path_length]);
 
   const active_stop = useMemo(
     () => journey_stops.find((stop) => stop.id === active_id) ?? journey_stops[0],
@@ -395,7 +431,7 @@ const Internships: React.FC<Internships_props> = () => {
     <section
       ref={section_ref}
       id="internships"
-      className={`journey-map relative bg-[#050505] text-white scroll-mt-20 ${is_locked ? 'is-locked' : ''}`}
+      className={`journey-map relative bg-[#050505] text-white scroll-mt-20 ${is_locked ? 'is-locked' : ''} ${is_narrow ? 'is-mobile-scrub' : ''}`}
     >
       <div className="journey-map__panel-shell">
         <div className="editorial-guides pointer-events-none absolute inset-0" aria-hidden>
@@ -415,9 +451,11 @@ const Internships: React.FC<Internships_props> = () => {
             My Voyage
           </Reveal>
           <Reveal className="journey-map__intro" delay={motion_stagger * 2} y={24}>
-            {is_locked
-              ? 'Scroll to travel the path — finish every stop before continuing.'
-              : 'Scroll to enter the map.'}
+            {is_narrow
+              ? 'Keep scrolling to travel the path.'
+              : is_locked
+                ? 'Scroll to travel the path — finish every stop before continuing.'
+                : 'Scroll to enter the map.'}
           </Reveal>
         </div>
 

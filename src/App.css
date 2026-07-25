@@ -798,7 +798,7 @@ body.magic-cursor-on .mouse-follower-root {
 
 @media (min-width: 768px) {
   .hero-editorial__name {
-    margin-left: 27%;
+    margin-left: 31%;
     padding-bottom: 0.15em;
   }
 
@@ -1104,6 +1104,17 @@ body.magic-cursor-on .mouse-follower-root {
 
 .projects-hs {
   --projects-muted: rgba(255, 255, 255, 0.48);
+  height: 100dvh;
+  height: 100vh;
+}
+
+.projects-hs.is-mobile-scrub {
+  height: 340vh;
+}
+
+.projects-hs.is-mobile-scrub .projects-hs__sticky {
+  position: sticky;
+  top: 0;
   height: 100dvh;
   height: 100vh;
 }
@@ -2071,6 +2082,19 @@ html.projects-hs-locked {
   overflow: visible;
 }
 
+.journey-map.is-mobile-scrub {
+  height: 300vh;
+  overflow: visible;
+}
+
+.journey-map.is-mobile-scrub .journey-map__panel-shell {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  height: 100vh;
+  overflow: hidden;
+}
+
 .journey-map.is-locked {
   z-index: 60;
 }
@@ -2693,9 +2717,16 @@ html.journey-map-locked {
 
 @media (max-width: 767px) {
   .journey-map {
+    margin-top: -8vh;
+  }
+
+  .journey-map:not(.is-mobile-scrub) {
     height: 100dvh;
     height: 100vh;
-    margin-top: -8vh;
+  }
+
+  .journey-map.is-mobile-scrub {
+    height: 280vh;
   }
 
   .journey-map__panel-shell {

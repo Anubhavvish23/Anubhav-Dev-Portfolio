@@ -132,6 +132,7 @@ const Projects: React.FC<Projects_props> = () => {
   const [scroll_distance, set_scroll_distance] = useState(0);
   const [active_index, set_active_index] = useState(0);
   const [is_locked, set_is_locked] = useState(false);
+  const [is_narrow, set_is_narrow] = useState(false);
 
   const progress = useMotionValue(0);
   const progress_ref = useRef(0);
@@ -143,6 +144,13 @@ const Projects: React.FC<Projects_props> = () => {
   const slide_count = featured_projects.length + 1;
   const x = useTransform(progress, (value) => -value * Math.max(1, scroll_distance));
   const progress_width = useTransform(progress, [0, 1], ['0%', '100%']);
+
+  useEffect(() => {
+    const sync_narrow = () => set_is_narrow(window.innerWidth < 768);
+    sync_narrow();
+    window.addEventListener('resize', sync_narrow);
+    return () => window.removeEventListener('resize', sync_narrow);
+  }, []);
 
   useEffect(() => {
     const measure = () => {
@@ -175,6 +183,41 @@ const Projects: React.FC<Projects_props> = () => {
   });
 
   useEffect(() => {
+    if (!is_narrow) return;
+
+    const section = section_ref.current;
+    if (!section) return;
+
+    mode_ref.current = 'free';
+    set_is_locked(false);
+    document.documentElement.classList.remove('projects-hs-locked');
+    get_lenis()?.start?.();
+
+    const update_from_scroll = () => {
+      const rect = section.getBoundingClientRect();
+      const scrollable = Math.max(1, section.offsetHeight - window.innerHeight);
+      const next = Math.min(1, Math.max(0, -rect.top / scrollable));
+      progress_ref.current = next;
+      progress.set(next);
+    };
+
+    update_from_scroll();
+    window.addEventListener('scroll', update_from_scroll, { passive: true });
+    window.addEventListener('resize', update_from_scroll);
+
+    const lenis = get_lenis();
+    lenis?.on?.('scroll', update_from_scroll);
+
+    return () => {
+      window.removeEventListener('scroll', update_from_scroll);
+      window.removeEventListener('resize', update_from_scroll);
+      lenis?.off?.('scroll', update_from_scroll);
+    };
+  }, [is_narrow, progress]);
+
+  useEffect(() => {
+    if (is_narrow) return;
+
     const section = section_ref.current;
     if (!section) return;
 
@@ -327,14 +370,15 @@ const Projects: React.FC<Projects_props> = () => {
       document.documentElement.classList.remove('projects-hs-locked');
       get_lenis_control()?.start();
       mode_ref.current = 'free';
+      set_is_locked(false);
     };
-  }, [progress]);
+  }, [is_narrow, progress]);
 
   return (
     <section
       ref={section_ref}
       id="projects"
-      className={`projects-hs relative bg-[#050505] text-white scroll-mt-20 ${is_locked ? 'is-locked' : ''}`}
+      className={`projects-hs relative bg-[#050505] text-white scroll-mt-20 ${is_locked ? 'is-locked' : ''} ${is_narrow ? 'is-mobile-scrub' : ''}`}
     >
       <div className="projects-hs__sticky flex h-[100dvh] w-full flex-col overflow-hidden">
         <div className="editorial-guides pointer-events-none absolute inset-0" aria-hidden>
@@ -390,7 +434,7 @@ const Projects: React.FC<Projects_props> = () => {
             <motion.span className="projects-hs__progress-fill" style={{ width: progress_width }} />
           </div>
           <p className="projects-hs__lock-hint">
-            {is_locked ? 'Finish all projects to continue' : 'Scroll to enter'}
+            {is_narrow ? 'Keep scrolling' : is_locked ? 'Finish all projects to continue' : 'Scroll to enter'}
           </p>
         </div>
       </div>
