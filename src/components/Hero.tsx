@@ -110,7 +110,7 @@ const Hero: React.FC<HeroProps> = ({ magicMode = false }) => {
         className="relative z-10 flex h-full w-full flex-col"
         style={{ y: text_y, opacity: text_opacity }}
       >
-        <div className="hero-editorial__content flex h-full w-full flex-col px-5 pb-2 pt-24 sm:px-8 lg:px-10 lg:pb-0">
+        <div className="hero-editorial__content flex h-full w-full flex-col px-5 pb-2 pt-16 sm:px-8 sm:pt-20 lg:px-10 lg:pb-0 lg:pt-24">
           <div className="hero-editorial__copy flex min-h-0 flex-1 flex-col">
             <motion.div
               className="hero-editorial__intro"

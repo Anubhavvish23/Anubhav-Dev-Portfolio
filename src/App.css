@@ -690,11 +690,13 @@ body.magic-cursor-on .mouse-follower-root {
     position: relative;
     z-index: 3;
     max-width: 15rem;
+    margin-top: -0.5rem;
+    margin-bottom: 0.75rem;
   }
 
   .hero-editorial__portrait {
-    height: 62vh;
-    bottom: 8vh;
+    height: 56vh;
+    bottom: 5vh;
     transform: translateX(-50%) scale(1.05);
   }
 
@@ -702,8 +704,8 @@ body.magic-cursor-on .mouse-follower-root {
     background:
       linear-gradient(
         to bottom,
-        rgba(0, 0, 0, 0.45) 0%,
-        transparent 28%
+        rgba(0, 0, 0, 0.5) 0%,
+        transparent 32%
       ),
       linear-gradient(
         to top,
@@ -2418,7 +2420,7 @@ html.journey-map-locked {
 @media (min-width: 1024px) {
   .achievements-wall__progress.is-visible {
     display: flex;
-    pointer-events: auto;
+  pointer-events: auto;
     opacity: 1;
   }
 }

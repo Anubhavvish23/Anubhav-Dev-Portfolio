@@ -274,8 +274,8 @@ const Internships: React.FC<Internships_props> = () => {
           enter_locked();
           apply_delta(event.deltaY);
         }
-        return;
-      }
+      return;
+    }
 
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -580,7 +580,7 @@ const Internships: React.FC<Internships_props> = () => {
               </AnimatePresence>
             </aside>
           </div>
-        </div>
+            </div>
       </div>
     </section>
   );

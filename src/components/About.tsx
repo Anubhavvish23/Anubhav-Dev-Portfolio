@@ -136,7 +136,7 @@ const About: React.FC<AboutProps> = () => {
             >
               <motion.div style={{ y: portrait_y }} className="h-full w-full">
                 <ProgressiveImage
-                  src="/i1.jpeg"
+                  src="/12.jpg"
                   alt="Anubhav portrait"
                   img_class_name="about-editorial__photo"
                   placeholder_color="#d6d3d1"
