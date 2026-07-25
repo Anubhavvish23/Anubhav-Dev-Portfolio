@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, startTransition } from 'react';
 
 const section_ids = ['home', 'about', 'skills', 'projects', 'achievements', 'contact'];
-const scroll_spy_offset = 140;
+const scroll_spy_offset = 120;
 
 export const useActiveSection = (enabled: boolean) => {
   const [active_section, set_active_section] = useState('home');
@@ -24,7 +24,9 @@ export const useActiveSection = (enabled: boolean) => {
         }
       }
 
-      set_active_section((prev) => (prev === current ? prev : current));
+      startTransition(() => {
+        set_active_section((prev) => (prev === current ? prev : current));
+      });
     };
 
     const on_scroll = () => {

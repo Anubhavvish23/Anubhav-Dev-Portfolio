@@ -1,302 +1,471 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
-import { useTheme } from '../contexts/ThemeContext';
-import { Briefcase, Calendar, MapPin, Code, Users, TrendingUp, Sparkles, ArrowRight, Building2, Laptop2 } from 'lucide-react';
-import ParallaxSection, { ParallaxCard } from './ParallaxSection';
-import ExperienceCard from './ExperienceCard';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useMotionValueEvent,
+  useTransform,
+} from 'framer-motion';
+import { get_lenis } from '../utils/scroll_to';
+import { ease_out, motion_stagger } from '../utils/motion';
+import Reveal from './Reveal';
 
-interface InternshipsProps {
+interface Internships_props {
   magicMode?: boolean;
 }
+const wheel_resistance = 2400;
 
-const getRandom = (min: number, max: number) => Math.random() * (max - min) + min;
+const path_d =
+  'M 120 40 C 220 120, 780 80, 860 200 C 940 320, 180 360, 140 500 C 100 640, 820 620, 880 760 C 940 900, 260 920, 200 1080 C 160 1160, 520 1180, 720 1220';
 
-const Internships: React.FC<InternshipsProps> = ({ magicMode }) => {
-  const { isDark } = useTheme();
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
+const journey_stops = [
+  {
+    id: 'rc-labs',
+    company: 'Rc Labs',
+    role: 'Software Developer Intern',
+    year: '2023',
+    impact: 'Delivered 5+ production applications',
+    tags: ['Full-Stack', 'Agile', 'Shipping'],
+    path_t: 0.12,
+    side: 'right' as const,
+  },
+  {
+    id: 'gully',
+    company: 'Gully Group',
+    role: 'Project Management Intern',
+    year: '2024',
+    impact: 'Managed 3+ concurrent projects',
+    tags: ['Leadership', 'Planning', 'Delivery'],
+    path_t: 0.34,
+    side: 'left' as const,
+  },
+  {
+    id: 'notarc',
+    company: 'Notarc',
+    role: 'Operations Lead & Co-Founder',
+    year: '2024 – 2025',
+    impact: 'Led workshops + company web presence',
+    tags: ['Operations', 'Founding', 'Product'],
+    path_t: 0.58,
+    side: 'right' as const,
+  },
+  {
+    id: 'inunity',
+    company: 'Inunity',
+    role: 'Software Developer & Program Mentor',
+    year: '2025 – Present',
+    impact: 'Shipped apps & dashboards across platforms',
+    tags: ['Cross-Platform', 'Mentorship', 'Dashboards'],
+    path_t: 0.82,
+    side: 'left' as const,
+  },
+];
 
-  // Optimized Chaotic Magic Mode state - reduced number of animated elements
-  const [titlePos, setTitlePos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
-  const [descPos, setDescPos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
-  const [timelinePos, setTimelinePos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
+type Lenis_control = {
+  stop: () => void;
+  start: () => void;
+  scrollTo: (target: number | string | HTMLElement, opts?: object) => void;
+};
 
-  // Optimized magic mode animations with useCallback and reduced frequency
-  const chaosTitle = useCallback(() => {
-    setTitlePos({
-      x: getRandom(-40, 40),
-      y: getRandom(-20, 20),
-      rotate: getRandom(-15, 15),
-      scale: getRandom(0.95, 1.05)
-    });
-  }, []);
+const Internships: React.FC<Internships_props> = () => {
+  const section_ref = useRef<HTMLElement>(null);
+  const path_ref = useRef<SVGPathElement>(null);
 
-  const fallDesc = useCallback(() => {
-    setDescPos({
-      x: getRandom(-30, 30),
-      y: getRandom(-15, 15),
-      rotate: getRandom(-10, 10),
-      scale: getRandom(0.95, 1.05)
-    });
-  }, []);
+  const [path_length, set_path_length] = useState(1);
+  const [active_id, set_active_id] = useState(journey_stops[0].id);
+  const [marker_point, set_marker_point] = useState({ x: 120, y: 40 });
+  const [node_points, set_node_points] = useState<Record<string, { x: number; y: number }>>({});
+  const [progress_value, set_progress_value] = useState(0);
+  const [is_locked, set_is_locked] = useState(false);
 
-  const floatTimeline = useCallback(() => {
-    setTimelinePos({
-      x: getRandom(-15, 15),
-      y: getRandom(-5, 5),
-      rotate: getRandom(-5, 5),
-      scale: getRandom(0.98, 1.02)
-    });
-  }, []);
+  const progress = useMotionValue(0);
+  const progress_ref = useRef(0);
+  const mode_ref = useRef<'free' | 'locked'>('free');
+  const touch_start_y = useRef(0);
+  const release_armed_ref = useRef(false);
+
+  const dash_offset = useTransform(progress, (value) => path_length * (1 - value));
 
   useEffect(() => {
-    if (!magicMode) {
-      setTitlePos({ x: 0, y: 0, rotate: 0, scale: 1 });
-      setDescPos({ x: 0, y: 0, rotate: 0, scale: 1 });
-      setTimelinePos({ x: 0, y: 0, rotate: 0, scale: 1 });
-      return;
+    const path = path_ref.current;
+    if (!path) return;
+
+    const measure = () => {
+      const length = path.getTotalLength();
+      set_path_length(length);
+
+      const points: Record<string, { x: number; y: number }> = {};
+      journey_stops.forEach((stop) => {
+        const point = path.getPointAtLength(length * stop.path_t);
+        points[stop.id] = { x: point.x, y: point.y };
+      });
+      set_node_points(points);
+
+      const start = path.getPointAtLength(0);
+      set_marker_point({ x: start.x, y: start.y });
+    };
+
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
+
+  useMotionValueEvent(progress, 'change', (value) => {
+    const path = path_ref.current;
+    if (!path || path_length <= 1) return;
+
+    progress_ref.current = value;
+    set_progress_value(value);
+
+    const point = path.getPointAtLength(path_length * value);
+    set_marker_point({ x: point.x, y: point.y });
+
+    let nearest = journey_stops[0];
+    let nearest_dist = Number.POSITIVE_INFINITY;
+    journey_stops.forEach((stop) => {
+      const dist = Math.abs(stop.path_t - value);
+      if (dist < nearest_dist) {
+        nearest_dist = dist;
+        nearest = stop;
+      }
+    });
+
+    if (nearest_dist < 0.14) {
+      set_active_id((prev) => (prev === nearest.id ? prev : nearest.id));
     }
 
-    let timers: number[] = [];
+    if (value < 0.98) {
+      release_armed_ref.current = false;
+    }
+  });
 
-    // Reduced animation frequency for better performance
-    const startChaosTitle = () => {
-      chaosTitle();
-      timers.push(window.setTimeout(startChaosTitle, getRandom(3000, 6000)));
+  useEffect(() => {
+    const section = section_ref.current;
+    if (!section) return;
+
+    const get_lenis_control = () => get_lenis() as Lenis_control | undefined;
+
+    const snap_section_to_top = () => {
+      const lenis = get_lenis_control();
+      const top = section.getBoundingClientRect().top + window.scrollY;
+      if (lenis) {
+        lenis.scrollTo(top, { immediate: true });
+      } else {
+        window.scrollTo(0, top);
+      }
     };
 
-    const startFallDesc = () => {
-      fallDesc();
-      timers.push(window.setTimeout(startFallDesc, getRandom(4000, 7000)));
+    const enter_locked = () => {
+      if (mode_ref.current === 'locked') {
+        snap_section_to_top();
+        return;
+      }
+      mode_ref.current = 'locked';
+      set_is_locked(true);
+      snap_section_to_top();
+      get_lenis_control()?.stop();
+      document.documentElement.classList.add('journey-map-locked');
     };
 
-    const startFloatTimeline = () => {
-      floatTimeline();
-      timers.push(window.setTimeout(startFloatTimeline, getRandom(5000, 8000)));
+    const exit_locked = (direction: 'up' | 'down') => {
+      if (mode_ref.current !== 'locked') return;
+      mode_ref.current = 'free';
+      set_is_locked(false);
+      release_armed_ref.current = false;
+      document.documentElement.classList.remove('journey-map-locked');
+
+      const lenis = get_lenis_control();
+      lenis?.start();
+
+      const nudge = direction === 'down' ? 80 : -80;
+      const next_y = window.scrollY + nudge;
+      if (lenis) {
+        lenis.scrollTo(next_y, { duration: 0.55 });
+      } else {
+        window.scrollTo({ top: next_y, behavior: 'smooth' });
+      }
     };
 
-    // Start animations with delays to prevent overwhelming
-    timers.push(window.setTimeout(startChaosTitle, 1000));
-    timers.push(window.setTimeout(startFallDesc, 2000));
-    timers.push(window.setTimeout(startFloatTimeline, 3000));
+    const apply_delta = (delta_y: number) => {
+      const current = progress_ref.current;
+
+      if (current <= 0.001 && delta_y < 0) {
+        exit_locked('up');
+        return;
+      }
+
+      if (current >= 0.999 && delta_y > 0) {
+        if (!release_armed_ref.current) {
+          release_armed_ref.current = true;
+          progress_ref.current = 1;
+          progress.set(1);
+          return;
+        }
+        exit_locked('down');
+        return;
+      }
+
+      const next = Math.min(1, Math.max(0, current + delta_y / wheel_resistance));
+      progress_ref.current = next;
+      progress.set(next);
+    };
+
+    const section_in_capture_zone = (delta_y: number) => {
+      const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+
+      if (delta_y > 0) {
+        return rect.top <= 100 && rect.top >= -vh * 0.65 && progress_ref.current < 0.999;
+      }
+
+      return rect.bottom >= vh - 100 && rect.top <= 100 && progress_ref.current > 0.005;
+    };
+
+    const on_wheel = (event: WheelEvent) => {
+      if (event.ctrlKey) return;
+
+      if (mode_ref.current === 'free') {
+        if (section_in_capture_zone(event.deltaY)) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          enter_locked();
+          apply_delta(event.deltaY);
+        }
+        return;
+      }
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      snap_section_to_top();
+      apply_delta(event.deltaY);
+    };
+
+    const on_touch_start = (event: TouchEvent) => {
+      touch_start_y.current = event.touches[0]?.clientY ?? 0;
+    };
+
+    const on_touch_move = (event: TouchEvent) => {
+      const current_y = event.touches[0]?.clientY ?? 0;
+      const delta_y = touch_start_y.current - current_y;
+      touch_start_y.current = current_y;
+
+      if (mode_ref.current === 'free') {
+        if (Math.abs(delta_y) > 4 && section_in_capture_zone(delta_y)) {
+          event.preventDefault();
+          enter_locked();
+          apply_delta(delta_y * 1.35);
+        }
+        return;
+      }
+
+      event.preventDefault();
+      snap_section_to_top();
+      apply_delta(delta_y * 1.35);
+    };
+
+    const on_scroll = () => {
+      if (mode_ref.current !== 'locked') {
+        const rect = section.getBoundingClientRect();
+        if (progress_ref.current < 0.999 && rect.top < -16 && rect.top > -window.innerHeight * 0.85) {
+          enter_locked();
+        }
+        return;
+      }
+      snap_section_to_top();
+    };
+
+    window.addEventListener('wheel', on_wheel, { passive: false, capture: true });
+    window.addEventListener('touchstart', on_touch_start, { passive: true, capture: true });
+    window.addEventListener('touchmove', on_touch_move, { passive: false, capture: true });
+    window.addEventListener('scroll', on_scroll, { passive: true });
 
     return () => {
-      timers.forEach(timer => clearTimeout(timer));
+      window.removeEventListener('wheel', on_wheel, true);
+      window.removeEventListener('touchstart', on_touch_start, true);
+      window.removeEventListener('touchmove', on_touch_move, true);
+      window.removeEventListener('scroll', on_scroll);
+      document.documentElement.classList.remove('journey-map-locked');
+      get_lenis_control()?.start();
+      mode_ref.current = 'free';
     };
-  }, [magicMode, chaosTitle, fallDesc, floatTimeline]);
+  }, [progress, path_length]);
 
-  const internships = [
-    {
-      company: "Rc Labs",
-      role: "Software Developer Intern",
-      year: "2023",
-      icon: <Code className="w-5 h-5 sm:w-6 sm:h-6" />,
-      description: "Full-stack development experience with modern technologies and agile development practices.",
-      skills: ["Full-Stack Development", "Agile", "Modern Technologies"],
-      impact: "Delivered 5+ production applications"
-    },
-    {
-      company: "Gully Group",
-      role: "Project Management Intern",
-      year: "2024",
-      icon: <Users className="w-5 h-5 sm:w-6 sm:h-6" />,
-      description: "Led cross-functional teams, managed project timelines, and delivered successful project outcomes.",
-      skills: ["Project Management", "Team Leadership", "Strategic Planning"],
-      impact: "Managed 3+ concurrent projects"
-    },
-    {
-      company: "Notarc",
-      role: "Operations Lead & Co-Founder",
-      year: "2024 – 2025",
-      icon: <Building2 className="w-5 h-5 sm:w-6 sm:h-6" />,
-      description: "Co-founded the company as operations lead and software developer, managing drone workshops and the business website.",
-      skills: ["Operations", "Software Development", "Business Management"],
-      impact: "Led workshops and built the company web presence"
-    },
-    {
-      company: "Inunity",
-      role: "Software Developer & Program Mentor",
-      year: "2025 – Present",
-      icon: <Laptop2 className="w-5 h-5 sm:w-6 sm:h-6" />,
-      description: "Handled cross-platform projects, published apps, and built dashboards while mentoring program participants.",
-      skills: ["Cross-Platform Development", "App Publishing", "Mentorship"],
-      impact: "Shipped apps and dashboards across platforms"
-    }
-  ];
-
-  const stats = [
-    { label: "Total Internships", value: "4", icon: <Briefcase className="w-5 h-5" /> },
-    { label: "Years Experience", value: "3+", icon: <Calendar className="w-5 h-5" /> },
-    { label: "Companies", value: "4", icon: <MapPin className="w-5 h-5" /> },
-    { label: "Skills Gained", value: "14+", icon: <TrendingUp className="w-5 h-5" /> }
-  ];
-
-  const FloatingBackgroundElements = () => (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <motion.div
-        className="absolute top-20 left-10 w-24 h-24 sm:w-32 sm:h-32 bg-slate-200/30 rounded-full blur-2xl"
-        animate={{
-          x: [0, 30, 0],
-          y: [0, -20, 0],
-          scale: [1, 1.1, 1]
-        }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-      <motion.div
-        className="absolute bottom-20 right-10 w-32 h-32 sm:w-40 sm:h-40 bg-slate-200/30 rounded-full blur-2xl"
-        animate={{
-          x: [0, -30, 0],
-          y: [0, 30, 0],
-          scale: [1, 1.2, 1]
-        }}
-        transition={{
-          duration: 25,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-    </div>
+  const active_stop = useMemo(
+    () => journey_stops.find((stop) => stop.id === active_id) ?? journey_stops[0],
+    [active_id]
   );
 
+  const panel_ref = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    if (active_id !== 'inunity') return;
+
+    const frame_id = requestAnimationFrame(() => {
+      const section = section_ref.current;
+      const panel = panel_ref.current;
+      if (!section || !panel) return;
+
+      const section_rect = section.getBoundingClientRect();
+      const panel_rect = panel.getBoundingClientRect();
+      const overflow_ancestors: string[] = [];
+      let node: HTMLElement | null = panel;
+
+      while (node && node !== document.body) {
+        const style = window.getComputedStyle(node);
+        if (style.overflow !== 'visible' || style.overflowY !== 'visible' || style.overflowX !== 'visible') {
+          overflow_ancestors.push(
+            `${node.className || node.tagName}: overflow=${style.overflow}/${style.overflowY}`
+          );
+        }
+        node = node.parentElement;
+      }
+
+      const clipped_bottom = panel_rect.bottom > section_rect.bottom + 1;
+      const under_next =
+        panel_rect.bottom > window.innerHeight - 4 && !is_locked;
+
+      console.info('[journey-map debug]', {
+        active_id,
+        progress: progress_ref.current,
+        is_locked,
+        section_height: section_rect.height,
+        section_bottom: section_rect.bottom,
+        panel_top: panel_rect.top,
+        panel_bottom: panel_rect.bottom,
+        panel_height: panel_rect.height,
+        clipped_by_section: clipped_bottom,
+        likely_covered_by_next_section: under_next,
+        overflow_ancestors,
+      });
+    });
+
+    return () => cancelAnimationFrame(frame_id);
+  }, [active_id, is_locked, progress_value]);
+
+  const jump_to_stop = (path_t: number) => {
+    progress_ref.current = path_t;
+    progress.set(path_t);
+  };
+
   return (
-    <section id="internships" className={`pt-24 pb-24 sm:pt-28 sm:pb-28 relative bg-white dark:bg-black text-slate-900 dark:text-white overflow-x-hidden scroll-mt-20 ${magicMode ? 'scale-x-[-1]' : ''}`}>
-      <FloatingBackgroundElements />
+    <section
+      ref={section_ref}
+      id="internships"
+      className={`journey-map relative bg-[#050505] text-white scroll-mt-20 ${is_locked ? 'is-locked' : ''}`}
+    >
+      <div className="journey-map__panel-shell">
+        <div className="editorial-guides pointer-events-none absolute inset-0" aria-hidden>
+          {[16.666, 33.333, 50, 66.666, 83.333].map((left) => (
+            <span key={left} className="editorial-guide editorial-guide--dark" style={{ left: `${left}%` }} />
+          ))}
+        </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <ParallaxSection speed={0.2}>
-          <motion.div
-            ref={ref}
-            initial={{ opacity: 0, y: 30 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16 sm:mb-20"
-          >
-            <motion.h2
-              className="title text-4xl font-bold mb-4 sm:mb-6 text-black dark:text-white"
-              animate={magicMode ? { ...titlePos } : {}}
-              transition={magicMode ? { duration: 1, type: 'spring' } : {}}
-              style={{ position: magicMode ? 'relative' : undefined }}
-            >
-              Internship Experience
-            </motion.h2>
-            <motion.p
-              className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed px-4"
-              animate={magicMode ? { ...descPos } : {}}
-              transition={magicMode ? { duration: 1.5, type: 'spring' } : {}}
-              style={{ position: magicMode ? 'relative' : undefined }}
-            >
-              Diverse professional experiences that shaped my journey in technology and innovation
-            </motion.p>
-          </motion.div>
-        </ParallaxSection>
+        <div className="journey-map__topo" aria-hidden />
 
-        <motion.div
-          className="mb-24 sm:mb-32 max-w-4xl mx-auto pb-8 border-b border-slate-200/80 dark:border-slate-800/80"
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 justify-items-center">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={stat.label}
-                className="w-full max-w-[200px] min-h-[148px] bg-white border border-slate-200 rounded-xl px-4 py-5 flex flex-col items-center justify-center text-center shadow-sm"
-                initial={{ opacity: 0, y: 16 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.45, delay: 0.25 + index * 0.08 }}
-              >
-                <div className="w-10 h-10 rounded-lg bg-slate-100 text-slate-900 flex items-center justify-center mb-3">
-                  {stat.icon}
-                </div>
-                <p className="text-3xl font-bold text-slate-900 tabular-nums leading-none mb-2">
-                  {stat.value}
-                </p>
-                <p className="text-xs sm:text-sm text-slate-600 leading-snug">
-                  {stat.label}
-                </p>
-              </motion.div>
-            ))}
+        <div className="journey-map__header relative z-20 px-5 pt-4 md:px-12 lg:px-16 md:pt-12">
+          <Reveal className="journey-map__eyebrow" delay={0} y={24}>
+            Experience
+          </Reveal>
+          <Reveal className="journey-map__title" delay={motion_stagger}>
+            My Voyage
+          </Reveal>
+          <Reveal className="journey-map__intro" delay={motion_stagger * 2} y={24}>
+            {is_locked
+              ? 'Scroll to travel the path — finish every stop before continuing.'
+              : 'Scroll to enter the map.'}
+          </Reveal>
+        </div>
+
+        <div className="journey-map__stage relative z-10 mx-auto min-h-0 w-full max-w-[1100px] flex-1 px-3 pb-4 md:px-6">
+          <div className="journey-map__canvas">
+            <svg
+              className="journey-map__svg"
+              viewBox="0 0 1000 1260"
+              preserveAspectRatio="xMidYMid meet"
+              aria-hidden
+            >
+              <path ref={path_ref} d={path_d} fill="none" stroke="transparent" strokeWidth="2" />
+              <path
+                d={path_d}
+                className="journey-map__path-base"
+                fill="none"
+                strokeWidth="2"
+                strokeDasharray="5 9"
+              />
+              <motion.path
+                d={path_d}
+                className="journey-map__path-fill"
+                fill="none"
+                strokeWidth="2.5"
+                strokeDasharray={path_length}
+                style={{ strokeDashoffset: dash_offset }}
+              />
+
+              {journey_stops.map((stop) => {
+                const point = node_points[stop.id];
+                if (!point) return null;
+                const is_active = stop.id === active_id;
+                const revealed = progress_value >= stop.path_t - 0.02;
+                return (
+                  <circle
+                    key={stop.id}
+                    cx={point.x}
+                    cy={point.y}
+                    r={is_active ? 11 : 7}
+                    className={`journey-map__node ${is_active ? 'is-active' : ''} ${revealed ? 'is-revealed' : ''}`}
+                  />
+                );
+              })}
+
+              <circle
+                cx={marker_point.x}
+                cy={marker_point.y}
+                r={7}
+                className="journey-map__marker-svg"
+              />
+            </svg>
+
+            {journey_stops.map((stop) => {
+              const point = node_points[stop.id];
+              if (!point) return null;
+              return (
+                <button
+                  key={`${stop.id}-hit`}
+                  type="button"
+                  className="journey-map__node-hit"
+                  style={{
+                    left: `${(point.x / 1000) * 100}%`,
+                    top: `${(point.y / 1260) * 100}%`,
+                  }}
+                  aria-label={`Jump to ${stop.company}`}
+                  onClick={() => jump_to_stop(stop.path_t)}
+                />
+              );
+            })}
           </div>
-        </motion.div>
 
-        <motion.div
-          className="mb-16 pt-8 sm:pt-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          <h3 className="title text-4xl font-bold text-center mb-10 sm:mb-12 text-slate-900 dark:text-white max-w-4xl mx-auto">
-            My Journey
-          </h3>
-
-          <motion.div
-            animate={magicMode ? { ...timelinePos } : {}}
-            transition={magicMode ? { duration: 1.5, type: 'spring' } : {}}
-            style={{ position: magicMode ? 'relative' : undefined }}
-            className="relative"
-          >
-            <div className="hidden lg:block absolute left-1/2 -translate-x-1/2 w-px h-full bg-black dark:bg-white rounded-full" />
-
-            <div className="space-y-6 lg:space-y-8">
-              {internships.map((internship, index) => (
-                <motion.div
-                  key={`${internship.company}-${internship.role}`}
-                  className="lg:grid lg:grid-cols-2 lg:gap-x-10 items-center"
-                  initial={{ opacity: 0, y: 24 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.6, delay: 0.5 + index * 0.12 }}
-                >
-                  <div className={`w-full max-w-[360px] mx-auto ${index % 2 === 0 ? 'lg:col-start-2' : 'lg:col-start-1'}`}>
-                    <ParallaxCard speed={0.1 + index * 0.05}>
-                      <ExperienceCard
-                        company={internship.company}
-                        role={internship.role}
-                        year={internship.year}
-                        icon={internship.icon}
-                        description={internship.description}
-                        skills={internship.skills}
-                        impact={internship.impact}
-                        is_dark={isDark}
-                        compact
-                      />
-                    </ParallaxCard>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </motion.div>
-
-        {/* Optimized Call to Action */}
-        <motion.div
-          className="mt-16 sm:mt-20 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 1 }}
-        >
-                      <motion.div
-              className="inline-flex items-center space-x-2 sm:space-x-3 bg-black text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-semibold hover:shadow-lg transition-all duration-300 cursor-pointer"
-              whileHover={{ 
-                scale: 1.02,
-                boxShadow: "0 10px 25px rgba(0, 0, 0, 0.3)"
-              }}
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+          <AnimatePresence mode="wait">
+            <motion.aside
+              ref={panel_ref}
+              key={active_stop.id}
+              className={`journey-map__panel journey-map__panel--${active_stop.side}`}
+              initial={{ opacity: 0, y: 14, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.35, ease: ease_out }}
             >
-              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="text-sm sm:text-base">Ready to collaborate?</span>
-              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-            </motion.div>
-        </motion.div>
+              <p className="journey-map__panel-year">{active_stop.year}</p>
+              <h3 className="journey-map__panel-company">{active_stop.company}</h3>
+              <p className="journey-map__panel-role">{active_stop.role}</p>
+              <p className="journey-map__panel-impact">{active_stop.impact}</p>
+              <p className="journey-map__panel-tags">{active_stop.tags.join(' · ')}</p>
+            </motion.aside>
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   );
 };
 
-export default Internships; 
+export default memo(Internships);

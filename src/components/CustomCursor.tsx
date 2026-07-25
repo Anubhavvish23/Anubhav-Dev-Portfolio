@@ -2,39 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { usePerformanceProfile } from '../hooks/usePerformanceProfile';
 
+const is_interactive = (target: EventTarget | null) => {
+  if (!(target instanceof Element)) return false;
+  return Boolean(target.closest('a, button, [role="button"], input, textarea, label, summary'));
+};
+
 const CustomCursor = () => {
   const { enable_custom_cursor } = usePerformanceProfile();
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isHovering, setIsHovering] = useState(false);
+  const [mouse_position, set_mouse_position] = useState({ x: 0, y: 0 });
+  const [is_hovering, set_is_hovering] = useState(false);
 
   useEffect(() => {
     if (!enable_custom_cursor) return;
-    const updateMousePosition = (e: MouseEvent) => {
-      // Use requestAnimationFrame for smoother updates
-      requestAnimationFrame(() => {
-        setMousePosition({ x: e.clientX, y: e.clientY });
-      });
+
+    const update_mouse_position = (event: MouseEvent) => {
+      set_mouse_position({ x: event.clientX, y: event.clientY });
+      set_is_hovering(is_interactive(event.target));
     };
 
-    const handleMouseEnter = () => setIsHovering(true);
-    const handleMouseLeave = () => setIsHovering(false);
-
-    window.addEventListener('mousemove', updateMousePosition);
-    
-    // Add hover listeners to interactive elements
-    const interactiveElements = document.querySelectorAll('a, button, [role="button"]');
-    interactiveElements.forEach(el => {
-      el.addEventListener('mouseenter', handleMouseEnter);
-      el.addEventListener('mouseleave', handleMouseLeave);
-    });
-
-    return () => {
-      window.removeEventListener('mousemove', updateMousePosition);
-      interactiveElements.forEach(el => {
-        el.removeEventListener('mouseenter', handleMouseEnter);
-        el.removeEventListener('mouseleave', handleMouseLeave);
-      });
-    };
+    window.addEventListener('mousemove', update_mouse_position, { passive: true });
+    return () => window.removeEventListener('mousemove', update_mouse_position);
   }, [enable_custom_cursor]);
 
   if (!enable_custom_cursor) {
@@ -44,41 +31,31 @@ const CustomCursor = () => {
   return (
     <>
       <motion.div
-        className="fixed top-0 left-0 w-4 h-4 bg-slate-900 rounded-full pointer-events-none z-50 mix-blend-difference"
+        className={`custom-cursor__dot ${is_hovering ? 'is-hovering' : ''}`}
         animate={{
-          x: mousePosition.x - 8,
-          y: mousePosition.y - 8,
-          scale: isHovering ? 1.5 : 1,
+          x: mouse_position.x - 5,
+          y: mouse_position.y - 5,
+          scale: is_hovering ? 2.4 : 1,
         }}
         transition={{
-          type: "spring",
-          stiffness: 800,
-          damping: 35,
-          mass: 0.5
-        }}
-        style={{
-          willChange: 'transform',
-          backfaceVisibility: 'hidden',
-          transform: 'translateZ(0)'
+          type: 'spring',
+          stiffness: 850,
+          damping: 38,
+          mass: 0.4,
         }}
       />
       <motion.div
-        className="fixed top-0 left-0 w-8 h-8 border border-slate-400 rounded-full pointer-events-none z-50"
+        className={`custom-cursor__ring ${is_hovering ? 'is-hovering' : ''}`}
         animate={{
-          x: mousePosition.x - 16,
-          y: mousePosition.y - 16,
-          scale: isHovering ? 2 : 1,
+          x: mouse_position.x - 18,
+          y: mouse_position.y - 18,
+          scale: is_hovering ? 1.55 : 1,
         }}
         transition={{
-          type: "spring",
-          stiffness: 300,
-          damping: 25,
-          mass: 0.8
-        }}
-        style={{
-          willChange: 'transform',
-          backfaceVisibility: 'hidden',
-          transform: 'translateZ(0)'
+          type: 'spring',
+          stiffness: 280,
+          damping: 26,
+          mass: 0.7,
         }}
       />
     </>

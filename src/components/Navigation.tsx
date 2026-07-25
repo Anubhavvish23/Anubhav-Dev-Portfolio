@@ -1,136 +1,188 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { memo, startTransition, useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useActiveSection } from '../hooks/useActiveSection';
+import { scroll_to_id } from '../utils/scroll_to';
 
 const Navigation = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [hideNav, setHideNav] = useState(false);
-  const lastScrollY = useRef(0);
+  const [is_open, set_is_open] = useState(false);
+  const [past_hero, set_past_hero] = useState(false);
+  const [hide_nav, set_hide_nav] = useState(false);
+  const last_scroll_y = useRef(0);
+  const raf_id = useRef(0);
   const location = useLocation();
   const navigate = useNavigate();
-  const isHomePage = location.pathname === '/';
-  const active_section = useActiveSection(isHomePage);
+  const is_home_page = location.pathname === '/';
+  const active_section = useActiveSection(is_home_page);
+  const use_solid_nav = !is_home_page || past_hero || is_open;
 
   const get_section_id = (href: string) => (href.startsWith('#') ? href.slice(1) : 'home');
 
   const is_item_active = (href: string) => {
-    if (!isHomePage) return false;
+    if (!is_home_page) return false;
     return get_section_id(href) === active_section;
   };
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-      if (window.scrollY > lastScrollY.current && window.scrollY > 80) {
-        setHideNav(true);
-      } else {
-        setHideNav(false);
-      }
-      lastScrollY.current = window.scrollY;
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    const update_nav_state = () => {
+      const hero = document.getElementById('home');
+      const hero_bottom = hero
+        ? hero.getBoundingClientRect().bottom
+        : window.innerHeight;
+      const scrolled_past = is_home_page ? hero_bottom <= 64 : true;
+      const y = window.scrollY;
+      const should_hide = y > last_scroll_y.current && y > 120 && !is_open;
 
-  const navItems = [
-    { name: 'Home', href: isHomePage ? '#home' : '/', isExternal: !isHomePage },
-    { name: 'About', href: '#about', isExternal: false },
-    { name: 'Skills', href: '#skills', isExternal: false },
-    { name: 'Projects', href: '#projects', isExternal: false },
-    { name: 'Achievements', href: '#achievements', isExternal: false },
-    { name: 'Contact', href: '#contact', isExternal: false },
+      startTransition(() => {
+        set_past_hero(scrolled_past);
+        set_hide_nav(should_hide);
+      });
+
+      last_scroll_y.current = y;
+    };
+
+    const on_scroll = () => {
+      cancelAnimationFrame(raf_id.current);
+      raf_id.current = requestAnimationFrame(update_nav_state);
+    };
+
+    update_nav_state();
+    window.addEventListener('scroll', on_scroll, { passive: true });
+    window.addEventListener('resize', on_scroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf_id.current);
+      window.removeEventListener('scroll', on_scroll);
+      window.removeEventListener('resize', on_scroll);
+    };
+  }, [is_home_page, is_open]);
+
+  const scroll_to_hash = (href: string) => {
+    scroll_to_id(href.replace('#', ''));
+  };
+
+  const nav_items = [
+    { name: 'About', href: '#about' },
+    { name: 'Services', href: '#skills' },
+    { name: 'Work', href: '#projects' },
+    { name: 'Testimonials', href: '#achievements' },
   ];
 
-  const nav_link_class = (href: string) => {
+  const link_class = (href: string) => {
     const is_active = is_item_active(href);
-    return `relative transition-colors duration-300 ${
+    return `relative text-[11px] font-semibold uppercase tracking-[0.22em] transition-colors duration-300 ${
       is_active
-        ? 'text-slate-900 dark:text-white font-semibold'
-        : 'text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white'
+        ? 'text-white'
+        : 'text-white/80 hover:text-white'
     }`;
   };
 
   return (
     <motion.nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white dark:bg-black text-slate-900 dark:text-white ${scrolled ? 'shadow-lg' : ''}`}
+      className={`nav-editorial ${
+        use_solid_nav ? 'nav-editorial--solid' : 'nav-editorial--transparent'
+      }`}
       initial={{ y: -100 }}
-      animate={{ y: isOpen ? 0 : hideNav ? -100 : 0 }}
-      transition={{ duration: 0.5 }}
+      animate={{ y: is_open ? 0 : hide_nav ? -100 : 0 }}
+      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
-          <motion.div
-            className="text-2xl font-bold gradient-text"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            
-          </motion.div>
+      <div className="nav-editorial__surface" aria-hidden />
+      <div className="nav-editorial__bar">
+        <motion.a
+          href={is_home_page ? '#home' : '/'}
+          onClick={(e) => {
+            if (is_home_page) {
+              e.preventDefault();
+              scroll_to_hash('#home');
+            } else {
+              e.preventDefault();
+              navigate('/');
+            }
+          }}
+          className="nav-editorial__logo text-white transition-colors duration-[250ms] ease-out"
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+        >
+          AS
+        </motion.a>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8">
-            {navItems.map((item, index) => {
-              const is_active = is_item_active(item.href);
-              return (
-                <motion.a
-                  key={item.name}
-                  href={item.href}
-                  aria-current={is_active ? 'page' : undefined}
-                  onClick={(e) => {
-                    if (item.isExternal) {
-                      e.preventDefault();
-                      navigate(item.href);
-                    } else if (item.href.startsWith('#')) {
-                      window.setTimeout(() => {
-                        (document.activeElement as HTMLElement | null)?.blur?.();
-                      }, 300);
-                    }
-                  }}
-                  className={nav_link_class(item.href)}
-                  whileHover={{ scale: is_active ? 1 : 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  {item.name}
-                  <span
-                    className={`absolute -bottom-1 left-0 right-0 h-0.5 bg-slate-900 dark:bg-white origin-left transition-transform duration-300 ${
-                      is_active ? 'scale-x-100' : 'scale-x-0'
-                    }`}
-                  />
-                </motion.a>
-              );
-            })}
-          </div>
+        <div className="nav-editorial__links">
+          {nav_items.map((item, index) => {
+            const is_active = is_item_active(item.href);
+            return (
+              <motion.a
+                key={item.name}
+                href={is_home_page ? item.href : `/${item.href}`}
+                aria-current={is_active ? 'page' : undefined}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (!is_home_page) {
+                    navigate(`/${item.href}`);
+                    return;
+                  }
+                  scroll_to_hash(item.href);
+                  window.setTimeout(() => {
+                    (document.activeElement as HTMLElement | null)?.blur?.();
+                  }, 300);
+                }}
+                className={link_class(item.href)}
+                whileHover={{ y: -1 }}
+                whileTap={{ scale: 0.97 }}
+                initial={{ opacity: 0, y: -12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.06 }}
+              >
+                {item.name}
+                <span
+                  className={`absolute -bottom-1 left-0 right-0 h-px origin-left bg-white transition-transform duration-300 ${
+                    is_active ? 'scale-x-100' : 'scale-x-0'
+                  }`}
+                />
+              </motion.a>
+            );
+          })}
 
-          {/* Mobile Menu Button */}
-          <motion.button
-            className="md:hidden text-slate-900 dark:text-white"
-            onClick={() => setIsOpen(!isOpen)}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
+          <motion.a
+            href={is_home_page ? '#contact' : '/#contact'}
+            onClick={(e) => {
+              e.preventDefault();
+              if (!is_home_page) {
+                navigate('/#contact');
+                return;
+              }
+              scroll_to_hash('#contact');
+            }}
+            className="nav-editorial__cta ui-pill-arrow inline-flex items-center rounded-sm border border-white/70 px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-white transition-all duration-[250ms] ease-out hover:bg-white hover:text-[#0B4C8C]"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </motion.button>
+            Contact Me <span className="ui-pill-arrow__glyph" aria-hidden>→</span>
+          </motion.a>
         </div>
+
+        <motion.button
+          type="button"
+          className="inline-flex items-center justify-center text-white md:hidden transition-colors duration-[250ms]"
+          onClick={() => set_is_open(!is_open)}
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.95 }}
+          aria-label={is_open ? 'Close menu' : 'Open menu'}
+        >
+          {is_open ? <X size={24} /> : <Menu size={24} />}
+        </motion.button>
       </div>
 
-      {/* Mobile Navigation */}
       <AnimatePresence>
-        {isOpen && (
+        {is_open && (
           <motion.div
-            className="md:hidden bg-white dark:bg-black text-slate-900 dark:text-white shadow-lg"
+            className="border-t border-slate-200 bg-white text-slate-900 shadow-lg md:hidden"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.28, ease: 'easeOut' }}
           >
-            <div className="px-4 py-4 space-y-4">
-              {navItems.map((item, index) => {
+            <div className="space-y-1 px-5 py-4">
+              {nav_items.map((item, index) => {
                 const is_active = is_item_active(item.href);
                 return (
                   <motion.a
@@ -138,30 +190,45 @@ const Navigation = () => {
                     href={item.href}
                     aria-current={is_active ? 'page' : undefined}
                     onClick={(e) => {
-                      setIsOpen(false);
-                      if (item.isExternal) {
-                        e.preventDefault();
-                        navigate(item.href);
-                      } else if (item.href.startsWith('#')) {
-                        window.setTimeout(() => {
-                          (document.activeElement as HTMLElement | null)?.blur?.();
-                        }, 300);
+                      e.preventDefault();
+                      set_is_open(false);
+                      if (!is_home_page) {
+                        navigate(`/${item.href}`);
+                        return;
                       }
+                      scroll_to_hash(item.href);
                     }}
-                    className={`block transition-colors duration-300 ${
+                    className={`block py-3 text-[12px] font-semibold uppercase tracking-[0.2em] transition-colors ${
                       is_active
-                        ? 'text-slate-900 dark:text-white font-semibold border-l-2 border-slate-900 dark:border-white pl-3'
-                        : 'text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white pl-3 border-l-2 border-transparent'
+                        ? 'text-slate-900 border-l-2 border-slate-900 pl-3'
+                        : 'text-slate-600 hover:text-slate-900 pl-3 border-l-2 border-transparent'
                     }`}
-                    initial={{ opacity: 0, x: -20 }}
+                    initial={{ opacity: 0, x: -16 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    whileHover={{ x: is_active ? 0 : 6 }}
+                    transition={{ delay: index * 0.05 }}
                   >
                     {item.name}
                   </motion.a>
                 );
               })}
+              <motion.a
+                href="#contact"
+                onClick={(e) => {
+                  e.preventDefault();
+                  set_is_open(false);
+                  if (!is_home_page) {
+                    navigate('/#contact');
+                    return;
+                  }
+                  scroll_to_hash('#contact');
+                }}
+                className="mt-2 ui-pill-arrow inline-flex w-full items-center justify-center border border-slate-900 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-900"
+                initial={{ opacity: 0, x: -16 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                Contact Me <span className="ui-pill-arrow__glyph" aria-hidden>→</span>
+              </motion.a>
             </div>
           </motion.div>
         )}
@@ -170,4 +237,4 @@ const Navigation = () => {
   );
 };
 
-export default Navigation;
+export default memo(Navigation);

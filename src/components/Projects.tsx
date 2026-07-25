@@ -1,363 +1,401 @@
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
-import { ExternalLink, Github, Eye } from 'lucide-react';
+import React, { memo, useEffect, useRef, useState } from 'react';
+import {
+  motion,
+  useMotionValue,
+  useMotionValueEvent,
+  useTransform,
+  type MotionValue,
+} from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { get_lenis } from '../utils/scroll_to';
+import { motion_stagger } from '../utils/motion';
+import ProgressiveImage from './ProgressiveImage';
+import Reveal from './Reveal';
 
-interface ProjectsProps {
+interface Projects_props {
   magicMode?: boolean;
 }
 
-const getRandom = (min: number, max: number) => Math.random() * (max - min) + min;
+const featured_projects = [
+  {
+    title: 'AI Image Generator',
+    description:
+      'Generate images with React, Node, Express and OpenAI — ratios, styles, and prompt craft in one flow.',
+    image: 'https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    tags: ['React', 'Node.js', 'Express', 'OpenAI'],
+    github: 'https://github.com/Anubhavvish23/AI-Image-Genrator',
+    demo: 'https://ai-image-genrator-gamma.vercel.app',
+  },
+  {
+    title: 'Sanskrit GPT',
+    description:
+      'Conversational AI trained for Sanskrit comprehension, translation, and quiet linguistic detail.',
+    image: 'https://images.pexels.com/photos/577513/pexels-photo-577513.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    tags: ['OpenAI', 'Next.js', 'Language Model'],
+    github: 'https://github.com/Anubhavvish23/Sanskrit-GPT',
+    demo: 'https://sanskritgpt-lemon.vercel.app/',
+  },
+  {
+    title: 'Datasheet AI',
+    description:
+      'An Excel assistant that reads datasheets and answers with structured insight through GPT.',
+    image: 'https://images.pexels.com/photos/6813326/pexels-photo-6813326.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    tags: ['React', 'OpenAI', 'Excel', 'Tailwind'],
+    github: 'https://github.com/Anubhavvish23/Excel-AI',
+    demo: 'https://excel-ai-five.vercel.app/',
+  },
+  {
+    title: 'AI Chat Application',
+    description:
+      'Modern chat with AI integration, real-time messaging, and smart conversation features using the OpenAI API.',
+    image: 'https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    tags: ['Next.js', 'OpenAI', 'WebSocket', 'Tailwind'],
+    github: 'https://github.com/Anubhavvish23/LLama-3-ChatBot',
+    demo: 'https://l-ama-3-chat-bot.vercel.app/',
+  },
+];
 
-const Projects: React.FC<ProjectsProps> = ({ magicMode }) => {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-  const navigate = useNavigate();
+const wheel_resistance = 2.35;
 
-  // Enhanced Chaotic Magic Mode state
-  const [titlePos, setTitlePos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
-  const [descPos, setDescPos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
-  const [projectsContainerPos, setProjectsContainerPos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
-  const [viewAllBtnPos, setViewAllBtnPos] = useState({ x: 0, y: 0, rotate: 0, scale: 1 });
+const Project_slide = ({
+  project,
+  index,
+  total_slides,
+  progress,
+}: {
+  project: (typeof featured_projects)[number];
+  index: number;
+  total_slides: number;
+  progress: MotionValue<number>;
+}) => {
+  const center = (index + 0.5) / total_slides;
 
-  useEffect(() => {
-    if (!magicMode) {
-      setTitlePos({ x: 0, y: 0, rotate: 0, scale: 1 });
-      setDescPos({ x: 0, y: 0, rotate: 0, scale: 1 });
-      setProjectsContainerPos({ x: 0, y: 0, rotate: 0, scale: 1 });
-      setViewAllBtnPos({ x: 0, y: 0, rotate: 0, scale: 1 });
-      return;
-    }
+  const opacity = useTransform(progress, [center - 0.22, center - 0.06, center + 0.06, center + 0.22], [0.4, 1, 1, 0.4]);
+  const scale = useTransform(progress, [center - 0.22, center - 0.06, center + 0.06, center + 0.22], [0.92, 1, 1, 0.94]);
+  const copy_opacity = useTransform(progress, [center - 0.14, center - 0.04, center + 0.08, center + 0.18], [0, 1, 1, 0]);
+  const copy_y = useTransform(progress, [center - 0.14, center - 0.04], [28, 0]);
 
-    let timers: number[] = [];
-
-    // Optimized chaotic animations with reduced frequency
-    const chaosTitle = () => {
-      setTitlePos({
-        x: getRandom(-40, 40),
-        y: getRandom(-20, 20),
-        rotate: getRandom(-15, 15),
-        scale: getRandom(0.95, 1.05)
-      });
-      timers.push(window.setTimeout(chaosTitle, getRandom(5000, 8000)));
-    };
-
-    const fallDesc = () => {
-      setDescPos({
-        x: getRandom(-30, 30),
-        y: getRandom(-10, 10),
-        rotate: getRandom(-8, 8),
-        scale: getRandom(0.95, 1.05)
-      });
-      timers.push(window.setTimeout(fallDesc, getRandom(6000, 9000)));
-    };
-
-    const spinProjectsContainer = () => {
-      setProjectsContainerPos({
-        x: getRandom(-25, 25),
-        y: getRandom(-8, 8),
-        rotate: getRandom(-10, 10),
-        scale: getRandom(0.98, 1.02)
-      });
-      timers.push(window.setTimeout(spinProjectsContainer, getRandom(7000, 10000)));
-    };
-
-    const bounceViewAllBtn = () => {
-      setViewAllBtnPos({
-        x: getRandom(-20, 20),
-        y: getRandom(-5, 5),
-        rotate: getRandom(-8, 8),
-        scale: getRandom(0.95, 1.05)
-      });
-      timers.push(window.setTimeout(bounceViewAllBtn, getRandom(8000, 11000)));
-    };
-
-    // Start animations with staggered delays
-    timers.push(window.setTimeout(chaosTitle, 1000));
-    timers.push(window.setTimeout(fallDesc, 2000));
-    timers.push(window.setTimeout(spinProjectsContainer, 3000));
-    timers.push(window.setTimeout(bounceViewAllBtn, 4000));
-
-    return () => {
-      timers.forEach(timer => clearTimeout(timer));
-    };
-  }, [magicMode]);
-
-  // Continuous rotation for extra chaos
-  const continuousRotate = magicMode ? {
-    rotate: [0, 360],
-    transition: { duration: 12, repeat: Infinity, ease: "linear" }
-  } : {};
-
-  const container_variants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.1
-      }
-    }
-  };
-
-  const card_variants = {
-    hidden: { opacity: 0, y: 40 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: { type: 'spring', stiffness: 300, damping: 24 }
-    }
-  };
-
-  const projects = [
-    {
-      title: "Ai Image Generator",
-      description: "a Image Generator with React, Node.js, Express, OpenAI. Features include types of image generations ,Image ratios",
-      image: "https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&w=600",
-      tags: ["React", "Node.js", "Express", "OpenAI"],
-      github: "https://github.com/Anubhavvish23/AI-Image-Genrator",
-      demo: "https://ai-image-genrator-gamma.vercel.app",
-      featured: false
-    },
-    {
-      title: "Sanskrit GPT",
-      description: "Conversational AI chatbot trained specifically for Sanskrit language comprehension, translation, and interaction.",
-      image: "https://images.pexels.com/photos/577513/pexels-photo-577513.jpeg?auto=compress&cs=tinysrgb&w=600",
-      tags: ["OpenAI", "Next.js", "Language Model", "Sanskrit"],
-      github: "https://github.com/Anubhavvish23/Sanskrit-GPT",
-      demo: "https://sanskritgpt-lemon.vercel.app/",
-      featured: true
-    },
-  
-    {
-    title: "Datasheet AI",
-    description: "AI-powered Excel assistant that reads your datasheets and provides intelligent insights and answers using OpenAI GPT.",
-    image: "https://images.pexels.com/photos/6813326/pexels-photo-6813326.jpeg?auto=compress&cs=tinysrgb&w=600",
-    tags: ["React", "OpenAI", "Excel", "Tailwind"],
-    github: "https://github.com/Anubhavvish23/Excel-AI",
-    demo: "https://excel-ai-five.vercel.app/",
-    featured: true
-  }
-  ];
+  const is_external_demo = project.demo.startsWith('http');
 
   return (
-    <>
-      <style>{`
-        .animated-button {
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 16px 36px;
-          border: 4px solid transparent;
-          font-size: 16px;
-          background-color: inherit;
-          border-radius: 100px;
-          font-weight: 600;
-          color: #000000;
-          box-shadow: 0 0 0 2px #000000;
-          cursor: pointer;
-          overflow: hidden;
-          transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-          z-index: 10;
-        }
+    <motion.article className="projects-hs__slide" style={{ opacity, scale }}>
+      <div className="projects-hs__media">
+        <ProgressiveImage
+          src={project.image}
+          alt={project.title}
+          img_class_name="projects-hs__image"
+          placeholder_color="#0a0a0a"
+        />
+        <div className="projects-hs__scrim" />
+        <div className="projects-hs__glow" aria-hidden />
+      </div>
 
-        .animated-button .circle {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 20px;
-          height: 20px;
-          background-color: #000000;
-          border-radius: 50%;
-          opacity: 0;
-          transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-
-        .animated-button .text {
-          position: relative;
-          z-index: 1;
-          transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-
-        .animated-button:hover {
-          box-shadow: 0 0 0 12px transparent;
-          color: #ffffff;
-          border-radius: 12px;
-        }
-
-        .animated-button:active {
-          scale: 0.95;
-          box-shadow: 0 0 0 4px #000000;
-        }
-
-        .animated-button:hover .circle {
-          width: 220px;
-          height: 220px;
-          opacity: 1;
-        }
-
-        .dark .animated-button {
-          color: #ffffff;
-          box-shadow: 0 0 0 2px #ffffff;
-        }
-
-        .dark .animated-button .circle {
-          background-color: #ffffff;
-        }
-
-        .dark .animated-button:hover {
-          color: #000000;
-        }
-
-        .dark .animated-button:active {
-          box-shadow: 0 0 0 4px #ffffff;
-        }
-      `}</style>
-
-      <section id="projects" className="pt-24 pb-24 sm:pt-28 sm:pb-28 relative bg-white dark:bg-black text-slate-900 dark:text-white scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            ref={ref}
-            initial={{ opacity: 0, y: 50 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-            className="text-center mb-16"
+      <motion.div className="projects-hs__copy" style={{ opacity: copy_opacity, y: copy_y }}>
+        <p className="projects-hs__slide-index">{String(index + 1).padStart(2, '0')}</p>
+        <h3 className="projects-hs__project-title">{project.title}</h3>
+        <p className="projects-hs__project-desc">{project.description}</p>
+        <p className="projects-hs__tags">{project.tags.join(' · ')}</p>
+        <div className="projects-hs__links">
+          <a
+            href={project.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="projects-hs__link ui-link-underline"
           >
-            <motion.h2
-              className="title text-4xl font-bold text-slate-900 dark:text-white"
-              animate={magicMode ? { ...titlePos } : {}}
-              transition={magicMode ? { duration: 1.5, type: 'spring' } : {}}
-              style={{ position: magicMode ? 'relative' : undefined }}
-            >
-              Featured Projects
-            </motion.h2>
-            <motion.p
-              className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed"
-              animate={magicMode ? { ...descPos } : {}}
-              transition={magicMode ? { duration: 2, type: 'spring' } : {}}
-              style={{ position: magicMode ? 'relative' : undefined }}
-            >
-              A showcase of my recent work, demonstrating technical skills and creative problem-solving
-            </motion.p>
-          </motion.div>
-
-          <div className="max-w-5xl mx-auto">
-            <motion.div
-              animate={magicMode ? { ...projectsContainerPos } : {}}
-              transition={magicMode ? { duration: 2, type: 'spring' } : {}}
-              style={{ position: magicMode ? 'relative' : undefined }}
-              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 justify-items-start"
-            >
-              <motion.div
-                className="contents"
-                variants={container_variants}
-                initial="hidden"
-                animate={inView ? 'show' : 'hidden'}
-              >
-              {projects.map((project) => (
-                <motion.div
-                  key={project.title}
-                  variants={card_variants}
-                  className="group relative w-full max-w-[340px] h-full flex flex-col bg-white border border-slate-200 dark:bg-white dark:border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-500"
-                whileHover={magicMode ? { 
-                  scale: 1.05, 
-                  rotate: getRandom(-5, 5),
-                  y: -8 
-                } : { 
-                  scale: 1.02, 
-                  y: -6 
-                }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-              >
-                <div className="relative h-44 flex-shrink-0 overflow-hidden">
-                  <motion.img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    animate={magicMode ? continuousRotate : {}}
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-500" />
-                </div>
-                
-                <div className="p-5 flex flex-col flex-1 min-h-[220px]">
-                  <motion.h3 
-                    className="text-lg font-bold mb-2 text-slate-900"
-                    whileHover={magicMode ? { scale: 1.1, rotate: 5 } : {}}
-                  >
-                    {project.title}
-                  </motion.h3>
-                  <p className="text-sm text-slate-600 mb-4 line-clamp-3 flex-1">
-                    {project.description}
-                  </p>
-                  
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.tags.map((tag) => (
-                      <motion.span
-                        key={tag}
-                        className="px-2.5 py-1 bg-slate-100 text-slate-700 text-xs rounded-full"
-                        whileHover={magicMode ? { scale: 1.2, rotate: 10 } : { scale: 1.05 }}
-                      >
-                        {tag}
-                      </motion.span>
-                    ))}
-                  </div>
-                  
-                  <div className="flex gap-3 mt-auto">
-                    <motion.a
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 py-2 bg-slate-900 text-white text-sm rounded-lg hover:bg-slate-700 transition-colors"
-                      whileHover={magicMode ? { scale: 1.2, rotate: 15 } : { scale: 1.05 }}
-                      whileTap={magicMode ? { scale: 0.8, rotate: -15 } : { scale: 0.95 }}
-                    >
-                      <Github size={16} />
-                      Code
-                    </motion.a>
-                    <motion.a
-                      href={project.demo}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
-                      whileHover={magicMode ? { scale: 1.2, rotate: 15 } : { scale: 1.05 }}
-                      whileTap={magicMode ? { scale: 0.8, rotate: -15 } : { scale: 0.95 }}
-                    >
-                      <Eye size={16} />
-                      Demo
-                    </motion.a>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-            </motion.div>
-          </motion.div>
-
-            <motion.div
-              className="flex justify-center"
-              style={{ position: 'relative', zIndex: 20 }}
-            >
-              <motion.button
-                onClick={() => navigate('/all-projects', { replace: false })}
-                className="animated-button"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-              >
-                <span className="circle"></span>
-                <span className="text">View All Projects</span>
-              </motion.button>
-            </motion.div>
-          </div>
+            Code
+          </a>
+          <a
+            href={project.demo}
+            target={is_external_demo ? '_blank' : undefined}
+            rel={is_external_demo ? 'noopener noreferrer' : undefined}
+            className="projects-hs__pill ui-pill-arrow"
+          >
+            Demo <span className="ui-pill-arrow__glyph" aria-hidden>→</span>
+          </a>
         </div>
-      </section>
-    </>
+      </motion.div>
+    </motion.article>
   );
 };
 
-export default Projects;
+type Lenis_control = {
+  stop: () => void;
+  start: () => void;
+  scrollTo: (target: number | string | HTMLElement, opts?: object) => void;
+};
+
+const Projects: React.FC<Projects_props> = () => {
+  const section_ref = useRef<HTMLElement>(null);
+  const track_ref = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  const [scroll_distance, set_scroll_distance] = useState(0);
+  const [active_index, set_active_index] = useState(0);
+  const [is_locked, set_is_locked] = useState(false);
+
+  const progress = useMotionValue(0);
+  const progress_ref = useRef(0);
+  const distance_ref = useRef(0);
+  const mode_ref = useRef<'free' | 'horizontal'>('free');
+  const touch_start_y = useRef(0);
+  const release_armed_ref = useRef(false);
+
+  const slide_count = featured_projects.length + 1;
+  const x = useTransform(progress, (value) => -value * Math.max(1, scroll_distance));
+  const progress_width = useTransform(progress, [0, 1], ['0%', '100%']);
+
+  useEffect(() => {
+    const measure = () => {
+      if (!track_ref.current) return;
+      const distance = Math.max(1, track_ref.current.scrollWidth - window.innerWidth);
+      distance_ref.current = distance;
+      set_scroll_distance(distance);
+    };
+
+    measure();
+    window.addEventListener('resize', measure);
+    const timeout_id = window.setTimeout(measure, 160);
+    return () => {
+      window.removeEventListener('resize', measure);
+      window.clearTimeout(timeout_id);
+    };
+  }, []);
+
+  useMotionValueEvent(progress, 'change', (value) => {
+    progress_ref.current = value;
+    const next_index = Math.min(
+      featured_projects.length - 1,
+      Math.max(0, Math.floor(value * featured_projects.length))
+    );
+    set_active_index((prev) => (prev === next_index ? prev : next_index));
+
+    if (value < 0.98) {
+      release_armed_ref.current = false;
+    }
+  });
+
+  useEffect(() => {
+    const section = section_ref.current;
+    if (!section) return;
+
+    const get_lenis_control = () => get_lenis() as Lenis_control | undefined;
+
+    const snap_section_to_top = () => {
+      const lenis = get_lenis_control();
+      const top = section.getBoundingClientRect().top + window.scrollY;
+      if (lenis) {
+        lenis.scrollTo(top, { immediate: true });
+      } else {
+        window.scrollTo(0, top);
+      }
+    };
+
+    const enter_horizontal = () => {
+      if (mode_ref.current === 'horizontal') {
+        snap_section_to_top();
+        return;
+      }
+      mode_ref.current = 'horizontal';
+      set_is_locked(true);
+      snap_section_to_top();
+      get_lenis_control()?.stop();
+      document.documentElement.classList.add('projects-hs-locked');
+    };
+
+    const exit_horizontal = (direction: 'up' | 'down') => {
+      if (mode_ref.current !== 'horizontal') return;
+      mode_ref.current = 'free';
+      set_is_locked(false);
+      release_armed_ref.current = false;
+      document.documentElement.classList.remove('projects-hs-locked');
+
+      const lenis = get_lenis_control();
+      lenis?.start();
+
+      const nudge = direction === 'down' ? 64 : -64;
+      const next_y = window.scrollY + nudge;
+      if (lenis) {
+        lenis.scrollTo(next_y, { duration: 0.55 });
+      } else {
+        window.scrollTo({ top: next_y, behavior: 'smooth' });
+      }
+    };
+
+    const apply_delta = (delta_y: number) => {
+      const distance = Math.max(1, distance_ref.current * wheel_resistance);
+      const current = progress_ref.current;
+
+      if (current <= 0.001 && delta_y < 0) {
+        exit_horizontal('up');
+        return;
+      }
+
+      if (current >= 0.995 && delta_y > 0) {
+        if (!release_armed_ref.current) {
+          release_armed_ref.current = true;
+          progress_ref.current = 1;
+          progress.set(1);
+          return;
+        }
+        exit_horizontal('down');
+        return;
+      }
+
+      const next = Math.min(1, Math.max(0, current + delta_y / distance));
+      progress_ref.current = next;
+      progress.set(next);
+    };
+
+    const section_in_capture_zone = (delta_y: number) => {
+      const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+
+      if (delta_y > 0) {
+        return rect.top <= 80 && rect.top >= -vh * 0.55 && progress_ref.current < 0.995;
+      }
+
+      return (
+        rect.bottom >= vh - 80 &&
+        rect.top <= 80 &&
+        progress_ref.current > 0.005
+      );
+    };
+
+    const on_wheel = (event: WheelEvent) => {
+      if (event.ctrlKey) return;
+
+      if (mode_ref.current === 'free') {
+        if (section_in_capture_zone(event.deltaY)) {
+          event.preventDefault();
+          event.stopPropagation();
+          enter_horizontal();
+          apply_delta(event.deltaY);
+        }
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      snap_section_to_top();
+      apply_delta(event.deltaY);
+    };
+
+    const on_touch_start = (event: TouchEvent) => {
+      touch_start_y.current = event.touches[0]?.clientY ?? 0;
+    };
+
+    const on_touch_move = (event: TouchEvent) => {
+      const current_y = event.touches[0]?.clientY ?? 0;
+      const delta_y = touch_start_y.current - current_y;
+      touch_start_y.current = current_y;
+
+      if (mode_ref.current === 'free') {
+        if (Math.abs(delta_y) > 4 && section_in_capture_zone(delta_y)) {
+          event.preventDefault();
+          enter_horizontal();
+          apply_delta(delta_y * 1.35);
+        }
+        return;
+      }
+
+      event.preventDefault();
+      snap_section_to_top();
+      apply_delta(delta_y * 1.35);
+    };
+
+    const on_scroll = () => {
+      if (mode_ref.current !== 'horizontal') {
+        const rect = section.getBoundingClientRect();
+        if (progress_ref.current < 0.995 && rect.top < -24 && rect.top > -window.innerHeight * 0.7) {
+          enter_horizontal();
+        }
+        return;
+      }
+      snap_section_to_top();
+    };
+
+    window.addEventListener('wheel', on_wheel, { passive: false, capture: true });
+    window.addEventListener('touchstart', on_touch_start, { passive: true, capture: true });
+    window.addEventListener('touchmove', on_touch_move, { passive: false, capture: true });
+    window.addEventListener('scroll', on_scroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('wheel', on_wheel, true);
+      window.removeEventListener('touchstart', on_touch_start, true);
+      window.removeEventListener('touchmove', on_touch_move, true);
+      window.removeEventListener('scroll', on_scroll);
+      document.documentElement.classList.remove('projects-hs-locked');
+      get_lenis_control()?.start();
+      mode_ref.current = 'free';
+    };
+  }, [progress]);
+
+  return (
+    <section
+      ref={section_ref}
+      id="projects"
+      className={`projects-hs relative bg-[#050505] text-white scroll-mt-20 ${is_locked ? 'is-locked' : ''}`}
+    >
+      <div className="projects-hs__sticky flex h-[100dvh] w-full flex-col overflow-hidden">
+        <div className="editorial-guides pointer-events-none absolute inset-0" aria-hidden>
+          {[16.666, 33.333, 50, 66.666, 83.333].map((left) => (
+            <span key={left} className="editorial-guide editorial-guide--dark" style={{ left: `${left}%` }} />
+          ))}
+        </div>
+
+        <div className="projects-hs__header relative z-20 px-5 pt-24 md:px-12 lg:px-16">
+          <Reveal className="projects-hs__eyebrow" delay={0} y={24}>
+            Selected Work
+          </Reveal>
+          <Reveal className="projects-hs__title" delay={motion_stagger}>
+            Featured Projects
+          </Reveal>
+          <Reveal className="projects-hs__intro" delay={motion_stagger * 2} y={24}>
+            Image-forward builds — systems, interfaces, and quiet details that earn a second look.
+          </Reveal>
+        </div>
+
+        <div className="projects-hs__track-wrap relative z-10 flex-1">
+          <motion.div ref={track_ref} className="projects-hs__track" style={{ x }}>
+            {featured_projects.map((project, index) => (
+              <Project_slide
+                key={project.title}
+                project={project}
+                index={index}
+                total_slides={slide_count}
+                progress={progress}
+              />
+            ))}
+
+            <div className="projects-hs__cta-slide">
+              <button
+                type="button"
+                className="projects-hs__cta"
+                onClick={() => navigate('/all-projects')}
+              >
+                <span className="projects-hs__cta-label">See All Projects</span>
+                <span className="projects-hs__cta-arrow">→</span>
+              </button>
+            </div>
+          </motion.div>
+        </div>
+
+        <div className="projects-hs__footer relative z-20 px-5 pb-6 md:px-12 lg:px-16">
+          <div className="projects-hs__counter">
+            <span>{String(active_index + 1).padStart(2, '0')}</span>
+            <span className="projects-hs__counter-sep">/</span>
+            <span>{String(featured_projects.length).padStart(2, '0')}</span>
+          </div>
+          <div className="projects-hs__progress">
+            <motion.span className="projects-hs__progress-fill" style={{ width: progress_width }} />
+          </div>
+          <p className="projects-hs__lock-hint">
+            {is_locked ? 'Finish all projects to continue' : 'Scroll to enter'}
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default memo(Projects);

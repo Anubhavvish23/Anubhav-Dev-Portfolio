@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive:wght@400&display=swap');
-
 /* Magic Mode Keyframes */
 @keyframes float {
   0%, 100% { transform: translateY(0px) rotate(0deg); }

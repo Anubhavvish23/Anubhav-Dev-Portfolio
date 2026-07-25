@@ -34,8 +34,9 @@ export default {
         }
       },
       fontFamily: {
-        'display': ['Inter', 'system-ui', 'sans-serif'],
-        'body': ['Inter', 'system-ui', 'sans-serif'],
+        'display': ['Bebas Neue', 'Impact', 'sans-serif'],
+        'body': ['Barlow', 'Helvetica Neue', 'sans-serif'],
+        'editorial': ['Barlow', 'Helvetica Neue', 'sans-serif'],
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',

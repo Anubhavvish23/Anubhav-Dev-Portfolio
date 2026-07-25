@@ -1,378 +1,335 @@
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Github, Eye, Search, X } from 'lucide-react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
+import { Search, Star, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { scroll_to_id } from '../utils/scroll_to';
+import { ease_out } from '../utils/motion';
+import ProgressiveImage from './ProgressiveImage';
 
-const projects = [
-  {
-    title: "Ai Image Generator",
-    description: "a Image Generator with React, Node.js, Express, OpenAI. Features include types of image generations ,Image ratios",
-    image: "https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&w=600",
-    tags: ["React", "Node.js", "Express", "OpenAI"],
-    github: "https://github.com/Anubhavvish23/AI-Image-Genrator",
-    demo: "https://ai-image-genrator-gamma.vercel.app",
-    featured: false
-  },
-  {
-    title: "Task Management System",
-    description: "Collaborative task management tool with real-time updates, drag-and-drop functionality, and team collaboration features.",
-    image: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=600",
-    tags: ["React", "Socket.io", "Express", "PostgreSQL"],
-    github: "#",
-    demo: "#",
-    featured: false
-  },
-  {
-    title: "AI Chat Application",
-    description: "Modern chat application with AI integration, real-time messaging, and smart conversation features using OpenAI API.",
-    image: "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=600",
-    tags: ["Next.js", "OpenAI", "WebSocket", "Tailwind"],
-    github: "https://github.com/Anubhavvish23/LLama-3-ChatBot",
-    demo: "https://l-ama-3-chat-bot.vercel.app/",
-    featured: true
-  },
-  {
-    title: "Book Review API",
-    description: "Full-stack backend system built with FastAPI, PostgreSQL, and Redis to manage and cache book reviews with RESTful APIs.",
-    image: "https://images.pexels.com/photos/590493/pexels-photo-590493.jpeg?auto=compress&cs=tinysrgb&w=600",
-    tags: ["FastAPI", "PostgreSQL", "Redis", "REST API"],
-    github: "https://github.com/Anubhavvish23/Book-Review-FastAPI",
-    demo: "",
-    featured: false
-  },
-  {
-    title: "MediBot: Medical Chat Assistant",
-    description: "Medical chatbot using LLaMA 2 for health-related queries, designed for quick and conversational medical support.",
-    image: "https://images.pexels.com/photos/1350560/pexels-photo-1350560.jpeg?auto=compress&cs=tinysrgb&w=600",
-    tags: ["LLaMA 2", "Medical AI", "Chatbot", "React"],
-    github: "https://github.com/Anubhavvish23/MediBot",
-    demo: "",
-    featured: false
-  },
-  {
-    title: "Sanskrit GPT",
-    description: "Conversational AI chatbot trained specifically for Sanskrit language comprehension, translation, and interaction.",
-    image: "https://images.pexels.com/photos/577513/pexels-photo-577513.jpeg?auto=compress&cs=tinysrgb&w=600",
-    tags: ["OpenAI", "Next.js", "Language Model", "Sanskrit"],
-    github: "https://github.com/Anubhavvish23/Sanskrit-GPT",
-    demo: "https://sanskritgpt-lemon.vercel.app/",
-    featured: true
-  },
-  {
-    title: "Datasheet AI",
-    description: "AI-powered Excel assistant that reads your datasheets and provides intelligent insights and answers using OpenAI GPT.",
-    image: "https://images.pexels.com/photos/6813326/pexels-photo-6813326.jpeg?auto=compress&cs=tinysrgb&w=600",
-    tags: ["React", "OpenAI", "Excel", "Tailwind"],
-    github: "https://github.com/Anubhavvish23/Excel-AI",
-    demo: "https://excel-ai-five.vercel.app/",
-    featured: true
-  }
-];
-
-// Get all unique tags
-const allTags = Array.from(new Set(projects.reduce((acc: string[], project) => [...acc, ...project.tags], [])));
-
-interface AllProjectsProps {
+interface All_projects_props {
   magicMode?: boolean;
 }
 
-const AllProjects: React.FC<AllProjectsProps> = ({ magicMode }) => {
-  const navigate = useNavigate();
-  const [filteredProjects, setFilteredProjects] = useState(projects);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showFeatured, setShowFeatured] = useState(false);
+const projects = [
+  {
+    title: 'Ai Image Generator',
+    description:
+      'A image generator with React, Node.js, Express, OpenAI. Features include types of image generations and image ratios.',
+    image: 'https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&w=900',
+    tags: ['React', 'Node.js', 'Express', 'OpenAI'],
+    github: 'https://github.com/Anubhavvish23/AI-Image-Genrator',
+    demo: 'https://ai-image-genrator-gamma.vercel.app',
+    featured: false,
+  },
+  {
+    title: 'Task Management System',
+    description:
+      'Collaborative task management tool with real-time updates, drag-and-drop functionality, and team collaboration features.',
+    image: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=900',
+    tags: ['React', 'Socket.io', 'Express', 'PostgreSQL'],
+    github: '#',
+    demo: '#',
+    featured: false,
+  },
+  {
+    title: 'AI Chat Application',
+    description:
+      'Modern chat application with AI integration, real-time messaging, and smart conversation features using OpenAI API.',
+    image: 'https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=900',
+    tags: ['Next.js', 'OpenAI', 'WebSocket', 'Tailwind'],
+    github: 'https://github.com/Anubhavvish23/LLama-3-ChatBot',
+    demo: 'https://l-ama-3-chat-bot.vercel.app/',
+    featured: true,
+  },
+  {
+    title: 'Book Review API',
+    description:
+      'Full-stack backend system built with FastAPI, PostgreSQL, and Redis to manage and cache book reviews with RESTful APIs.',
+    image: 'https://images.pexels.com/photos/590493/pexels-photo-590493.jpeg?auto=compress&cs=tinysrgb&w=900',
+    tags: ['FastAPI', 'PostgreSQL', 'Redis', 'REST API'],
+    github: 'https://github.com/Anubhavvish23/Book-Review-FastAPI',
+    demo: '',
+    featured: false,
+  },
+  {
+    title: 'MediBot: Medical Chat Assistant',
+    description:
+      'Medical chatbot using LLaMA 2 for health-related queries, designed for quick and conversational medical support.',
+    image: 'https://images.pexels.com/photos/1350560/pexels-photo-1350560.jpeg?auto=compress&cs=tinysrgb&w=900',
+    tags: ['LLaMA 2', 'Medical AI', 'Chatbot', 'React'],
+    github: 'https://github.com/Anubhavvish23/MediBot',
+    demo: '',
+    featured: false,
+  },
+  {
+    title: 'Sanskrit GPT',
+    description:
+      'Conversational AI chatbot trained specifically for Sanskrit language comprehension, translation, and interaction.',
+    image: 'https://images.pexels.com/photos/577513/pexels-photo-577513.jpeg?auto=compress&cs=tinysrgb&w=900',
+    tags: ['OpenAI', 'Next.js', 'Language Model', 'Sanskrit'],
+    github: 'https://github.com/Anubhavvish23/Sanskrit-GPT',
+    demo: 'https://sanskritgpt-lemon.vercel.app/',
+    featured: true,
+  },
+  {
+    title: 'Datasheet AI',
+    description:
+      'AI-powered Excel assistant that reads your datasheets and provides intelligent insights and answers using OpenAI GPT.',
+    image: 'https://images.pexels.com/photos/6813326/pexels-photo-6813326.jpeg?auto=compress&cs=tinysrgb&w=900',
+    tags: ['React', 'OpenAI', 'Excel', 'Tailwind'],
+    github: 'https://github.com/Anubhavvish23/Excel-AI',
+    demo: 'https://excel-ai-five.vercel.app/',
+    featured: true,
+  },
+];
 
-  // Scroll to top when component mounts
+const all_tags = Array.from(new Set(projects.flatMap((project) => project.tags)));
+
+const All_projects: React.FC<All_projects_props> = () => {
+  const navigate = useNavigate();
+  const [selected_tags, set_selected_tags] = useState<string[]>([]);
+  const [search_query, set_search_query] = useState('');
+  const [show_featured, set_show_featured] = useState(false);
+  const [search_focused, set_search_focused] = useState(false);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Filter projects based on selected tags, search query, and featured filter
-  useEffect(() => {
-    let filtered = projects;
+  const filtered_projects = useMemo(() => {
+    let next = projects;
 
-    // Filter by search query
-    if (searchQuery) {
-      filtered = filtered.filter(project =>
-        project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        project.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+    if (search_query) {
+      const query = search_query.toLowerCase();
+      next = next.filter(
+        (project) =>
+          project.title.toLowerCase().includes(query) ||
+          project.description.toLowerCase().includes(query) ||
+          project.tags.some((tag) => tag.toLowerCase().includes(query))
       );
     }
 
-    // Filter by selected tags
-    if (selectedTags.length > 0) {
-      filtered = filtered.filter(project =>
-        selectedTags.some(tag => project.tags.includes(tag))
-      );
+    if (selected_tags.length > 0) {
+      next = next.filter((project) => selected_tags.some((tag) => project.tags.includes(tag)));
     }
 
-    // Filter by featured
-    if (showFeatured) {
-      filtered = filtered.filter(project => project.featured);
+    if (show_featured) {
+      next = next.filter((project) => project.featured);
     }
 
-    setFilteredProjects(filtered);
-  }, [selectedTags, searchQuery, showFeatured]);
+    return next;
+  }, [search_query, selected_tags, show_featured]);
 
-  const toggleTag = (tag: string) => {
-    setSelectedTags(prev =>
-      prev.includes(tag)
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
+  const toggle_tag = (tag: string) => {
+    set_selected_tags((prev) =>
+      prev.includes(tag) ? prev.filter((item) => item !== tag) : [...prev, tag]
     );
   };
 
-  const clearFilters = () => {
-    setSelectedTags([]);
-    setSearchQuery('');
-    setShowFeatured(false);
+  const clear_filters = () => {
+    set_selected_tags([]);
+    set_search_query('');
+    set_show_featured(false);
   };
 
-  return (
-    <section className="relative z-10 pt-24 pb-24 sm:pt-28 sm:pb-28 min-h-screen bg-white dark:bg-black text-slate-900 dark:text-white scroll-mt-20">
-      <style>{`
-        button.custom-button {
-          --button_radius: 0.75em;
-          --button_color: #1e293b;
-          --button_outline_color: #1e293b;
-          font-size: 15px;
-          font-weight: bold;
-          border: none;
-          cursor: pointer;
-          border-radius: var(--button_radius);
-          background: var(--button_outline_color);
-        }
-        .custom-button .button_top {
-          display: block;
-          box-sizing: border-box;
-          border: 2px solid var(--button_outline_color);
-          border-radius: var(--button_radius);
-          padding: 0.75em 1.5em;
-          background: #ffffff;
-          color: var(--button_color);
-          transform: translateY(-0.2em);
-          transition: transform 0.1s ease;
-        }
-        .custom-button:hover .button_top {
-          transform: translateY(-0.33em);
-        }
-        .custom-button:active .button_top {
-          transform: translateY(0);
-        }
-        .dark button.custom-button {
-          --button_outline_color: #ffffff;
-        }
-        .dark .custom-button .button_top {
-          background: #0a0a0a;
-          color: #ffffff;
-        }
-      `}</style>
+  const go_to_projects = () => {
+    navigate('/');
+    const try_scroll = (attempts = 0) => {
+      const el = document.getElementById('projects');
+      if (el) {
+        scroll_to_id('projects');
+        return;
+      }
+      if (attempts < 30) {
+        window.setTimeout(() => try_scroll(attempts + 1), 40);
+      }
+    };
+    window.setTimeout(() => try_scroll(), 60);
+  };
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-          <h2 className="title text-4xl font-bold text-slate-900 dark:text-white text-center sm:text-left">All Projects</h2>
-          <button 
-            onClick={() => navigate('/#projects')}
-            className="custom-button mx-auto sm:mx-0"
+  const has_filters = selected_tags.length > 0 || search_query.length > 0 || show_featured;
+
+  return (
+    <section className="all-projects relative min-h-[100dvh] overflow-hidden bg-[#050505] text-white">
+      <div className="editorial-guides pointer-events-none absolute inset-0" aria-hidden>
+        {[16.666, 33.333, 50, 66.666, 83.333].map((left) => (
+          <span key={left} className="editorial-guide editorial-guide--dark" style={{ left: `${left}%` }} />
+        ))}
+      </div>
+
+      <div className="all-projects__inner relative z-10 mx-auto max-w-[1440px] px-5 pb-20 pt-28 sm:px-8 sm:pb-24 sm:pt-32 lg:px-12">
+        <div className="all-projects__header">
+          <div>
+            <p className="all-projects__eyebrow">Archive</p>
+            <h1 className="all-projects__title">All Projects</h1>
+          </div>
+          <button
+            type="button"
+            className="all-projects__back"
+            onClick={go_to_projects}
           >
-            <span className="button_top">Back to Home</span>
+            ← Back
           </button>
         </div>
 
-        {/* Search and Filter Section */}
-        <div className="mb-8 space-y-4">
-          {/* Search Bar */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Search projects by title, description, or technology..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-slate-900 dark:bg-black dark:border-white/20 dark:text-white"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            )}
-          </div>
-
-          {/* Filter Controls */}
-          <div className="flex flex-wrap items-center gap-4">
-            {/* Featured Toggle */}
-            <motion.button
-              onClick={() => setShowFeatured(!showFeatured)}
-              className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
-                showFeatured
-                  ? 'bg-yellow-500 text-white shadow-lg'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-black dark:border dark:border-white/10 dark:text-gray-300 dark:hover:border-white/20'
-              }`}
-              whileHover={magicMode ? { scale: 1.2, rotate: 5 } : { scale: 1.05 }}
-              whileTap={magicMode ? { scale: 0.95, rotate: -5 } : { scale: 0.95 }}
+        <div className={`all-projects__search ${search_focused ? 'is-focused' : ''}`}>
+          <Search className="all-projects__search-icon" strokeWidth={1.6} size={18} />
+          <input
+            type="text"
+            value={search_query}
+            onChange={(event) => set_search_query(event.target.value)}
+            onFocus={() => set_search_focused(true)}
+            onBlur={() => set_search_focused(false)}
+            placeholder="Search by title, stack, or keyword"
+            className="all-projects__search-input"
+          />
+          {search_query && (
+            <button
+              type="button"
+              className="all-projects__search-clear"
+              onClick={() => set_search_query('')}
+              aria-label="Clear search"
             >
-              ⭐ Featured Only
-            </motion.button>
+              <X size={16} strokeWidth={1.8} />
+            </button>
+          )}
+          <span className="all-projects__search-line" />
+        </div>
 
-            {/* Clear Filters */}
-            {(selectedTags.length > 0 || searchQuery || showFeatured) && (
-              <motion.button
-                onClick={clearFilters}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-all duration-300"
-                whileHover={magicMode ? { scale: 1.2, rotate: 5 } : { scale: 1.05 }}
-                whileTap={magicMode ? { scale: 0.95, rotate: -5 } : { scale: 0.95 }}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-              >
-                Clear Filters
-              </motion.button>
-            )}
-          </div>
+        <div className="all-projects__controls">
+          <button
+            type="button"
+            className={`all-projects__featured ${show_featured ? 'is-active' : ''}`}
+            onClick={() => set_show_featured((prev) => !prev)}
+          >
+            <Star
+              size={14}
+              strokeWidth={1.8}
+              fill={show_featured ? 'currentColor' : 'none'}
+            />
+            <span>Featured Only</span>
+          </button>
 
-          {/* Tag Filters */}
-          <div className="flex flex-wrap gap-2">
-            {allTags.map((tag) => (
-              <motion.button
-                key={tag}
-                onClick={() => toggleTag(tag)}
-                className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 ${
-                  selectedTags.includes(tag)
-                    ? 'bg-blue-500 text-white shadow-lg'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-black dark:border dark:border-white/10 dark:text-gray-300 dark:hover:border-white/20'
-                }`}
-                whileHover={magicMode ? { scale: 1.2, rotate: 5 } : { scale: 1.05 }}
-                whileTap={magicMode ? { scale: 0.95, rotate: -5 } : { scale: 0.95 }}
-              >
-                {tag}
-              </motion.button>
-            ))}
-          </div>
+          {has_filters && (
+            <button type="button" className="all-projects__clear" onClick={clear_filters}>
+              Clear Filters
+            </button>
+          )}
+        </div>
 
-          {/* Results Count */}
-          <div className="text-sm text-gray-600 dark:text-gray-400">
-            Showing {filteredProjects.length} of {projects.length} projects
+        <div className="all-projects__tags-wrap">
+          <div className="all-projects__tags">
+            {all_tags.map((tag) => {
+              const is_active = selected_tags.includes(tag);
+              return (
+                <button
+                  key={tag}
+                  type="button"
+                  className={`all-projects__tag ${is_active ? 'is-active' : ''}`}
+                  onClick={() => toggle_tag(tag)}
+                >
+                  {tag}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Projects Grid */}
-        <AnimatePresence mode="wait">
-          {filteredProjects.length > 0 ? (
-            <motion.div
-              key={`${selectedTags.join(',')}-${searchQuery}-${showFeatured}`}
-              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              {filteredProjects.map((project, index) => (
-                <motion.div
-                  key={`${project.title}-${index}`}
-                  className="w-full max-w-[340px] h-full flex flex-col bg-white border border-slate-200 dark:bg-white dark:border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 group"
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: index * 0.1 }}
-                  whileHover={magicMode ? { scale: 1.05, y: -6 } : { scale: 1.02, y: -4 }}
-                  layout
-                >
-                  <div className="relative h-44 flex-shrink-0 overflow-hidden">
-                    <motion.img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      transition={{ duration: 0.5 }}
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
-                    {project.featured && (
-                      <div className="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-                        Featured
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-5 flex flex-col flex-1 min-h-[220px]">
-                    <motion.h3
-                      className="text-lg font-bold text-slate-900 mb-2"
+        <p className="all-projects__count">
+          Showing {String(filtered_projects.length).padStart(2, '0')} of{' '}
+          {String(projects.length).padStart(2, '0')} projects
+        </p>
+
+        <LayoutGroup>
+          <AnimatePresence mode="popLayout">
+            {filtered_projects.length > 0 ? (
+              <motion.div layout className="all-projects__grid">
+                {filtered_projects.map((project, index) => {
+                  const has_demo = Boolean(project.demo && project.demo !== '#');
+                  const has_github = Boolean(project.github && project.github !== '#');
+
+                  return (
+                    <motion.article
+                      layout
+                      key={project.title}
+                      className="all-projects__card"
+                      initial={{ opacity: 0, scale: 0.94, y: 28 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.92, y: 16 }}
+                      transition={{
+                        layout: { duration: 0.45, ease: ease_out },
+                        opacity: { duration: 0.55, delay: index * 0.08, ease: ease_out },
+                        scale: { duration: 0.55, delay: index * 0.08, ease: ease_out },
+                        y: { duration: 0.55, delay: index * 0.08, ease: ease_out },
+                      }}
                     >
-                      {project.title}
-                    </motion.h3>
-                    <p className="text-sm text-slate-600 mb-4 line-clamp-3 flex-1 leading-relaxed">
-                      {project.description}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.tags.map((tag, tagIndex) => (
-                        <motion.span
-                          key={tag}
-                          className="px-2.5 py-1 bg-slate-100 rounded-full text-xs text-slate-700"
-                          initial={{ opacity: 0, scale: 0 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: 0.5 + tagIndex * 0.1 }}
-                        >
-                          {tag}
-                        </motion.span>
-                      ))}
-                    </div>
-                    <div className="flex gap-3 mt-auto">
-                      {project.demo && (
-                        <motion.a
-                          href={project.demo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <Eye size={16} />
-                          Demo
-                        </motion.a>
-                      )}
-                      <motion.a
-                        href={project.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-3 py-2 bg-slate-900 text-white text-sm rounded-lg hover:bg-slate-700 transition-colors"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <Github size={16} />
-                        Code
-                      </motion.a>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              className="text-center py-12"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              <div className="text-6xl mb-4">🔍</div>
-              <h3 className="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-2">
-                No projects found
-              </h3>
-              <p className="text-gray-500 dark:text-gray-400">
-                Try adjusting your search or filter criteria
-              </p>
-              <motion.button
-                onClick={clearFilters}
-                className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300"
-                whileHover={magicMode ? { scale: 1.2 } : { scale: 1.05 }}
-                whileTap={magicMode ? { scale: 0.95 } : { scale: 0.95 }}
+                      <div className="all-projects__card-media">
+                        <ProgressiveImage
+                          src={project.image}
+                          alt={project.title}
+                          img_class_name="all-projects__card-image"
+                          placeholder_color="#0a0a0a"
+                        />
+                        <div className="all-projects__card-scrim" />
+                        {project.featured && (
+                          <span className="all-projects__featured-badge">★ Featured</span>
+                        )}
+                      </div>
+
+                      <div className="all-projects__card-body">
+                        <h2 className="all-projects__card-title">{project.title}</h2>
+                        <p className="all-projects__card-desc">{project.description}</p>
+                        <p className="all-projects__card-tags">{project.tags.join(' · ')}</p>
+                        <div className="all-projects__card-links">
+                          {has_github && (
+                            <a
+                              href={project.github}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="all-projects__card-link ui-link-underline"
+                            >
+                              Code
+                            </a>
+                          )}
+                          {has_demo && (
+                            <a
+                              href={project.demo}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="all-projects__card-pill ui-pill-arrow"
+                            >
+                              Demo <span className="ui-pill-arrow__glyph" aria-hidden>→</span>
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </motion.article>
+                  );
+                })}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="empty"
+                className="all-projects__empty"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.4, ease: ease_out }}
               >
-                Clear All Filters
-              </motion.button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                <p className="all-projects__empty-title">No projects found</p>
+                <p className="all-projects__empty-copy">
+                  Try adjusting your search or filter criteria.
+                </p>
+                <button type="button" className="all-projects__back" onClick={clear_filters}>
+                  Clear All Filters
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </LayoutGroup>
       </div>
     </section>
   );
 };
 
-export default AllProjects;
+export default memo(All_projects);
