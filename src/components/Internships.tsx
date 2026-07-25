@@ -77,6 +77,7 @@ const Internships: React.FC<Internships_props> = () => {
   const [node_points, set_node_points] = useState<Record<string, { x: number; y: number }>>({});
   const [progress_value, set_progress_value] = useState(0);
   const [is_locked, set_is_locked] = useState(false);
+  const [is_narrow, set_is_narrow] = useState(false);
 
   const progress = useMotionValue(0);
   const progress_ref = useRef(0);
@@ -108,6 +109,13 @@ const Internships: React.FC<Internships_props> = () => {
     measure();
     window.addEventListener('resize', measure);
     return () => window.removeEventListener('resize', measure);
+  }, []);
+
+  useEffect(() => {
+    const sync_narrow = () => set_is_narrow(window.innerWidth < 768);
+    sync_narrow();
+    window.addEventListener('resize', sync_narrow);
+    return () => window.removeEventListener('resize', sync_narrow);
   }, []);
 
   useMotionValueEvent(progress, 'change', (value) => {
@@ -348,6 +356,41 @@ const Internships: React.FC<Internships_props> = () => {
     progress.set(path_t);
   };
 
+  const side_sign = active_stop.side === 'right' ? 1 : -1;
+  const leader_gap = 28;
+  const leader_length = 118;
+
+  let leader_end_x = marker_point.x + side_sign * leader_length;
+  let leader_end_y = marker_point.y;
+  let leader_mid_x = marker_point.x + side_sign * (leader_length * 0.55);
+  let leader_mid_y = marker_point.y + (marker_point.y > 700 ? -36 : 36);
+
+  if (is_narrow) {
+    leader_end_x = 500;
+    leader_end_y = 1185;
+    leader_mid_x = (marker_point.x + 500) / 2;
+    leader_mid_y = Math.min(marker_point.y + 140, 1050);
+  } else if (active_stop.side === 'right') {
+    leader_end_x = Math.min(leader_end_x, 680);
+  } else {
+    leader_end_x = Math.max(leader_end_x, 320);
+  }
+
+  const leader_path = `M ${marker_point.x} ${marker_point.y} Q ${leader_mid_x} ${leader_mid_y} ${leader_end_x} ${leader_end_y}`;
+
+  const panel_style = is_narrow
+    ? {
+        left: '50%',
+        top: 'auto',
+        bottom: '0.35rem',
+        transform: 'translateX(-50%)',
+      }
+    : {
+        left: `${(leader_end_x / 1000) * 100}%`,
+        top: `${Math.min(78, Math.max(12, (marker_point.y / 1260) * 100))}%`,
+        ['--leader-gap' as string]: `${leader_gap}px`,
+      };
+
   return (
     <section
       ref={section_ref}
@@ -356,12 +399,13 @@ const Internships: React.FC<Internships_props> = () => {
     >
       <div className="journey-map__panel-shell">
         <div className="editorial-guides pointer-events-none absolute inset-0" aria-hidden>
-          {[16.666, 33.333, 50, 66.666, 83.333].map((left) => (
+          {[12.5, 25, 37.5, 50, 62.5, 75, 87.5].map((left) => (
             <span key={left} className="editorial-guide editorial-guide--dark" style={{ left: `${left}%` }} />
           ))}
         </div>
 
         <div className="journey-map__topo" aria-hidden />
+        <div className="journey-map__atmosphere" aria-hidden />
 
         <div className="journey-map__header relative z-20 px-5 pt-4 md:px-12 lg:px-16 md:pt-12">
           <Reveal className="journey-map__eyebrow" delay={0} y={24}>
@@ -377,7 +421,7 @@ const Internships: React.FC<Internships_props> = () => {
           </Reveal>
         </div>
 
-        <div className="journey-map__stage relative z-10 mx-auto min-h-0 w-full max-w-[1100px] flex-1 px-3 pb-4 md:px-6">
+        <div className="journey-map__stage relative z-10 mx-auto min-h-0 w-full max-w-[1320px] flex-1 px-2 pb-4 md:px-4 lg:px-8">
           <div className="journey-map__canvas">
             <svg
               className="journey-map__svg"
@@ -385,21 +429,45 @@ const Internships: React.FC<Internships_props> = () => {
               preserveAspectRatio="xMidYMid meet"
               aria-hidden
             >
+              <defs>
+                <filter id="journey-marker-glow" x="-120%" y="-120%" width="340%" height="340%">
+                  <feGaussianBlur stdDeviation="4.5" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+
               <path ref={path_ref} d={path_d} fill="none" stroke="transparent" strokeWidth="2" />
               <path
                 d={path_d}
                 className="journey-map__path-base"
                 fill="none"
-                strokeWidth="2"
-                strokeDasharray="5 9"
+                strokeWidth="2.25"
+                strokeDasharray="4 10"
               />
               <motion.path
                 d={path_d}
                 className="journey-map__path-fill"
                 fill="none"
-                strokeWidth="2.5"
+                strokeWidth="5"
                 strokeDasharray={path_length}
                 style={{ strokeDashoffset: dash_offset }}
+              />
+
+              <path
+                d={leader_path}
+                className="journey-map__leader"
+                fill="none"
+                strokeWidth="1.35"
+                strokeDasharray="5 7"
+              />
+              <circle
+                cx={leader_end_x}
+                cy={leader_end_y}
+                r={2.4}
+                className="journey-map__leader-tip"
               />
 
               {journey_stops.map((stop) => {
@@ -412,7 +480,7 @@ const Internships: React.FC<Internships_props> = () => {
                     key={stop.id}
                     cx={point.x}
                     cy={point.y}
-                    r={is_active ? 11 : 7}
+                    r={is_active ? 12 : 7.5}
                     className={`journey-map__node ${is_active ? 'is-active' : ''} ${revealed ? 'is-revealed' : ''}`}
                   />
                 );
@@ -421,8 +489,15 @@ const Internships: React.FC<Internships_props> = () => {
               <circle
                 cx={marker_point.x}
                 cy={marker_point.y}
-                r={7}
+                r={18}
+                className="journey-map__marker-halo"
+              />
+              <circle
+                cx={marker_point.x}
+                cy={marker_point.y}
+                r={11}
                 className="journey-map__marker-svg"
+                filter="url(#journey-marker-glow)"
               />
             </svg>
 
@@ -443,25 +518,30 @@ const Internships: React.FC<Internships_props> = () => {
                 />
               );
             })}
-          </div>
 
-          <AnimatePresence mode="wait">
-            <motion.aside
+            <aside
               ref={panel_ref}
-              key={active_stop.id}
-              className={`journey-map__panel journey-map__panel--${active_stop.side}`}
-              initial={{ opacity: 0, y: 14, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.35, ease: ease_out }}
+              className={`journey-map__panel journey-map__panel--${active_stop.side}${is_narrow ? ' is-narrow' : ''}`}
+              style={panel_style}
             >
-              <p className="journey-map__panel-year">{active_stop.year}</p>
-              <h3 className="journey-map__panel-company">{active_stop.company}</h3>
-              <p className="journey-map__panel-role">{active_stop.role}</p>
-              <p className="journey-map__panel-impact">{active_stop.impact}</p>
-              <p className="journey-map__panel-tags">{active_stop.tags.join(' · ')}</p>
-            </motion.aside>
-          </AnimatePresence>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={active_stop.id}
+                  className="journey-map__panel-body"
+                  initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                  transition={{ duration: 0.32, ease: ease_out }}
+                >
+                  <p className="journey-map__panel-year">{active_stop.year}</p>
+                  <h3 className="journey-map__panel-company">{active_stop.company}</h3>
+                  <p className="journey-map__panel-role">{active_stop.role}</p>
+                  <p className="journey-map__panel-impact">{active_stop.impact}</p>
+                  <p className="journey-map__panel-tags">{active_stop.tags.join(' · ')}</p>
+                </motion.div>
+              </AnimatePresence>
+            </aside>
+          </div>
         </div>
       </div>
     </section>

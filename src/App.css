@@ -2099,20 +2099,29 @@ html.journey-map-locked {
 
 .journey-map .editorial-guide--dark,
 .journey-map__panel-shell .editorial-guide {
-  background: rgba(255, 255, 255, 0.12) !important;
+  background: rgba(255, 255, 255, 0.16) !important;
 }
 
 .journey-map__topo {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.07;
+  opacity: 0.11;
   background-image:
     radial-gradient(circle at 18% 22%, rgba(255,255,255,0.35) 0 1px, transparent 1.5px),
     radial-gradient(circle at 72% 38%, rgba(255,255,255,0.25) 0 1px, transparent 1.5px),
     radial-gradient(circle at 40% 70%, rgba(255,255,255,0.2) 0 1px, transparent 1.5px),
     radial-gradient(circle at 85% 80%, rgba(255,255,255,0.2) 0 1px, transparent 1.5px);
   background-size: 180px 180px, 220px 220px, 160px 160px, 200px 200px;
+}
+
+.journey-map__atmosphere {
+  position: absolute;
+  inset: 8% 6% 4%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 48% at 42% 48%, rgba(11, 76, 140, 0.14) 0%, transparent 72%),
+    radial-gradient(ellipse 40% 35% at 70% 30%, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
 }
 
 .journey-map__header {
@@ -2497,7 +2506,7 @@ html.journey-map-locked {
   flex: 1 1 auto;
   min-height: 0;
   width: 100%;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .journey-map__svg {
@@ -2510,39 +2519,59 @@ html.journey-map-locked {
 }
 
 .journey-map__panel {
-  position: relative;
-  flex: 0 0 auto;
-  width: min(300px, 70%);
-  max-width: 300px;
-  margin: 0.65rem 0 0 auto;
+  --leader-gap: 28px;
+  position: absolute;
   z-index: 8;
-  padding: 1.1rem 1.15rem 1.2rem;
-  background: rgba(8, 8, 8, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  width: min(300px, 32vw);
+  max-width: 300px;
+  padding: 1.15rem 1.2rem 1.25rem;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   pointer-events: none;
-  transform: none;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
 }
 
 .journey-map__panel--right {
-  margin-left: auto;
-  margin-right: 4%;
+  transform: translate(var(--leader-gap), -50%);
 }
 
 .journey-map__panel--left {
-  margin-left: 4%;
-  margin-right: auto;
+  transform: translate(calc(-100% - var(--leader-gap)), -50%);
+}
+
+.journey-map__panel-body {
+  display: block;
 }
 
 .journey-map__path-base {
-  stroke: rgba(255, 255, 255, 0.22);
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .journey-map__path-fill {
   stroke: #ffffff;
   stroke-linecap: round;
   stroke-linejoin: round;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.28));
+}
+
+.journey-map__leader {
+  stroke: rgba(11, 76, 140, 0.85);
+  stroke-linecap: round;
+  animation: journey-map-leader-dash 1.1s linear infinite;
+}
+
+.journey-map__leader-tip {
+  fill: #0b4c8c;
+}
+
+@keyframes journey-map-leader-dash {
+  to {
+    stroke-dashoffset: -24;
+  }
 }
 
 .journey-map__node {
@@ -2555,13 +2584,14 @@ html.journey-map-locked {
 }
 
 .journey-map__node.is-revealed {
-  fill: rgba(255, 255, 255, 0.55);
+  fill: rgba(255, 255, 255, 0.7);
+  stroke: rgba(255, 255, 255, 0.9);
 }
 
 .journey-map__node.is-active {
   fill: #fff;
   stroke: #fff;
-  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.45));
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.55));
   animation: journey-map-node-pulse 1.6s ease-in-out infinite;
 }
 
@@ -2570,11 +2600,29 @@ html.journey-map-locked {
   50% { transform: scale(1.12); }
 }
 
+.journey-map__marker-halo {
+  fill: rgba(11, 76, 140, 0.28);
+  animation: journey-map-marker-pulse 1.8s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
 .journey-map__marker-svg {
   fill: #0b4c8c;
   stroke: #fff;
-  stroke-width: 2;
-  filter: drop-shadow(0 0 10px rgba(11, 76, 140, 0.8));
+  stroke-width: 2.5;
+  filter: drop-shadow(0 0 14px rgba(11, 76, 140, 0.95));
+}
+
+@keyframes journey-map-marker-pulse {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.18);
+  }
 }
 
 .journey-map__node-hit {
@@ -2691,24 +2739,20 @@ html.journey-map-locked {
     flex: 1 1 auto;
     min-height: 0;
     max-height: none;
+    overflow: hidden;
   }
 
   .journey-map__panel,
   .journey-map__panel--right,
-  .journey-map__panel--left {
-    position: relative !important;
-    left: auto !important;
-    right: auto !important;
-    top: auto !important;
-    bottom: auto !important;
-    transform: none !important;
-    width: min(78vw, 280px);
-    max-width: 280px;
-    margin: 0 auto 0.15rem;
+  .journey-map__panel--left,
+  .journey-map__panel.is-narrow {
+    width: min(86vw, 300px);
+    max-width: 300px;
+    margin: 0;
     flex: 0 0 auto;
     max-height: none;
-    padding: 0.7rem 0.8rem 0.75rem;
-    background: rgba(10, 10, 10, 0.96);
+    padding: 0.75rem 0.85rem 0.8rem;
+    background: rgba(255, 255, 255, 0.045);
     border: 1px solid rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
