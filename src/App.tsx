@@ -11,7 +11,6 @@ import LoadingScreen from './components/LoadingScreen';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import NotFound404 from './components/NotFound404';
 import { ParallaxBackground } from './components/ParallaxSection';
-import SocialMediaVisitor from './components/SocialMediaVisitor';
 import ScrollProgressBar from './components/ScrollProgressBar';
 import { MouseFollower } from 'react-mouse-follower';
 import { usePerformanceProfile } from './hooks/usePerformanceProfile';
@@ -101,7 +100,6 @@ const AppContent = () => {
   return (
     <div className="App relative z-10">
       <ScrollProgressBar />
-      <SocialMediaVisitor />
       <CustomCursor />
       <ChaosCursor magicMode={deferred_magic_mode} />
       <MagicParticles magicMode={deferred_magic_mode} />
