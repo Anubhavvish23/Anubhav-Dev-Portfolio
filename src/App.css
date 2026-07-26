@@ -1142,6 +1142,10 @@ html.projects-hs-locked {
   height: 100%;
 }
 
+.projects-hs__header {
+  margin-top: -5vh;
+}
+
 .projects-hs__eyebrow {
   margin: 0 0 0.55rem;
   font-family: var(--font-editorial);
@@ -1442,6 +1446,7 @@ html.projects-hs-locked {
 @media (max-width: 767px) {
   .projects-hs__header {
     padding-top: 4.25rem;
+    margin-top: -5vh;
   }
 
   .projects-hs__title {

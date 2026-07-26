@@ -15,7 +15,7 @@ const projects = [
     title: 'Ai Image Generator',
     description:
       'A image generator with React, Node.js, Express, OpenAI. Features include types of image generations and image ratios.',
-    image: 'https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&w=900',
+    image: '/project-ai-image-generator.jpg',
     tags: ['React', 'Node.js', 'Express', 'OpenAI'],
     github: 'https://github.com/Anubhavvish23/AI-Image-Genrator',
     demo: 'https://ai-image-genrator-gamma.vercel.app',
@@ -75,7 +75,7 @@ const projects = [
     title: 'Datasheet AI',
     description:
       'AI-powered Excel assistant that reads your datasheets and provides intelligent insights and answers using OpenAI GPT.',
-    image: 'https://images.pexels.com/photos/6813326/pexels-photo-6813326.jpeg?auto=compress&cs=tinysrgb&w=900',
+    image: '/project-datasheet-ai.jpg',
     tags: ['React', 'OpenAI', 'Excel', 'Tailwind'],
     github: 'https://github.com/Anubhavvish23/Excel-AI',
     demo: 'https://excel-ai-five.vercel.app/',
