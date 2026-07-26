@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useActiveSection } from '../hooks/useActiveSection';
-import { scroll_to_id } from '../utils/scroll_to';
+import { force_scroll_to_id } from '../utils/scroll_to';
 
 const Navigation = () => {
   const [is_open, set_is_open] = useState(false);
@@ -57,15 +57,13 @@ const Navigation = () => {
     };
   }, [is_home_page, is_open]);
 
-  const scroll_to_hash = (href: string) => {
-    scroll_to_id(href.replace('#', ''));
+  const go_to_hash = (href: string) => {
+    force_scroll_to_id(href.replace('#', ''));
   };
 
   const nav_items = [
-    { name: 'About', href: '#about' },
-    { name: 'Services', href: '#skills' },
-    { name: 'Work', href: '#projects' },
-    { name: 'Testimonials', href: '#achievements' },
+    { name: 'About Me', href: '#about' },
+    { name: 'Projects', href: '#projects' },
   ];
 
   const link_class = (href: string) => {
@@ -93,7 +91,7 @@ const Navigation = () => {
           onClick={(e) => {
             if (is_home_page) {
               e.preventDefault();
-              scroll_to_hash('#home');
+              go_to_hash('#home');
             } else {
               e.preventDefault();
               navigate('/');
@@ -120,7 +118,7 @@ const Navigation = () => {
                     navigate(`/${item.href}`);
                     return;
                   }
-                  scroll_to_hash(item.href);
+                  go_to_hash(item.href);
                   window.setTimeout(() => {
                     (document.activeElement as HTMLElement | null)?.blur?.();
                   }, 300);
@@ -150,7 +148,7 @@ const Navigation = () => {
                 navigate('/#contact');
                 return;
               }
-              scroll_to_hash('#contact');
+              go_to_hash('#contact');
             }}
             className="nav-editorial__cta ui-pill-arrow inline-flex items-center rounded-sm border border-white/70 px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-white transition-all duration-[250ms] ease-out hover:bg-white hover:text-[#0B4C8C]"
             whileHover={{ scale: 1.02 }}
@@ -196,7 +194,7 @@ const Navigation = () => {
                         navigate(`/${item.href}`);
                         return;
                       }
-                      scroll_to_hash(item.href);
+                      go_to_hash(item.href);
                     }}
                     className={`block py-3 text-[12px] font-semibold uppercase tracking-[0.2em] transition-colors ${
                       is_active
@@ -220,7 +218,7 @@ const Navigation = () => {
                     navigate('/#contact');
                     return;
                   }
-                  scroll_to_hash('#contact');
+                  go_to_hash('#contact');
                 }}
                 className="mt-2 ui-pill-arrow inline-flex w-full items-center justify-center border border-slate-900 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-900"
                 initial={{ opacity: 0, x: -16 }}

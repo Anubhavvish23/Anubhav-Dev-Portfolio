@@ -7,7 +7,7 @@ import {
   type MotionValue,
 } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { get_lenis } from '../utils/scroll_to';
+import { get_lenis, FORCE_NAV_EVENT } from '../utils/scroll_to';
 import { motion_stagger } from '../utils/motion';
 import ProgressiveImage from './ProgressiveImage';
 import Reveal from './Reveal';
@@ -140,6 +140,7 @@ const Projects: React.FC<Projects_props> = () => {
   const mode_ref = useRef<'free' | 'horizontal'>('free');
   const touch_start_y = useRef(0);
   const release_armed_ref = useRef(false);
+  const nav_bypass_until_ref = useRef(0);
 
   const slide_count = featured_projects.length + 1;
   const x = useTransform(progress, (value) => -value * Math.max(1, scroll_distance));
@@ -181,6 +182,20 @@ const Projects: React.FC<Projects_props> = () => {
       release_armed_ref.current = false;
     }
   });
+
+  useEffect(() => {
+    const on_force_nav = () => {
+      nav_bypass_until_ref.current = Date.now() + 1200;
+      mode_ref.current = 'free';
+      set_is_locked(false);
+      release_armed_ref.current = false;
+      document.documentElement.classList.remove('projects-hs-locked');
+      get_lenis()?.start?.();
+    };
+
+    window.addEventListener(FORCE_NAV_EVENT, on_force_nav);
+    return () => window.removeEventListener(FORCE_NAV_EVENT, on_force_nav);
+  }, []);
 
   useEffect(() => {
     if (!is_narrow) return;
@@ -306,6 +321,7 @@ const Projects: React.FC<Projects_props> = () => {
 
     const on_wheel = (event: WheelEvent) => {
       if (event.ctrlKey) return;
+      if (Date.now() < nav_bypass_until_ref.current) return;
 
       if (mode_ref.current === 'free') {
         if (section_in_capture_zone(event.deltaY)) {
@@ -328,6 +344,8 @@ const Projects: React.FC<Projects_props> = () => {
     };
 
     const on_touch_move = (event: TouchEvent) => {
+      if (Date.now() < nav_bypass_until_ref.current) return;
+
       const current_y = event.touches[0]?.clientY ?? 0;
       const delta_y = touch_start_y.current - current_y;
       touch_start_y.current = current_y;
@@ -347,6 +365,8 @@ const Projects: React.FC<Projects_props> = () => {
     };
 
     const on_scroll = () => {
+      if (Date.now() < nav_bypass_until_ref.current) return;
+
       if (mode_ref.current !== 'horizontal') {
         const rect = section.getBoundingClientRect();
         if (progress_ref.current < 0.995 && rect.top < -24 && rect.top > -window.innerHeight * 0.7) {

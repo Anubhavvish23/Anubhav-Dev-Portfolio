@@ -2997,6 +2997,8 @@ html.journey-map-locked {
 
 .contact-editorial__underline input,
 .contact-editorial__underline textarea {
+  position: relative;
+  z-index: 1;
   width: 100%;
   border: none;
   border-radius: 0;
@@ -3009,6 +3011,9 @@ html.journey-map-locked {
   padding: 0.65rem 0;
   outline: none;
   resize: none;
+  pointer-events: auto;
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 .contact-editorial__underline input::placeholder,
@@ -3024,6 +3029,16 @@ html.journey-map-locked {
   width: 0;
   background: var(--contact-blue);
   transition: width 0.25s ease;
+  pointer-events: none;
+}
+
+.contact-editorial__honey {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .contact-editorial__underline.is-active .contact-editorial__underline-line,

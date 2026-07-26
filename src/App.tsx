@@ -15,7 +15,7 @@ import ScrollProgressBar from './components/ScrollProgressBar';
 import { MouseFollower } from 'react-mouse-follower';
 import { usePerformanceProfile } from './hooks/usePerformanceProfile';
 import { useLenisScroll } from './hooks/useLenisScroll';
-import { get_lenis } from './utils/scroll_to';
+import { force_scroll_to_id } from './utils/scroll_to';
 import './App.css';
 
 const Scene3D = lazy(() => import('./components/Scene3D'));
@@ -75,12 +75,7 @@ const AppContent = () => {
     const try_scroll = () => {
       const el = document.getElementById(id);
       if (el) {
-        const lenis = get_lenis();
-        if (lenis) {
-          lenis.scrollTo(el, { offset: 0 });
-        } else {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        force_scroll_to_id(id);
         window.setTimeout(() => {
           (document.activeElement as HTMLElement | null)?.blur?.();
         }, 300);

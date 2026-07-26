@@ -10,6 +10,30 @@ interface Contact_props {
 const contact_form_email =
   import.meta.env.VITE_CONTACT_FORM_EMAIL || 'anubhavsanjay01@gmail.com';
 
+const is_valid_email = (value: string) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+
+const open_mailto_fallback = (payload: {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}) => {
+  const subject = encodeURIComponent(
+    payload.subject.trim() || `Portfolio message from ${payload.name.trim() || 'visitor'}`
+  );
+  const body = encodeURIComponent(
+    [
+      payload.message.trim(),
+      '',
+      '—',
+      `From: ${payload.name.trim() || 'Anonymous'}`,
+      `Email: ${payload.email.trim()}`,
+    ].join('\n')
+  );
+  window.location.href = `mailto:${contact_form_email}?subject=${subject}&body=${body}`;
+};
+
 const social_links = [
   {
     id: 'github',
@@ -88,6 +112,7 @@ const Contact: React.FC<Contact_props> = () => {
     email: '',
     subject: '',
     message: '',
+    honey: '',
   });
   const [message_focused, set_message_focused] = useState(false);
   const [is_submitting, set_is_submitting] = useState(false);
@@ -107,43 +132,100 @@ const Contact: React.FC<Contact_props> = () => {
 
   const handle_submit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (form_data.honey) {
+      set_submit_status('success');
+      set_submit_message('Message sent. I will get back to you soon.');
+      return;
+    }
+
+    const trimmed_email = form_data.email.trim();
+    const trimmed_name = form_data.name.trim();
+    const trimmed_subject = form_data.subject.trim() || 'Portfolio inquiry';
+    const trimmed_message = form_data.message.trim();
+
+    if (!trimmed_name || !trimmed_message) {
+      set_submit_status('error');
+      set_submit_message('Please fill in your name and message.');
+      return;
+    }
+
+    if (!is_valid_email(trimmed_email)) {
+      set_submit_status('error');
+      set_submit_message('Please enter a valid email address.');
+      return;
+    }
+
     set_is_submitting(true);
     set_submit_status('idle');
     set_submit_message('');
 
+    const payload = {
+      name: trimmed_name,
+      email: trimmed_email,
+      subject: trimmed_subject,
+      message: trimmed_message,
+    };
+
     try {
+      const form_body = new FormData();
+      form_body.append('name', payload.name);
+      form_body.append('email', payload.email);
+      form_body.append('_replyto', payload.email);
+      form_body.append('subject', payload.subject);
+      form_body.append('message', payload.message);
+      form_body.append('_subject', `Portfolio contact: ${payload.subject}`);
+      form_body.append('_template', 'table');
+      form_body.append('_captcha', 'false');
+      form_body.append('_honey', '');
+
       const response = await fetch(
         `https://formsubmit.co/ajax/${encodeURIComponent(contact_form_email)}`,
         {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
             Accept: 'application/json',
           },
-          body: JSON.stringify({
-            name: form_data.name,
-            email: form_data.email,
-            subject: form_data.subject,
-            message: form_data.message,
-            _subject: `Portfolio contact: ${form_data.subject}`,
-            _template: 'table',
-            _captcha: 'false',
-          }),
+          body: form_body,
         }
       );
 
-      const data = await response.json();
+      const raw_text = await response.text();
+      let data: { success?: boolean | string; message?: string } = {};
+      try {
+        data = raw_text ? JSON.parse(raw_text) : {};
+      } catch {
+        data = {};
+      }
 
-      if (!response.ok || data.success === 'false' || data.success === false) {
-        throw new Error(data.message || 'Failed to send message');
+      const response_message = String(data.message || raw_text || '');
+      const needs_activation = /activat/i.test(response_message);
+      const failed =
+        !response.ok ||
+        data.success === 'false' ||
+        data.success === false ||
+        needs_activation;
+
+      if (failed) {
+        if (needs_activation) {
+          set_submit_status('error');
+          set_submit_message(
+            'First-time setup: check your inbox (and spam) for a FormSubmit activation link, then try again.'
+          );
+          return;
+        }
+        throw new Error(response_message || 'Failed to send message');
       }
 
       set_submit_status('success');
       set_submit_message('Message sent. I will get back to you soon.');
-      set_form_data({ name: '', email: '', subject: '', message: '' });
+      set_form_data({ name: '', email: '', subject: '', message: '', honey: '' });
     } catch {
+      open_mailto_fallback(payload);
       set_submit_status('error');
-      set_submit_message('Could not send. Please email me directly instead.');
+      set_submit_message(
+        'Opening your email app as a backup. You can also email me at anubhavsanjay01@gmail.com.'
+      );
     } finally {
       set_is_submitting(false);
     }
@@ -220,10 +302,25 @@ const Contact: React.FC<Contact_props> = () => {
                   placeholder="you@email.com"
                   required
                   autoComplete="email"
+                  inputMode="email"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
                 />
                 <span className="contact-editorial__underline-line" aria-hidden />
               </span>
             </label>
+
+            <input
+              type="text"
+              name="honey"
+              value={form_data.honey}
+              onChange={handle_input_change}
+              className="contact-editorial__honey"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden
+            />
 
             <label className="contact-editorial__field">
               <span className="contact-editorial__field-label">Message</span>
