@@ -101,7 +101,7 @@ const Navigation = () => {
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
         >
-          AS
+          AV
         </motion.a>
 
         <div className="nav-editorial__links">
